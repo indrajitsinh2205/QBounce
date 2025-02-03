@@ -3,23 +3,17 @@ import 'package:flutter/material.dart';
 class AppImages {
   /// home Devices
 
-  static const String homeDevice = "assets/images/home-device.png";
-  static const String hadingBG = "assets/images/hading-bg.png";
-  static const String device = "assets/images/device.png";
-  static const String phoneDevice = "assets/images/phone-device.png";
-  static const String connectingLogo = "assets/images/connecting-logo.png";
-  static const String backIcon = "assets/images/back-icon.png";
-  static const String submitIcon = "assets/images/submit-Icon.png";
-  static const String onScale = "assets/images/on-scale.png";
-  static const String scanner = "assets/images/scanner.png";
-  static const String search = "assets/images/search-icon.png";
-  static const String clearIcon = "assets/images/cancel-icon.png";
-  static const String calender = "assets/images/calender.png";
-  static const String rightArrow = "assets/images/right-arrow.png";
-  static const String rightGreyArrow = "assets/images/grey-right-arrow.png";
-  static const String mediumKcal = "assets/images/medium-kcal.png";
-  static const String highKcal = "assets/images/high-kcal.png";
-  static const String splashBG = "assets/images/splashBG.png";
+  static const String appBackGround = "assets/images/appBack.png";
+  static const String landing1 = "assets/images/landing1.png";
+  static const String landing2 = "assets/images/landing2.png";
+  static const String landing3 = "assets/images/landing3.png";
+  static const String logo = "assets/images/logo.png";
+  static const String playerG = "assets/images/playerG.png";
+  static const String playerB = "assets/images/playerB.png";
+  static const String howItGroup = "assets/images/howItGroup.png";
+  static const String teacher = "assets/images/teacher.png";
+  static const String player = "assets/images/player.png";
+
 
   /// Returns an Image widget for a specific asset.
   static Widget image(String assetPath, {double? width, double? height, BoxFit? fit}) {

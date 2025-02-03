@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_bounce/screens/leaderboard_screen_view/leaderboard_screen.dart';
+import 'package:q_bounce/screens/sign_in_screen_view/sign_in_screen.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_screen.dart';
 import 'package:q_bounce/screens/training_screen_view/training_bloc/training_program_bloc.dart';
 
+import '../common_widget/common_app_bar.dart';
+import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
 import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
+import '../screens/on_boarding_screen_view/on_boarding_screen.dart';
 import '../screens/state_screen_view/statistics_bloc/statistics_bloc.dart';
 import '../screens/state_screen_view/statistics_delete_bloc/statistics_delete_bloc.dart';
 import '../screens/state_screen_view/statistics_edit_bloc/statistics_edit_bloc.dart';
@@ -23,6 +27,10 @@ class NavigationService {
   static const String statistics = "statistics";
   static const String edit = "edit";
   static const String leaderboard = "leaderboard";
+  static const String training = "training";
+  static const String signIn = "signing";
+  static const String howToUse = "howToUse";
+  static const String drawer = "drawer";
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -50,6 +58,8 @@ class NavigationService {
   static Widget _handleRoute(RouteSettings settings, var dashboardMessage) {
     switch (settings.name) {
       case '/':
+        return OnboardingScreen();
+      case 'training':
         return MultiBlocProvider(
             providers: [
               BlocProvider<TrainingProgramBloc>(
@@ -105,6 +115,12 @@ class NavigationService {
               BlocProvider<LeaderBoardBloc>(create: (context) => LeaderBoardBloc(),)
             ],
             child: LeaderboardScreen());
+      case signIn:
+        return SignInScreen();
+      case howToUse:
+        return HowToUseScreen();
+        case drawer:
+        return DrawerScreen();
 
       default:
         return _errorScreen();

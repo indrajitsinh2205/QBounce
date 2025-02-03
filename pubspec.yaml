@@ -41,6 +41,8 @@ dependencies:
   chewie: ^1.10.0
   responsive_table: ^0.2.0+2
   intl: ^0.20.2
+  smooth_page_indicator: ^1.2.0+3
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +67,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
@@ -80,6 +83,21 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Athletic
+      fonts:
+        - asset: assets/fonts/athletic-font/AthleticRegular-nvBJ.ttf
+
+    - family: SFPro
+      fonts:
+        - asset: assets/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF
+
+    - family: SFProMed
+      fonts:
+        - asset: assets/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF
+    - family: SFProReg
+      fonts:
+        - asset: assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF
   # fonts:
   #   - family: Schyler
   #     fonts:

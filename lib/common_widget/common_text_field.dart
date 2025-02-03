@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:q_bounce/constant/app_color.dart';
 
 class CommonTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -15,22 +16,25 @@ class CommonTextField extends StatefulWidget {
 class _CommonTextFieldState extends State<CommonTextField> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-          TextField(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(widget.label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+          child: TextField(
             keyboardType: widget.numType==true?TextInputType.number:TextInputType.name,
             controller: widget.controller,
             decoration: InputDecoration(
+              fillColor: AppColors.textFBack,
+              filled: true,
               border: OutlineInputBorder(),
               hintText: widget.hint,
+              hintStyle: TextStyle(color: AppColors.whiteColor.withValues(alpha: 50))
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

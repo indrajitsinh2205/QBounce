@@ -11,11 +11,8 @@ class AppColors{
   static const termColor = Color(0xFF272730);
   static const redColor = Color(0xFFDC0808);
   static const calenderBG = Color(0xFFF9F8F6);
-
-  /// pie Chart Colour
-  static const pieYellow = Color(0xFFFFCA5D);
-  static const pieBlue = Color(0xFF72BFCF);
-  static const pieRed = Color(0xFFFFF986A);
+  static const textFBack = Color(0xFF585858);
+  static const faq = Color(0xFF333333);
 
 
 }
