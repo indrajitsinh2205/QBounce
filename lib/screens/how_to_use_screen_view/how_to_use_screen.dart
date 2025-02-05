@@ -3,6 +3,7 @@ import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_strings.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 
+import '../../app_services/common_Capital.dart';
 import '../../common_widget/common_app_bar.dart';
 import '../../constant/app_images.dart';
 
@@ -95,6 +96,7 @@ class _HowToUseScreenState extends State<HowToUseScreen> {
   }
 }
 class SkillsGuideScreen extends StatelessWidget {
+
   const SkillsGuideScreen({super.key});
 
   final List<Map<String, dynamic>> steps = const [
@@ -148,8 +150,8 @@ class SkillsGuideScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 15),
-            Text(
-              '${index + 1}. ${steps[index]["title"]}',
+            Text(CommonCapital.capitalizeEachWord(
+              '${index + 1}. ${steps[index]["title"]}'),
               style:AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)
             ),
             const SizedBox(height: 5),

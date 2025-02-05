@@ -98,6 +98,9 @@ flutter:
     - family: SFProReg
       fonts:
         - asset: assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF
+    - family: SFUi700
+      fonts:
+        - asset: assets/fonts/sf-ui-text-2-cdnfonts (1)/SFUIText-Bold.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:

@@ -13,7 +13,7 @@ class AppStrings{
 
   /// Date Format
 
-  static const String dateFormat = "yyyy-MM-dd";
+  static const String dateFormat = "MM-DD-YYYY";
 
   /// UI Message
   static const String noSTData = "No statistics data available";
@@ -25,14 +25,20 @@ class AppStrings{
   static const String editST = 'Edit Statistics';
   static const String addST = 'Add Statistics';
 
-  static const String location = "location";
-  static const String opponent = "Opponent";
-  static const String pts = "PTS Score";
-  static const String reb = "REB Score";
-  static const String ast = "AST Score";
-  static const String stl = "STL Score";
-  static const String blk = "BLK Score";
-  static const String match = "Match Date";
+  static const String location = "Your match location";
+  static const String opponent = "Your opponent";
+  static const String pts = "Your PTS Score";
+  static const String reb = "Your REB Score";
+  static const String ast = "Your AST Score";
+  static const String stl = "Your STL Score";
+  static const String blk = "Your BLK Score";
+  static const String match = "Your Match Date";
+  static const String staticMail = "info@qbounceapp.com.";
+  static const String fName = "Your first name";
+  static const String lName = "Your Last name";
+  static const String uMail = "Your email name";
+  static const String message = "Your message";
+
 
   /// landing Page Text
 
@@ -46,12 +52,18 @@ class AppStrings{
   static const String enterMail ="Enter Your Email";
   static const String submit ="Submit";
   static const String confirm ="Confirm";
+  static const String allScore ="All score";
 
 
   static const String heyThere = 'Hey there!';
   static const String castOur = 'How to cast our app to your device ';
   static const String privacyPolicy = 'Privacy policy';
   static const String terms = 'TERMS & CONDITONS';
+  static const String howToCast ="How to cast our app to your device ";
+  static const String contactUs ="Contact us";
+  static const String leaderBoard ="Leaderboard";
+
+  static const String contactUsDesc ="If you have any questions, you can contact us using our contact details or via the contact form.";
 
 static const String howToUse2 ="Welcome to the QBounce, your ticket to unlocking extraordinary Basketball skills and taking your training to the next level!";
   static const String howToUse1 = 'Welcome to the QBounce Master Training App, your ticket to unlocking extraordinary Basketball skills and taking your training to the next level!';
@@ -66,4 +78,5 @@ static const String howToUse2 ="Welcome to the QBounce, your ticket to unlocking
   static const String maximizeDesc = 'Maximizing your results with QBounce depends on factors such as age, skill level, and dedication. Speed improvement varies for each player, but our program is designed to cater to individual progress. For younger players, the Level #1 program focuses on developing core skills like ball control and speed. As you advance, youll continue to refine these skills, enhancing both speed and accuracy. Consistent practice and dedication to your training will help you achieve your full potential.';
   static const String masterTrain = 'Why QBounce Master Training?';
   static const String masterTrainDesc = 'QBounce Master Training focuses on developing technical skills and spatial awareness, which are vital for basketball success. Our drills help players visualize ball movements and anticipate the actions of teammates and opponents, improving decision-making and on-court effectiveness. This training enhances abilities like making precise passes, accurate shots, and quick reactions in game situations.';
+
 }

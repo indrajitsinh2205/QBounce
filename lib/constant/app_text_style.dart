@@ -7,6 +7,7 @@ class AppTextStyles {
   static const String sfPro700 = 'SFPro';
   static const String sfPro500 = 'SFProMed';
   static const String sfPro400 = 'SFProReg';
+  static const String sfUi700 = 'SFUi700';
 
   static const TextStyle bold = TextStyle(
     fontWeight: FontWeight.w700,

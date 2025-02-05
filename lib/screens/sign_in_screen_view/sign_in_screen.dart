@@ -50,13 +50,13 @@ class _SignInScreenState extends State<SignInScreen> {
                         submit=1;
                       });
                     },
-                    child: CommonButton(title: AppStrings.submit,)):InkWell(
+                    child: CommonButton(title: AppStrings.submit,color: AppColors.appColor,)):InkWell(
                   onTap: () {
                     setState(() {
                       submit=0;
                     });
                   },
-                  child: CommonButton(title: AppStrings.confirm,))
+                  child: CommonButton(title: AppStrings.confirm,color: AppColors.appColor,))
               ],
             ),
           ),

@@ -13,6 +13,9 @@ class AppColors{
   static const calenderBG = Color(0xFFF9F8F6);
   static const textFBack = Color(0xFF585858);
   static const faq = Color(0xFF333333);
+  static const bNavBar = Color(0xFF222324);
+  static const bShadow = Color(0xFF8A8A8A);
+  static const scoreUnselect = Color(0xFF25292C);
 
 
 }

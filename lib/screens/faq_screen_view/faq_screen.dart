@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:q_bounce/app_services/common_Capital.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 import 'package:q_bounce/screens/faq_screen_view/faq_data.dart';
@@ -11,6 +12,7 @@ class FAQPage extends StatefulWidget {
 }
 
 class _FAQPageState extends State<FAQPage> {
+
 
   int? expandedIndex; // To track which tile is expanded
 
@@ -40,7 +42,8 @@ class _FAQPageState extends State<FAQPage> {
                     key: Key(index.toString()), // Ensures correct state tracking
                     initiallyExpanded: expandedIndex == index,
                     title: Text(
-                      FAQData.faqList[index]["title"]!,
+                      CommonCapital.capitalizeEachWord(
+                      FAQData.faqList[index]["title"]!),
                       style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor)
                     ),
                     onExpansionChanged: (expanded) {
@@ -52,7 +55,8 @@ class _FAQPageState extends State<FAQPage> {
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Text(
-                          FAQData.faqList[index]["content"]!,
+                          CommonCapital.capitalizeEachWord(
+                          FAQData.faqList[index]["content"]!),
                             style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor)
                         ),
                       ),

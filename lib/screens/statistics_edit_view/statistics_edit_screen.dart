@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:q_bounce/app_services/navigation_service.dart';
+import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_strings.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_update_bloc/statistics_update_view_model/post_statistics_update_request.dart';
 
+import '../../common_widget/common_text_field.dart';
 import '../../common_widget/custom_snackbar.dart';
+import '../../constant/app_text_style.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_bloc.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_event.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_state.dart';
@@ -76,37 +79,33 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.Id > 0 ? AppStrings.editST :AppStrings.addST),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20),
-        child: widget.Id > 0?BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
-          builder: (context, state) {
-            if (state is StatisticsEditLoading) {
-              return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
-            } else if (state is StatisticsEditLoaded) {
-              if (widget.Id > 0) {
-                _locationController.text = state.getStatisticsEditResponse.data!.statistics!.location.toString();
-                _opponentController.text = state.getStatisticsEditResponse.data!.statistics!.opponentTeam.toString();
-                _PTSController.text = state.getStatisticsEditResponse.data!.statistics!.pointsScored.toString();
-                _REBController.text = state.getStatisticsEditResponse.data!.statistics!.rebounds.toString();
-                _ASTController.text = state.getStatisticsEditResponse.data!.statistics!.assists.toString();
-                _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
-                _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
-                selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10);
+    return Container(
+      color: Colors.transparent,
+      child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20),
+          child: widget.Id > 0?BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
+            builder: (context, state) {
+              if (state is StatisticsEditLoading) {
+                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
+              } else if (state is StatisticsEditLoaded) {
+                if (widget.Id > 0) {
+                  _locationController.text = state.getStatisticsEditResponse.data!.statistics!.location.toString();
+                  _opponentController.text = state.getStatisticsEditResponse.data!.statistics!.opponentTeam.toString();
+                  _PTSController.text = state.getStatisticsEditResponse.data!.statistics!.pointsScored.toString();
+                  _REBController.text = state.getStatisticsEditResponse.data!.statistics!.rebounds.toString();
+                  _ASTController.text = state.getStatisticsEditResponse.data!.statistics!.assists.toString();
+                  _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
+                  _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
+                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10);
+                }
+                return FormUI();
+              } else if (state is StatisticsEditError) {
+                return Center(child: Text(state.errorMessage, style: TextStyle(color: Colors.red)));
+              } else {
+                return Center(child: Text(AppStrings.somethingW, style: TextStyle(color: Colors.white)));
               }
-              return FormUI();
-            } else if (state is StatisticsEditError) {
-              return Center(child: Text(state.errorMessage, style: TextStyle(color: Colors.red)));
-            } else {
-              return Center(child: Text(AppStrings.somethingW, style: TextStyle(color: Colors.white)));
-            }
-          },
-        ):FormUI()
+            },
+          ):FormUI()
       ),
     );
   }
@@ -117,7 +116,14 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
       child: Column(
         children: [
           dataFormWidget(),
-          widget.Id > 0?updateData():saveData(),
+          SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              widget.Id > 0?updateData():saveData(),
+              CommonButton(title: "cancel", color: AppColors.faq,),
+            ],
+          )
         ],
       ),
     );
@@ -203,20 +209,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
             );
             BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
           },
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: AppColors.appColor),
-            child: Text(
-              AppStrings.save,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
+          child: CommonButton(title: "Save", color: AppColors.appColor)
         );
       },
     );
@@ -226,37 +219,38 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          commonTextField(_locationController, AppStrings.location, AppStrings.location,false
-          ),
-          commonTextField(_opponentController, AppStrings.opponent, AppStrings.opponent,false),
+          CommonTextField(controller: _locationController,label:  AppStrings.location,hint:  AppStrings.location,numType: false),
+          SizedBox(height: 25),
+          CommonTextField(controller: _opponentController,label:  AppStrings.opponent,hint:  AppStrings.opponent,numType: false),
+          SizedBox(height: 25),
+
           Row(
             children: [
               Flexible(
-                child: commonTextField(_PTSController, AppStrings.pts, AppStrings.pts,true),
-              ),
-              SizedBox(width: 10),  
+                child: CommonTextField(controller: _PTSController,label:  AppStrings.pts,hint:  AppStrings.pts,numType: true),),
+              SizedBox(width: 15),
               Flexible(
-                child: commonTextField(_REBController, AppStrings.reb, AppStrings.reb,true),
-              ),
+                child: CommonTextField(controller: _REBController,label:  AppStrings.reb,hint:  AppStrings.reb,numType: true),),
             ],
           ),
+          SizedBox(height: 25),
+
           Row(
             children: [
               Flexible(
-                child: commonTextField(_ASTController, AppStrings.ast, AppStrings.ast,true),
-              ),
-              SizedBox(width: 10),
+                child: CommonTextField(controller: _ASTController,label:  AppStrings.ast,hint:  AppStrings.ast,numType: true),),
+              SizedBox(width: 15),
               Flexible(
-                child: commonTextField(_STLController, AppStrings.stl, AppStrings.stl,true,),
-              ),
+                child: CommonTextField(controller: _STLController,label:  AppStrings.stl,hint:  AppStrings.stl,numType: true,),),
             ],
           ),
+          SizedBox(height: 25),
+
           Row(
             children: [
               Flexible(
-                child: commonTextField(_BLKController, AppStrings.blk, AppStrings.blk,true),
-              ),
-              SizedBox(width: 10),
+                child: CommonTextField(controller: _BLKController,label:  AppStrings.blk,hint:  AppStrings.blk,numType: true),),
+              SizedBox(width: 15),
               commonCalender(),
             ],
           ),
@@ -275,21 +269,22 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
             padding: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: AppColors.blackColor),
+              border: Border.all(color: AppColors.faq),
+                color: AppColors.faq
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate, 
-                    style: TextStyle(fontSize: 12),
+                    style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
                   ),
                 ),
                 IconButton(
                   onPressed: () {
                     _selectDate(context); // Open date picker
                   },
-                  icon: Icon(Icons.calendar_month),
+                  icon: Icon(Icons.calendar_month,color: AppColors.whiteColor,),
                 ),
               ],
             ),
@@ -299,24 +294,24 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
     );
   }
 
-  Widget commonTextField(TextEditingController controller, String label, String hint, bool? numType) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-          TextField(
-            keyboardType: numType==true?TextInputType.number:TextInputType.name,
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: hint,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget commonTextField(TextEditingController controller, String label, String hint, bool? numType) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 10.0),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+  //         TextField(
+  //           keyboardType: numType==true?TextInputType.number:TextInputType.name,
+  //           controller: controller,
+  //           decoration: InputDecoration(
+  //             border: OutlineInputBorder(),
+  //             hintText: hint,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
