@@ -13,7 +13,7 @@ class AppStrings{
 
   /// Date Format
 
-  static const String dateFormat = "MM-DD-YYYY";
+  static const String dateFormat = "DD-MM-YYYY";
 
   /// UI Message
   static const String noSTData = "No statistics data available";
@@ -38,6 +38,8 @@ class AppStrings{
   static const String lName = "Your Last name";
   static const String uMail = "Your email name";
   static const String message = "Your message";
+  static const String instaHand = "Your Instagram handle";
+  static const String jerseyNo = "Your jersey number";
 
 
   /// landing Page Text
@@ -63,7 +65,7 @@ class AppStrings{
   static const String contactUs ="Contact us";
   static const String leaderBoard ="Leaderboard";
   static const String yourState = "Shoot, Score, Conquer.";
-  static const String profile = "edit your profile";
+    static const String profile = "edit your profile";
 
   static const String contactUsDesc ="If you have any questions, you can contact us using our contact details or via the contact form.";
 

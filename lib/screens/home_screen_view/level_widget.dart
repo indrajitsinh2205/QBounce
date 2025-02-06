@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/video_component.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/video_details_component.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../constant/app_color.dart';
 import '../../constant/app_text_style.dart';
 
 class LevelScreen extends StatefulWidget {
   final String text ;
-  const LevelScreen({super.key, required this.text});
+  final VideoPlayerController videoPlayerController;
+  const LevelScreen({super.key, required this.text, required this.videoPlayerController});
 
   @override
   State<LevelScreen> createState() => _LevelScreenState();
@@ -128,7 +130,7 @@ class _LevelScreenState extends State<LevelScreen> {
             ),
           ),
           VideoComponent(),
-          VideoDetailsComponent()
+          VideoDetailsComponent(videoPlayerController: widget.videoPlayerController,)
         ],
       ),
     );

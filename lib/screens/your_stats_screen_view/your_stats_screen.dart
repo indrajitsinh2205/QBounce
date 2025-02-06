@@ -37,7 +37,7 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 25),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -50,24 +50,21 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Slidable(
-                    startActionPane: ActionPane(
-                      motion: ScrollMotion(),
-                      children: [
-                        // SlidableAction(
-                        //   onPressed: (BuildContext context) {
-                        //     // Handle edit action
-                        //     print('Edit ${stateData[index]['name']}');
-                        //   },
-                        //   backgroundColor: Colors.blue,
-                        //   foregroundColor: Colors.white,
-                        //   icon: Icons.edit,
-                        //   label: 'Edit',
-                        // ),
-                      ],
-                    ),
+                    closeOnScroll: true, // Ensures only one slider stays open
                     endActionPane: ActionPane(
                       motion: ScrollMotion(),
                       children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 6),
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Color(0xFFD74B16),
+
+                          ),
+                          child: AppImages.image(AppImages.edit, height: 35, width: 35, fit: BoxFit.fitWidth),
+                        ),
                         InkWell(
                           onTap: () => _showAlertDialog(context),
                           child: Container(
@@ -76,74 +73,65 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                             height: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Color(0xFFD74B16),
+                              color: Color(0xFFD31D0B),
+
                             ),
-                            child: AppImages.image(AppImages.delete,height: 35,width: 35,fit: BoxFit.fitWidth)
-                            // Image.asset(
-                            //   "assets/delete.png",
-                            //   height: 35,
-                            //   width: 35,
-                            //   fit: BoxFit.fitWidth,
-                            // ),
+                            child: AppImages.image(AppImages.delete, height: 35, width: 35, fit: BoxFit.fitWidth),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 6),
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color(0xFFD31D0B),
-                          ),
-                          child: AppImages.image(AppImages.edit,height: 35,width: 35,fit: BoxFit.fitWidth)
-                        ),
+
                       ],
                     ),
-
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 15),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(image: AssetImage("assets/images/stateBG.png"),fit: BoxFit.cover)
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/stateBG.png"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       child: Column(
                         children: [
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppImages.image(AppImages.ballImage,height: 30,width: 30,),
-                              // Image.asset("assets/ball.png",height: 30,width: 30,),
-                              SizedBox(width: 5,),
+                              AppImages.image(AppImages.ballImage, height: 30, width: 30),
+                              SizedBox(width: 5),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("US@Dfs",style: TextStyle(fontSize: 22,color: AppColors.whiteColor,fontWeight: FontWeight.w600),),
-                                  Text("07-01-25",style: TextStyle(fontSize: 13,color:AppColors.whiteColor.withOpacity(0.5),fontWeight: FontWeight.w400),)
+                                  Text(
+                                    "US@Dfs",
+                                    style: TextStyle(fontSize: 22, color: AppColors.whiteColor, fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "07-01-25",
+                                    style: TextStyle(fontSize: 13, color: AppColors.whiteColor.withOpacity(0.5), fontWeight: FontWeight.w400),
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(vertical: 10),
-                            height: 2,  // Height of the divider
-                            width: double.infinity,  // Full width
+                            height: 2,
+                            width: double.infinity,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Color(0xFFD74B16), Color(0xFFE9B6A3)],  // Gradient colors
-                                begin: Alignment. center,
+                                colors: [Color(0xFFD74B16), Color(0xFFE9B6A3)],
+                                begin: Alignment.center,
                                 end: Alignment.center,
                               ),
                             ),
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute space between items
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-
                               for (var item in stateData)
                                 Container(
-                                  // height: 33,
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0), // Optional padding inside each item
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Column(
                                     children: [
                                       Text(
@@ -158,8 +146,7 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                                   ),
                                 ),
                             ],
-                          )
-
+                          ),
                         ],
                       ),
                     ),
@@ -217,9 +204,17 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribute buttons evenly
               children: [
-                CommonButton(title: AppStrings.cancel, color: AppColors.faq,horizontal: 10,font: 14,),
+                InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: CommonButton(title: AppStrings.cancel, color: AppColors.faq,horizontal: 10,font: 14,)),
                 SizedBox(width: 10,),
-                CommonButton(title: AppStrings.yesDelete, color: AppColors.appColor,horizontal: 10,font: 14,),
+                InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: CommonButton(title: AppStrings.yesDelete, color: AppColors.appColor,horizontal: 10,font: 14,)),
               ],
             ),
           ],

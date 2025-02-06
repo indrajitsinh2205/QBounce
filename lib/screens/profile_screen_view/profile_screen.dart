@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:q_bounce/constant/app_images.dart';
 
 import '../../common_widget/common_text_field.dart';
 import '../../constant/app_color.dart';
@@ -34,17 +35,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     EdgeInsets.symmetric(horizontal: 20,vertical: 25),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-            margin: EdgeInsets.only(top: 50,bottom: 25),
-        height: 150,
-              width: 150,
-              decoration: BoxDecoration(
-                color: AppColors.faq,
-                borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.appColor,width: 5)
-        )
-              ),
+            Text(AppStrings.profile.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 28, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)),
+
+            Center(
+              child: Container(
+              margin: EdgeInsets.only(top: 50,bottom: 25),
+                      height: 150,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: AppColors.faq,
+                  borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.appColor,width: 5)
+                      ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Upload Image",style: AppTextStyles.athleticStyle(fontSize: 16, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                    AppImages.image(AppImages.upload,height: 20,width: 20)
+                  ],
+                ),
+                ),
+            ),
         
             dataFormWidget()],
         ),
@@ -62,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Flexible(child: CommonTextField(controller: lastNameController,label:  AppStrings.lName,hint:  "Johnson",numType: false)),
 
           ],),
-
+          SizedBox(height: 25),
           Row(
             children: [
               Flexible(
@@ -81,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(width: 10),
               Flexible(
-                child: CommonTextField(controller: jerseyNumberController,label:  AppStrings.stl,hint:  AppStrings.stl,numType: true,),),
+                child: CommonTextField(controller: jerseyNumberController,label:  AppStrings.jerseyNo,hint:  "4",numType: true,),),
             ],
           ),
           SizedBox(height: 25),
@@ -91,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Flexible(child: buildDropdownField("Your Country Name", countries, selectedCountry, (value) => setState(() => selectedCountry = value))),
               SizedBox(width: 15),
               Flexible(
-                child: CommonTextField(controller: instagramHandleController,label:  AppStrings.blk,hint:  AppStrings.blk,numType: true),),
+                child: CommonTextField(controller: instagramHandleController,label:  AppStrings.instaHand,hint: "bill gates",numType: true),),
 
             ],
           ),

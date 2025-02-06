@@ -121,7 +121,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               widget.Id > 0?updateData():saveData(),
-              CommonButton(title: "cancel", color: AppColors.faq,),
+              // CommonButton(title: "cancel", color: AppColors.faq,),
             ],
           )
         ],
@@ -197,17 +197,17 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         return GestureDetector(
           onTap: () {
-            PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
-              location: _locationController.text,
-              opponentTeam: _opponentController.text,
-              pointsScored: _PTSController.text,
-              rebounds: _REBController.text,
-              assists: _ASTController.text,
-              steals: _STLController.text,
-              blockedShots: _BLKController.text,
-              gameDate: selectedDate,
-            );
-            BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
+            // PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
+            //   location: _locationController.text,
+            //   opponentTeam: _opponentController.text,
+            //   pointsScored: _PTSController.text,
+            //   rebounds: _REBController.text,
+            //   assists: _ASTController.text,
+            //   steals: _STLController.text,
+            //   blockedShots: _BLKController.text,
+            //   gameDate: selectedDate,
+            // );
+            // BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
           },
           child: CommonButton(title: "Save", color: AppColors.appColor)
         );
@@ -265,6 +265,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(AppStrings.match,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
+          SizedBox(height: 10,),
           Container(
             padding: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(

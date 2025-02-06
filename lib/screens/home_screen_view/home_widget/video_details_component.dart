@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../app_services/common_Capital.dart';
 import '../../../constant/app_color.dart';
 import '../../../constant/app_text_style.dart';
 
 class VideoDetailsComponent extends StatefulWidget {
-  const VideoDetailsComponent({super.key});
+  final VideoPlayerController videoPlayerController;
+  const VideoDetailsComponent({super.key, required this.videoPlayerController});
 
   @override
   State<VideoDetailsComponent> createState() => _VideoDetailsComponentState();
@@ -36,13 +39,36 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 20),
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 0,vertical: 20),
     child: Column(
       children: [
-        Container(
-          height: 200,
-          width: double.infinity,
-        ),
+    widget.videoPlayerController.value.isInitialized
+    ? Stack(
+      children:[ 
+        AspectRatio(
+      aspectRatio: widget.videoPlayerController.value.aspectRatio,
+        child: VideoPlayer(widget.videoPlayerController),
+      ),
+        Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.transparent,
+              border: Border.all(color: Colors.white)
+            ),
+            child: IconButton(onPressed: () {
+              setState(() {
+                widget.videoPlayerController.value.isPlaying
+                    ? widget.videoPlayerController.pause()
+                    : widget.videoPlayerController.play();
+              });
+            }, icon: Icon(widget.videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,)),
+          ),
+        )
+      ]
+    )
+            : Container(),
+      SizedBox(height: 25,),
 
       Container(
         width: double.infinity,
@@ -65,7 +91,7 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal:  25,vertical:  18.5),
         decoration: BoxDecoration(
-            color: AppColors.appColor,
+            color: AppColors.faq,
             borderRadius: BorderRadius.circular(8)
         ),
         child: Row(
@@ -114,6 +140,7 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
                       (i) => Row(
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         textAlign: TextAlign.start,
@@ -122,7 +149,8 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
                       ),
                       Expanded(
                         child: Text(
-                          videoDetails[index]["points"][i],
+                          CommonCapital.capitalizeEachWord(
+                          videoDetails[index]["points"][i]),
                           style:  AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),
                         ),
                       ),

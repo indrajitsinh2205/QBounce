@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/screens/how_to_cast_screen_view/how_to_cast_screen.dart';
 import 'package:q_bounce/screens/static_leader_board.dart';
 import 'package:q_bounce/screens/your_stats_screen_view/your_stats_screen.dart';
@@ -22,28 +23,57 @@ import '../screens/terms_and_conditons_screen_view/terms_and_conditons_screen.da
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget actions;
+  final bool? button;
+  final VoidCallback voidCallback;
 
   CommonAppBar({
     required this.title,
     required this.actions,
+    this.button = false,
+    required this.voidCallback,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      title: actions,
-      leading: Container(
-        height: 30,width: 30,
-        decoration: AppImages.background(AppImages.drawerIcon,fit: BoxFit.cover),
-      )
-      
-      // IconButton(
-      //   icon: Icon(Icons.menu, color: Colors.white),
-      //   onPressed: () {
-      //     Scaffold.of(context).openDrawer(); // Open the drawer when the menu icon is tapped
-      //   },
-      // ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        titleSpacing: 5, // Reduced spacing between leading and title
+        title: actions,
+        leading: InkWell(
+          onTap: () {
+            Scaffold.of(context).openDrawer();
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 10, bottom: 10),
+            height: 25,
+            width: 25,
+            child: AppImages.image(AppImages.drawerIcon),
+          ),
+        ),
+        actions: [
+          button == false
+              ? SizedBox()
+              : InkWell(
+            onTap: () {
+              voidCallback();
+            },
+            child: Container(
+              width: 81,
+              height: 38,
+              child: CommonButton(
+                title: "+ Add Match",
+                color: AppColors.appColor,
+                horizontal: 5,
+                font: 10,
+                vertical: 2,
+              ),
+            ),
+          ),
+        ],
+      ),
+
     );
   }
 
@@ -87,8 +117,29 @@ class _DrawerScreenState extends State<DrawerScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: CommonAppBar(
+          voidCallback: () {
+            print("0.2");
+            setState(() {
+              _selectedIndex=0;
+              _selectedScreen = MultiBlocProvider(
+                providers: [
+                  BlocProvider<StatisticsEditBloc>(
+                    create: (BuildContext context) => StatisticsEditBloc(),
+                  ),
+                  BlocProvider<StatisticsUpdateBloc>(
+                    create: (BuildContext context) => StatisticsUpdateBloc(),
+                  ),
+                  BlocProvider<StatisticsStoreBloc>(
+                    create: (BuildContext context) => StatisticsStoreBloc(),
+                  ),
+                ],
+                child: StatisticsEditScreen(Id: 0),
+              );
+            });
+          },
+          button: _selectedIndex==1?true:false,
           title: '',
-          actions: AppImages.image(AppImages.logo, height: 40),
+          actions: AppImages.image(AppImages.logo, height: 30),
         ),
         drawer: Drawer(
           child: Container(
@@ -102,38 +153,46 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     padding: EdgeInsets.zero,
                     children: <Widget>[
                   
-                      Container(
-                        margin: EdgeInsets.only(top: 110),
-                        padding: EdgeInsets.symmetric(horizontal: 11.65,vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF414141),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.faq.withAlpha(3),
-                            )
-                          ]
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
-                              child: AppImages.image(AppImages.playerB,height: 40,width: 40),
-                            ),
-                            SizedBox(width: 10,),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Michael Johnson",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-                                  Text(overflow: TextOverflow.ellipsis,"MichaelJohnson@gmail.com",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
-                                ],
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedScreen = ProfileScreen();
+                          });
+                          Navigator.pop(context); // Close drawer
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 110),
+                          padding: EdgeInsets.symmetric(horizontal: 11.65,vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF414141),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.faq.withAlpha(3),
+                              )
+                            ]
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
+                                child: AppImages.image(AppImages.playerB,height: 40,width: 40),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            AppImages.image(AppImages.drawerEdit,height: 20,width: 20)
-                          ],
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Michael Johnson",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                                    Text(overflow: TextOverflow.ellipsis,"MichaelJohnson@gmail.com",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 10,),
+                              AppImages.image(AppImages.drawerEdit,height: 20,width: 20)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 50,),
@@ -294,30 +353,44 @@ class _DrawerScreenState extends State<DrawerScreen> {
               )
             ]
           ),
-          child: BottomNavigationBar(
-            backgroundColor: AppColors.redColor,
-            selectedItemColor: AppColors.appColor,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(14),
+              topRight: Radius.circular(14),
+              bottomLeft: Radius.circular(14),
+              bottomRight: Radius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: BottomNavigationBar(
 
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,  // Update selected screen based on tapped index
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppImages.home)),
-                label: '',
+                backgroundColor: AppColors.bNavBar,
+                selectedItemColor: AppColors.appColor,
+                unselectedItemColor: AppColors.faq,
+                type: BottomNavigationBarType.fixed,
+                elevation: 0.0,
+                currentIndex: _selectedIndex,
+                onTap: _onItemTapped,  // Update selected screen based on tapped index
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: ImageIcon(AssetImage(AppImages.home)),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageIcon(AssetImage(AppImages.state)),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageIcon(AssetImage(AppImages.cart)),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageIcon(AssetImage(AppImages.leader)),
+                    label: '',
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppImages.state)),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppImages.cart)),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppImages.leader)),
-                label: '',
-              ),
-            ],
+            ),
           ),
         ),
       ),

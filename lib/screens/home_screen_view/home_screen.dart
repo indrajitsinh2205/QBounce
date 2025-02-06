@@ -5,6 +5,7 @@ import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/gridComponent.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../common_widget/common_tab_bar.dart';
 import '../../constant/app_strings.dart';
@@ -22,6 +23,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin  {
   late TabController _tabController;
   String? _selectedText; // Null means show default UI
+  late VideoPlayerController _controller;
+
 
   void _updateUI(String text) {
     setState(() {
@@ -38,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
+    _controller = VideoPlayerController.networkUrl(Uri.parse(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -55,15 +64,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildButton("Beginner"),
-                    _buildButton("Advanced"),
-                    _buildButton("Pro"),
-                    _buildButton("Master"),
+                    Expanded(child: _buildButton("Beginner")),
+                    Expanded(child: _buildButton("Advanced")),
+                    Expanded(child: _buildButton("Pro")),
+                    Expanded(child: _buildButton("Master")),
                   ],
                 ),
-              )
+              ),
             ),
-            _selectedText == null?defaultUI():LevelScreen(text: _selectedText.toString(),)
+
+            _selectedText == null?defaultUI():LevelScreen(text: _selectedText.toString(), videoPlayerController: _controller,)
           ],
         )
       ),
@@ -118,12 +128,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return InkWell(
       onTap: () => _updateUI(text),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.5,vertical: 10),
+        margin: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
         decoration: BoxDecoration(
           color: AppColors.appColor,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+        child: Center(child: Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
       ),
     );
   }
