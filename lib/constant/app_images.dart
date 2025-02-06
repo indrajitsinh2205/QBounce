@@ -40,6 +40,8 @@ class AppImages {
   static const String drawerBG = "assets/images/drawerBG.png";
   static const String lock = "assets/images/lock.png";
   static const String upload = "assets/images/upload.png";
+  static const String levelLock = "assets/images/levelLock.png";
+  static const String rightArrow = "assets/images/rightArrow.png";
 
   /// bottomSheet
   static const String home = "assets/images/home.png";

@@ -80,14 +80,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 }
               },
 
-              child:  Text(
-                "GET STARTED   →",
-                style: AppTextStyles.athleticStyle(
-                    fontSize: 18,
-                    fontFamily: AppTextStyles.sfPro700,
-                    color: AppColors.whiteColor,
-
-                ),
+              child:  Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "GET STARTED ",
+                    style: AppTextStyles.athleticStyle(
+                        fontSize: 18,
+                        fontFamily: AppTextStyles.sfPro700,
+                        color: AppColors.whiteColor,
+                  
+                    ),
+                  ),
+                  AppImages.image(AppImages.rightArrow,height: 20,width: 20)
+                ],
               ),
             ),
           ),

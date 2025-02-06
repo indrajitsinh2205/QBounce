@@ -43,7 +43,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          CommonTextField(icon: Icon(Icons.mail_outline_outlined) ,controller: _staticMailController,hint:  AppStrings.staticMail, label: '',boarder: true,),
+          CommonTextField(icon: Icon(Icons.mail_outline_outlined) ,controller: _staticMailController,hint:  AppStrings.staticMail, label: '',boarder: true,readOnly: true,),
           SizedBox(height: 30),
           Row(
             children: [
@@ -60,7 +60,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           SizedBox(height: 15),
           CommonTextField(controller: _uMailController,label:  AppStrings.uMail,hint:  AppStrings.uMail,),
           SizedBox(height: 15),
-          CommonTextField(controller: _messageController,label:  AppStrings.message,hint:  AppStrings.message,),
+          CommonTextField(controller: _messageController,label:  AppStrings.message,hint:  AppStrings.message,textArea: true,),
           SizedBox(height: 15),
           Row(
             children: [

@@ -26,11 +26,12 @@ class _LeaderBoardState extends State<LeaderBoard> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-                SizedBox(width: 5,),
-                widget.scoreBool==false?SizedBox():CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,)
+                SizedBox(width: 20,),
+                widget.scoreBool==false?SizedBox():CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 12.0,vertical: 5.5,font: 18,)
               ],
             ),
           ),
@@ -49,7 +50,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                     padding: EdgeInsets.symmetric(horizontal:  25,/*vertical:  10*/),
                     decoration: BoxDecoration(
                         color:index==0?AppColors.appColor:AppColors.scoreUnselect,
-                        borderRadius: BorderRadius.circular(35)
+                        borderRadius: BorderRadius.circular(12)
                     ),
                     child: Center(child: Text(score[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
                   );

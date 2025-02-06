@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
-          SizedBox(height: 3),
+          SizedBox(height: 10),
           DropdownButtonFormField<String>(
             dropdownColor: Colors.black,
             value: selectedValue,

@@ -33,13 +33,13 @@ class AppStrings{
   static const String stl = "Your STL Score";
   static const String blk = "Your BLK Score";
   static const String match = "Your Match Date";
-  static const String staticMail = "info@qbounceapp.com.";
-  static const String fName = "Your first name";
-  static const String lName = "Your Last name";
-  static const String uMail = "Your email name";
-  static const String message = "Your message";
-  static const String instaHand = "Your Instagram handle";
-  static const String jerseyNo = "Your jersey number";
+  static const String staticMail = "info@qbounceapp.com";
+  static const String fName = "Your First Name";
+  static const String lName = "Your Last Name";
+  static const String uMail = "Your Email Name";
+  static const String message = "Your Message";
+  static const String instaHand = "Your Instagram Handle";
+  static const String jerseyNo = "Your Jersey Number";
 
 
   /// landing Page Text
@@ -50,7 +50,7 @@ class AppStrings{
 
   static const String welCome ="Welcome Back!";
   static const String otp ="OTP";
-  static const String enterOtp ="Enter the code sent on email here";
+  static const String enterOtp ="Enter The Code Sent On Email Here";
   static const String enterMail ="Enter Your Email";
   static const String submit ="Submit";
   static const String confirm ="Confirm";

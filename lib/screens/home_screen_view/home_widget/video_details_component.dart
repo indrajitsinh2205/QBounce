@@ -44,30 +44,43 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
       children: [
     widget.videoPlayerController.value.isInitialized
     ? Stack(
-      children:[ 
+      children: [
         AspectRatio(
-      aspectRatio: widget.videoPlayerController.value.aspectRatio,
-        child: VideoPlayer(widget.videoPlayerController),
-      ),
-        Center(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.transparent,
-              border: Border.all(color: Colors.white)
+          aspectRatio: widget.videoPlayerController.value.aspectRatio,
+          child: VideoPlayer(widget.videoPlayerController),
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  widget.videoPlayerController.value.isPlaying
+                      ? widget.videoPlayerController.pause()
+                      : widget.videoPlayerController.play();
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.transparent,
+                  border: Border.all(color: Colors.white),
+                ),
+                child: Icon(
+                  widget.videoPlayerController.value.isPlaying
+                      ? Icons.pause
+                      : Icons.play_arrow,
+                  color: Colors.white,
+                  size: 50, // Adjust size as needed
+                ),
+              ),
             ),
-            child: IconButton(onPressed: () {
-              setState(() {
-                widget.videoPlayerController.value.isPlaying
-                    ? widget.videoPlayerController.pause()
-                    : widget.videoPlayerController.play();
-              });
-            }, icon: Icon(widget.videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,)),
           ),
-        )
-      ]
+        ),
+      ],
     )
-            : Container(),
+
+        : Container(),
       SizedBox(height: 25,),
 
       Container(

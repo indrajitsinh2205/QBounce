@@ -24,13 +24,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget actions;
   final bool? button;
+  final bool? saveButton;
   final VoidCallback voidCallback;
 
   CommonAppBar({
     required this.title,
     required this.actions,
     this.button = false,
-    required this.voidCallback,
+    required this.voidCallback, this.saveButton,
   });
 
   @override
@@ -54,7 +55,22 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         actions: [
           button == false
-              ? SizedBox()
+              ? saveButton == true ?InkWell(
+          onTap: () {
+    voidCallback();
+    },
+      child: Container(
+        width: 81,
+        height: 38,
+        child: CommonButton(
+          title: "Save",
+          color: AppColors.appColor,
+          horizontal: 5,
+          font: 10,
+          vertical: 2,
+        ),
+      ),
+    ):SizedBox()
               : InkWell(
             onTap: () {
               voidCallback();
@@ -91,21 +107,60 @@ class DrawerScreen extends StatefulWidget {
 class _DrawerScreenState extends State<DrawerScreen> {
   Widget _selectedScreen = HomeScreen(); // Default screen
   int _selectedIndex = 0;
+  int button = 0;
 
 
   // Method to update the selected screen based on BottomNavigationBar item tapped
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-      if (index == 0) {
-        _selectedScreen = HomeScreen();
-      } else if (index == 2) {
-        _selectedScreen = CartScreen();
-      } else if (index == 3) {
-        _selectedScreen = StaticLeaderBoard();
-      }
-      else if (index == 1) {
-        _selectedScreen = YourStatsScreen();
+      // This ensures that when tapping the same index, the widget gets rebuilt
+      if (_selectedIndex == index) {
+        // Change _selectedScreen to a new instance of the same screen.
+        if (index == 0) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = HomeScreen(key: UniqueKey());  // Assign a new key to force rebuild
+        } else if (index == 1) {
+          setState(() {
+            button =1;
+          });
+          _selectedScreen = YourStatsScreen(key: UniqueKey());
+        } else if (index == 2) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = CartScreen(key: UniqueKey());
+        } else if (index == 3) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = StaticLeaderBoard(key: UniqueKey());
+        }
+      } else {
+        // If the index has changed, assign the new screen
+        _selectedIndex = index;
+        if (index == 0) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = HomeScreen();
+        } else if (index == 1) {
+          setState(() {
+            button =1;
+          });
+          _selectedScreen = YourStatsScreen();
+        } else if (index == 2) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = CartScreen();
+        } else if (index == 3) {
+          setState(() {
+            button =0;
+          });
+          _selectedScreen = StaticLeaderBoard();
+        }
       }
     });
   }
@@ -118,7 +173,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         backgroundColor: Colors.transparent,
         appBar: CommonAppBar(
           voidCallback: () {
-            print("0.2");
+            print("0.");
             setState(() {
               _selectedIndex=0;
               _selectedScreen = MultiBlocProvider(
@@ -137,7 +192,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
               );
             });
           },
-          button: _selectedIndex==1?true:false,
+          button: button==1?true:false,
+          saveButton: button == 2?true:false,
           title: '',
           actions: AppImages.image(AppImages.logo, height: 30),
         ),
@@ -156,6 +212,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
+                            button=2;
                             _selectedScreen = ProfileScreen();
                           });
                           Navigator.pop(context); // Close drawer
@@ -209,6 +266,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           onTap: () {
                             setState(() {
                               _selectedScreen = HowToUseScreen();
+                              button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -227,7 +285,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              _selectedScreen = HowToCastScreen();
+                              button=0;                              _selectedScreen = HowToCastScreen();
+
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -246,6 +305,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('Teams & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
+                              button=0;
                               _selectedScreen = TermsAndConditonsScreen();
                             });
                             Navigator.pop(context); // Close drawer
@@ -266,6 +326,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           onTap: () {
                             setState(() {
                               _selectedScreen = PrivacyPolicyScreen();
+                              button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -285,6 +346,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           onTap: () {
                             setState(() {
                               _selectedScreen = FAQPage();
+                              button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -305,6 +367,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           onTap: () {
                             setState(() {
                               _selectedScreen = ContactUsScreen();
+                              button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -322,7 +385,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   ),
                   child: ListTile(
                     leading:AppImages.image(AppImages.signOut,height: 30,width: 30),
-                    title: Text('Sign Out',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                    title: Text('Sign Out',style: AppTextStyles.athleticStyle(fontSize: 16  , color: AppColors.whiteColor.withOpacity(0.5),fontFamily: AppTextStyles.sfPro700),),
                     onTap: () {
                       setState(() {
                         // _selectedScreen = HowToUseScreen();

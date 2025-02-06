@@ -19,6 +19,7 @@ class _OTPFieldState extends State<OTPField> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // OTP input fields
+        SizedBox(height: 25,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(6, (index) {

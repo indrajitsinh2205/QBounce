@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
     _controller = VideoPlayerController.networkUrl(Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
+        'https://qbounce-production.s3.us-east-2.amazonaws.com/videos/VIDEO_1.mp4'))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
@@ -60,14 +60,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           children: [
             Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: _buildButton("Beginner")),
-                    Expanded(child: _buildButton("Advanced")),
-                    Expanded(child: _buildButton("Pro")),
-                    Expanded(child: _buildButton("Master")),
+                    Expanded(child: _buildButton("Beginner",false)),
+                    Expanded(child: _buildButton("Advanced",true)),
+                    Expanded(child: _buildButton("Pro",true)),
+                    Expanded(child: _buildButton("Master",true)),
                   ],
                 ),
               ),
@@ -124,17 +124,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ],
     );
   }
-  Widget _buildButton(String text) {
+  Widget _buildButton(String text,bool lock) {
     return InkWell(
       onTap: () => _updateUI(text),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
+        margin: EdgeInsets.symmetric(horizontal: 3),
+        padding: EdgeInsets.symmetric(horizontal: 2,vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.appColor,
+          color: lock ==true?Colors.transparent:AppColors.appColor,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: lock ==false?Colors.transparent:AppColors.whiteColor,width: 1)
         ),
-        child: Center(child: Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
+        child: Center(child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+            lock == true?AppImages.image(AppImages.levelLock,height: 14,width: 14):SizedBox(),
+          ],
+        )),
       ),
     );
   }

@@ -24,7 +24,7 @@ class _LevelScreenState extends State<LevelScreen> {
     {"name":"PTS",
       "point":"1",
     },
-    {"name":"RED",
+    {"name":"REB",
       "point":"1",
     },
     {"name":"AST",
