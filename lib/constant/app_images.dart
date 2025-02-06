@@ -31,6 +31,30 @@ class AppImages {
   static const String rank3Person = "assets/images/thirdRankPerson.png";
   static const String ballIcon = "assets/images/homeBallIcon.png";
   static const String leaderBG = "assets/images/leaderBG.png";
+  static const String delete = "assets/images/delete.png";
+  static const String ballImage = "assets/images/ball.png";
+  static const String edit = "assets/images/edit.png";
+  static const String levelFrame = "assets/images/level_frame.png";
+  static const String stateBG = "assets/images/stateBG.png";
+  static const String confirmDelete = "assets/images/confirmDelete.png";
+  static const String drawerBG = "assets/images/drawerBG.png";
+
+  /// bottomSheet
+  static const String home = "assets/images/home.png";
+  static const String state = "assets/images/state.png";
+  static const String cart = "assets/images/cart.png";
+  static const String leader = "assets/images/leader.png";
+
+  /// drawer
+  static const String howToUse = "assets/images/htuIcon.png";
+  static const String cast = "assets/images/castIcon.png";
+  static const String terms = "assets/images/termIcon.png";
+  static const String privacy = "assets/images/privacyIcon.png";
+  static const String faq = "assets/images/faqIcon.png";
+  static const String contact = "assets/images/castIcon.png";
+  static const String signOut = "assets/images/signOutIcon.png";
+  static const String drawerEdit = "assets/images/drawerEdit.png";
+  static const String drawerIcon = "assets/images/drawerIcon.png";
 
 
   /// Returns an Image widget for a specific asset.
@@ -47,6 +71,7 @@ class AppImages {
     return BoxDecoration(
       color: Colors.transparent,
       image: DecorationImage(
+        
         image: AssetImage(assetPath),
         fit: fit,
       ),

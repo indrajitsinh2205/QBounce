@@ -81,7 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
 
               child:  Text(
-                "GET STARTED →",
+                "GET STARTED   →",
                 style: AppTextStyles.athleticStyle(
                     fontSize: 18,
                     fontFamily: AppTextStyles.sfPro700,

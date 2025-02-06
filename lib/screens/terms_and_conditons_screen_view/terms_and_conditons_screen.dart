@@ -7,7 +7,7 @@ import '../../constant/app_strings.dart';
 import '../../constant/app_text_style.dart';
 
 class TermsAndConditonsScreen extends StatefulWidget {
-  const TermsAndConditonsScreen({super.key});
+  const  TermsAndConditonsScreen({super.key});
 
   @override
   State<TermsAndConditonsScreen> createState() => _TermsAndConditonsScreenState();
@@ -16,9 +16,9 @@ class TermsAndConditonsScreen extends StatefulWidget {
 class _TermsAndConditonsScreenState extends State<TermsAndConditonsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

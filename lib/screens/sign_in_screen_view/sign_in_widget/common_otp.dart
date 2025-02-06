@@ -22,32 +22,34 @@ class _OTPFieldState extends State<OTPField> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(6, (index) {
-            return Container(
-              width: fieldWidth,  // Use dynamic width based on screen size
-              height: 60,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: AppColors.textFBack
-                // border: Border.all(color: Colors.orange, width: 2),
-              ),
-              child: TextField(
-                controller: controllers[index],
-                maxLength: 1,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  counterText: '',
-                  hintText: '',
-                  hintStyle: TextStyle(fontSize: 20, color: Colors.grey),
-                  border: InputBorder.none,
+            return Expanded(
+              child: Container(
+                width: fieldWidth,  // Use dynamic width based on screen size
+                height: 60,
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.textFBack
+                  // border: Border.all(color: Colors.orange, width: 2),
                 ),
-                onChanged: (value) {
-                  if (value.isNotEmpty && index < controllers.length - 1) {
-                    FocusScope.of(context).nextFocus();
-                  }
-                },
+                child: TextField(
+                  controller: controllers[index],
+                  maxLength: 1,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    counterText: '',
+                    hintText: '',
+                    hintStyle: TextStyle(fontSize: 20, color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    if (value.isNotEmpty && index < controllers.length - 1) {
+                      FocusScope.of(context).nextFocus();
+                    }
+                  },
+                ),
               ),
             );
           }),
@@ -55,13 +57,13 @@ class _OTPFieldState extends State<OTPField> {
 
         // Button to print OTP value
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            String otp = controllers.map((controller) => controller.text).join('');
-            print('Entered OTP: $otp');
-          },
-          child: const Text('Print OTP'),
-        ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     String otp = controllers.map((controller) => controller.text).join('');
+        //     print('Entered OTP: $otp');
+        //   },
+        //   child: const Text('Print OTP'),
+        // ),
       ],
     );
   }

@@ -16,15 +16,15 @@ class HowToCastScreen extends StatefulWidget {
 class _HowToCastScreenState extends State<HowToCastScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
         child: Column( crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(AppStrings.howToCast.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
             // Text(AppStrings.howToUse2,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
             SizedBox(height: 10,),
-        
+
             castData()
           ],
         ),
@@ -70,7 +70,7 @@ class _HowToCastScreenState extends State<HowToCastScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                                child: AppImages.image(cast['image'],width:double.infinity,height: 100,)
+                                child: AppImages.image(cast['image'],width:MediaQuery.of(context).size.width,height:150,fit: BoxFit.fitWidth)
                             ),
                             SizedBox(height: 15),
                             Text(cast['title'].toString(),style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),

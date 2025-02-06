@@ -4,9 +4,13 @@ import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
+import 'package:q_bounce/screens/home_screen_view/home_widget/gridComponent.dart';
 
 import '../../common_widget/common_tab_bar.dart';
 import '../../constant/app_strings.dart';
+import 'home_widget/leader_board.dart';
+import 'home_widget/video_component.dart';
+import 'level_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +21,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin  {
   late TabController _tabController;
+  String? _selectedText; // Null means show default UI
+
+  void _updateUI(String text) {
+    setState(() {
+      _selectedText = text;
+    });
+  }
+
+  void resetUI() {
+    setState(() {
+      _selectedText = null; // Reset to default UI
+    });
+  }
 
   @override
   void initState() {
@@ -30,106 +47,145 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 25),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // CommonTabBar(
-            //   initialIndex: 0,
-            //   tabTitles: ["Beginner", "Advanced", "Pro", "Master"],
-            //   Box: true,
-            //   controller: _tabController,
-            // ),
-            // SizedBox(
-            //   width: double.infinity,
-            //   height: 247.46, // Adjust height according to your design
-            //   child: Stack(
-            //     children: [
-            //       // Background container
-            //       Positioned(
-            //         top: MediaQuery.of(context).size.height * 0.074,
-            //         left: MediaQuery.of(context).size.width * 0.334,
-            //         child: AppImages.image(
-            //           AppImages.rank1Person,
-            //           height: 120,
-            //           fit: BoxFit.fitHeight,
-            //         ),
-            //       ),
-            //       Positioned.fill(
-            //         child: Container(
-            //           height: 248,
-            //           decoration: AppImages.background(AppImages.rank1, fit: BoxFit.fitHeight),
-            //         ),
-            //       ),
-            //
-            //     ],
-            //   ),
-            // ),
-            _buildRankContainer(0,0.071,0.022,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
-
-            gridComponent(),
-            videoComponent(),
-           leaderBoard()
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildButton("Beginner"),
+                    _buildButton("Advanced"),
+                    _buildButton("Pro"),
+                    _buildButton("Master"),
+                  ],
+                ),
+              )
+            ),
+            _selectedText == null?defaultUI():LevelScreen(text: _selectedText.toString(),)
           ],
-        ),
+        )
       ),
     );
   }
-  Widget gridComponent (){
-    List level =["Beginner", "Advanced", "Pro", "Master"];
-    return  GridView.count(
-      padding: EdgeInsets.only(top: 25,right: 20,left: 20),
-      crossAxisCount: 2,
-      crossAxisSpacing:26.0,
-      mainAxisSpacing: 10.0,
-      shrinkWrap: true,
-      childAspectRatio:1.6,
-      physics: NeverScrollableScrollPhysics(),
-      children: List.generate(level.length, (index) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.whiteColor)
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 23),
-                child: AppImages.image(AppImages.ballIcon,height: 30,width: 30),
-              ),
-              // SizedBox(width: 10,),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Level $index",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),),
-                  Text(level[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),)
-                ],
-              ),
-              SizedBox(width: 10,),
-            ],
-          ),
-        );
-      },),
+  Widget defaultUI(){
+    return Column(
+      children: [
+        // CommonTabBar(
+        //   initialIndex: 0,
+        //   tabTitles: ["Beginner", "Advanced", "Pro", "Master"],
+        //   Box: true,
+        //   controller: _tabController,
+        // ),
+        // SizedBox(
+        //   width: double.infinity,
+        //   height: 247.46, // Adjust height according to your design
+        //   child: Stack(
+        //     children: [
+        //       // Background container
+        //       Positioned(
+        //         top: MediaQuery.of(context).size.height * 0.074,
+        //         left: MediaQuery.of(context).size.width * 0.334,
+        //         child: AppImages.image(
+        //           AppImages.rank1Person,
+        //           height: 120,
+        //           fit: BoxFit.fitHeight,
+        //         ),
+        //       ),
+        //       Positioned.fill(
+        //         child: Container(
+        //           height: 248,
+        //           decoration: AppImages.background(AppImages.rank1, fit: BoxFit.fitHeight),
+        //         ),
+        //       ),
+        //
+        //     ],
+        //   ),
+        // ),
+        _buildRankContainer(0,0.071,0.022,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
+
+        Gridcomponent(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: VideoComponent(),
+        ),
+        LeaderBoard(),
+      ],
     );
   }
-  Widget videoComponent(){
-    List video =["Triple threat", "Pound", "Cross", ];
-
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.only(top: 25.54,right: 20,left: 20),
-        itemBuilder: (context, index) {
-      return Container(
-        padding: EdgeInsets.only(left: 25,top: 18.5,bottom: 18.5),
+  Widget _buildButton(String text) {
+    return InkWell(
+      onTap: () => _updateUI(text),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.5,vertical: 10),
         decoration: BoxDecoration(
           color: AppColors.appColor,
-          borderRadius: BorderRadius.circular(8)
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(video[index],style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-      );
-    }, separatorBuilder: (context, index) => SizedBox(height: 10,), itemCount: video.length);
+        child: Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+      ),
+    );
   }
+
+  // Widget gridComponent (){
+  //   List level =["Beginner", "Advanced", "Pro", "Master"];
+  //   return  GridView.count(
+  //     padding: EdgeInsets.only(top: 25,right: 20,left: 20),
+  //     crossAxisCount: 2,
+  //     crossAxisSpacing:26.0,
+  //     mainAxisSpacing: 10.0,
+  //     shrinkWrap: true,
+  //     childAspectRatio:1.6,
+  //     physics: NeverScrollableScrollPhysics(),
+  //     children: List.generate(level.length, (index) {
+  //       return Container(
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(12),
+  //           border: Border.all(color: AppColors.whiteColor)
+  //         ),
+  //         child: Row(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             Padding(
+  //               padding: const EdgeInsets.only(left: 23),
+  //               child: AppImages.image(AppImages.ballIcon,height: 30,width: 30),
+  //             ),
+  //             // SizedBox(width: 10,),
+  //             Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text("Level $index",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),),
+  //                 Text(level[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),)
+  //               ],
+  //             ),
+  //             SizedBox(width: 10,),
+  //           ],
+  //         ),
+  //       );
+  //     },),
+  //   );
+  // }
+  // Widget videoComponent(){
+  //   List video =["Triple threat", "Pound", "Cross", ];
+  //
+  //     return ListView.separated(
+  //         shrinkWrap: true,
+  //         physics: NeverScrollableScrollPhysics(),
+  //         padding: EdgeInsets.only(top: 25.54,right: 20,left: 20),
+  //         itemBuilder: (context, index) {
+  //       return Container(
+  //         padding: EdgeInsets.only(left: 25,top: 18.5,bottom: 18.5),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.appColor,
+  //           borderRadius: BorderRadius.circular(8)
+  //         ),
+  //         child: Text(video[index],style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+  //       );
+  //     }, separatorBuilder: (context, index) => SizedBox(height: 10,), itemCount: video.length);
+  // }
   Widget leaderBoard(){
     List score =["Overall", "Monthly", "Weekly", ];
     return Padding(

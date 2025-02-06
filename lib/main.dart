@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
 
       navigatorKey: NavigationService.navigatorKey,
       onGenerateRoute: NavigationService.generateRoute,
-      initialRoute: NavigationService.drawer,
+      initialRoute: '/',
       debugShowCheckedModeBanner: false,
     );
   }

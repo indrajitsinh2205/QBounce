@@ -29,7 +29,7 @@ class _HowToUseScreenState extends State<HowToUseScreen> {
       backgroundColor: Colors.transparent,
 
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0,),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,11 +37,14 @@ class _HowToUseScreenState extends State<HowToUseScreen> {
               Text(AppStrings.heyThere.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
               Text(AppStrings.howToUse1,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
               SizedBox(height: 25,),
-              AppImages.image(
-                AppImages.playerG,
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.fill,
+              Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                child: AppImages.image(
+                  AppImages.playerG,
+                  width: double.infinity,
+                  height: 250,
+                  fit: BoxFit.fill,
+                ),
               ),
               SizedBox(height: 14),
               Text(

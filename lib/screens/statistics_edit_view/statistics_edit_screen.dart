@@ -264,7 +264,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppStrings.match, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          Text(AppStrings.match,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
           Container(
             padding: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(

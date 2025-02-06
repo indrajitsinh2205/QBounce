@@ -23,9 +23,9 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final TextEditingController _BLKController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,6 +65,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           Row(
             children: [
               CommonButton(title: AppStrings.save,color: AppColors.appColor,),
+              Spacer()
             ],
           )        ],
       ),

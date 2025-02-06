@@ -62,6 +62,8 @@ class AppStrings{
   static const String howToCast ="How to cast our app to your device ";
   static const String contactUs ="Contact us";
   static const String leaderBoard ="Leaderboard";
+  static const String yourState = "Shoot, Score, Conquer.";
+  static const String profile = "edit your profile";
 
   static const String contactUsDesc ="If you have any questions, you can contact us using our contact details or via the contact form.";
 
@@ -78,5 +80,11 @@ static const String howToUse2 ="Welcome to the QBounce, your ticket to unlocking
   static const String maximizeDesc = 'Maximizing your results with QBounce depends on factors such as age, skill level, and dedication. Speed improvement varies for each player, but our program is designed to cater to individual progress. For younger players, the Level #1 program focuses on developing core skills like ball control and speed. As you advance, youll continue to refine these skills, enhancing both speed and accuracy. Consistent practice and dedication to your training will help you achieve your full potential.';
   static const String masterTrain = 'Why QBounce Master Training?';
   static const String masterTrainDesc = 'QBounce Master Training focuses on developing technical skills and spatial awareness, which are vital for basketball success. Our drills help players visualize ball movements and anticipate the actions of teammates and opponents, improving decision-making and on-court effectiveness. This training enhances abilities like making precise passes, accurate shots, and quick reactions in game situations.';
+
+
+  static const String areYouSure ="Are you sure?";
+  static const String alertDesc ="This action cannot be undone!";
+  static const String cancel ="Cancel";
+  static const String yesDelete ="Yes,Delete It!";
 
 }

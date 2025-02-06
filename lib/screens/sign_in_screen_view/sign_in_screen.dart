@@ -6,6 +6,7 @@ import 'package:q_bounce/constant/app_strings.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 import 'package:q_bounce/screens/sign_in_screen_view/sign_in_widget/common_otp.dart';
 
+import '../../app_services/navigation_service.dart';
 import '../../common_widget/common_button.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -53,7 +54,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: CommonButton(title: AppStrings.submit,color: AppColors.appColor,)):InkWell(
                   onTap: () {
                     setState(() {
-                      submit=0;
+                      NavigationService.navigateTo(NavigationService.drawer);
+
                     });
                   },
                   child: CommonButton(title: AppStrings.confirm,color: AppColors.appColor,))

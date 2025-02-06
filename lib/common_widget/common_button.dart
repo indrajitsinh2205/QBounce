@@ -7,8 +7,9 @@ class CommonButton extends StatefulWidget {
   final Color color;
   final double? vertical;
   final double? horizontal;
+  final double? font;
 
-  const CommonButton({super.key, required this.title, required this.color,  this.vertical,  this.horizontal});
+  const CommonButton({super.key, required this.title, required this.color,  this.vertical,  this.horizontal, this.font});
 
   @override
   State<CommonButton> createState() => _CommonButtonState();
@@ -17,14 +18,16 @@ class CommonButton extends StatefulWidget {
 class _CommonButtonState extends State<CommonButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical:widget.vertical?? 12,horizontal:widget.horizontal?? 58),
-      // width: double.infinity,
-      decoration:  BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: widget.color,
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical:widget.vertical?? 12,horizontal:widget.horizontal?? 58),
+        // width: double.infinity,
+        decoration:  BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: widget.color,
+        ),
+        child: Center(child: Text(widget.title,style: AppTextStyles.athleticStyle(fontSize: widget.font??18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
       ),
-      child: Center(child: Text(widget.title,style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
     );
   }
 }

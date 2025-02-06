@@ -16,6 +16,8 @@ class AppColors{
   static const bNavBar = Color(0xFF222324);
   static const bShadow = Color(0xFF8A8A8A);
   static const scoreUnselect = Color(0xFF25292C);
+  static const alertColor = Color(0xFF272626);
+  static const drawerTile = Color(0xFF3F3F3F);
 
 
 }
