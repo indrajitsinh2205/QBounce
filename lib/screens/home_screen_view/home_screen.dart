@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         //     ],
         //   ),
         // ),
-        _buildRankContainer(0,0.071,0.022,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
+        _buildRankContainer(0,0.069,0.028,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
 
         Gridcomponent(),
         Padding(
