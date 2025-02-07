@@ -42,7 +42,7 @@ class _HowToUseScreenState extends State<HowToUseScreen> {
                 child: AppImages.image(
                   AppImages.playerG,
                   width: double.infinity,
-                  height: 250,
+                  // height: 250,
                   fit: BoxFit.fill,
                 ),
               ),

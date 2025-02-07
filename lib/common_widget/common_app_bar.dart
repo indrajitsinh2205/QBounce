@@ -48,37 +48,45 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: AppBar(
         backgroundColor: Colors.transparent,
-        titleSpacing: 5, // Reduced spacing between leading and title
-        title: actions,
-        leading: InkWell(
-          onTap: () {
-            Scaffold.of(context).openDrawer();
-          },
-          child: Container(
-            margin: EdgeInsets.only(top: 10, bottom: 10),
-            height: 25,
-            width: 25,
-            child: AppImages.image(AppImages.drawerIcon),
-          ),
+        titleSpacing: 0, // Remove spacing between leading and title
+        // title: actions,
+        leadingWidth: MediaQuery.of(context).size.width/2,
+        leading: Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Scaffold.of(context).openDrawer();
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 10, bottom: 10,right: 10),
+                height: 36,
+                width: 36,
+                child: AppImages.image(AppImages.drawerIcon),
+              ),
+            ),
+            actions
+          ],
         ),
         actions: [
           button == false
-              ? saveButton == true ?InkWell(
-          onTap: () {
-    voidCallback2();
-    },
-      child: Container(
-        width: 81,
-        height: 38,
-        child: CommonButton(
-          title: "Save",
-          color: AppColors.appColor,
-          horizontal: 5,
-          font: 10,
-          vertical: 2,
-        ),
-      ),
-    ):SizedBox()
+              ? saveButton == true
+              ? InkWell(
+            onTap: () {
+              voidCallback2();
+            },
+            child: Container(
+              width: 81,
+              height: 38,
+              child: CommonButton(
+                title: "Save",
+                color: AppColors.appColor,
+                horizontal: 5,
+                font: 10,
+                vertical: 2,
+              ),
+            ),
+          )
+              : SizedBox()
               : InkWell(
             onTap: () {
               voidCallback1();
@@ -97,7 +105,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-
     );
   }
 
@@ -496,44 +503,13 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  bool isLoading = true;
-
   @override
   Widget build(BuildContext context) {
-    return
-      Container(
-        color: Colors.transparent,
-        child: Expanded(
-          child: Stack(
-            children: [
-              FlutterFlowWebView(
-                content: "https://qbouncepro.com/",
-                verticalScroll: true,
-                horizontalScroll: false,
-                onPageStarted: (url) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                },
-                onPageFinished: (url) {
-                    setState(() {
-                      isLoading = false;
-                  });
-                },
-              ),
-              if (isLoading)
-                Container(
-                  color: Colors.transparent,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.appColor,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      );
+    return Center(
+      child: Container(
+        child: Text("Cart Screen".toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)),
+      ),
+    );
   }
 }
 
