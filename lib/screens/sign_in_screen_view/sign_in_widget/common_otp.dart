@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:q_bounce/constant/app_color.dart';
+import 'package:q_bounce/constant/app_text_style.dart';
 
 class OTPField extends StatefulWidget {
   const OTPField({Key? key}) : super(key: key);
@@ -35,14 +36,16 @@ class _OTPFieldState extends State<OTPField> {
                 ),
                 child: TextField(
                   controller: controllers[index],
-                  maxLength: 1,
+                  // maxLength: 1,
+                  textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style:  TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    counterText: '',
-                    hintText: '',
-                    hintStyle: TextStyle(fontSize: 20, color: Colors.grey),
+                    contentPadding: EdgeInsets.all(10.0),
+                    // counterText: '',
+                    hintText: '0',
+                    hintStyle: AppTextStyles.getOpenSansGoogleFont(14, AppColors.whiteColor.withOpacity(0.5), false),
                     border: InputBorder.none,
                   ),
                   onChanged: (value) {

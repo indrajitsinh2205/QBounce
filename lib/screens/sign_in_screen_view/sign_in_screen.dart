@@ -42,7 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 child:  Text(submit ==0?AppStrings.enterMail:AppStrings.enterOtp,style: AppTextStyles.athleticStyle(fontSize: 20, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor,
                 ),),
                 ),
-                submit ==0?  CommonTextField(controller: _emailController, label: '', hint: 'Email'): OTPField(),
+                submit ==0?  CommonTextField(controller: _emailController, label: '', hint: 'Email',hintColor: true,): OTPField(),
                 SizedBox(height: 25,),
 
               submit ==0?  InkWell(

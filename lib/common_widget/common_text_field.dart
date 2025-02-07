@@ -8,11 +8,12 @@ class CommonTextField extends StatefulWidget {
   final bool? textArea;
   final bool? readOnly;
   final Widget? icon;
+  final bool? hintColor;
   final TextEditingController controller;
     final  String? label;
   final String hint;
       final bool? numType;
-  const CommonTextField({super.key, required this.controller, required this.label, required this.hint, this.numType, this.boarder = false, this.icon, this.textArea = false, this.readOnly = false});
+  const CommonTextField({super.key, required this.controller, required this.label, required this.hint, this.numType, this.boarder = false, this.icon, this.textArea = false, this.readOnly = false, this.hintColor = false});
 
   @override
   State<CommonTextField> createState() => _CommonTextFieldState();
@@ -29,6 +30,8 @@ class _CommonTextFieldState extends State<CommonTextField> {
         Container(
           // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Colors.white),
           child:TextField(
+            keyboardAppearance: Brightness.dark,
+            cursorColor: AppColors.appColor,
             readOnly:widget.readOnly as bool ,
             maxLines:widget.textArea==true?4: 1,
             keyboardType: widget.numType == true ? TextInputType.number : TextInputType.name,
@@ -59,7 +62,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               fillColor: AppColors.faq,
               filled: true,
               hintText: widget.hint,
-              hintStyle:widget.label!.isEmpty? AppTextStyles.athleticStyle(fontSize: 16, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor)
+              hintStyle:widget.label!.isEmpty? AppTextStyles.athleticStyle(fontSize: 16, fontFamily: AppTextStyles.sfPro500, color:widget.hintColor==true?AppColors.whiteColor.withOpacity(0.5): AppColors.whiteColor)
         : AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
             ),
           ),

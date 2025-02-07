@@ -24,11 +24,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late TabController _tabController;
   String? _selectedText; // Null means show default UI
   late VideoPlayerController _controller;
+  String? selectedButton = "Beginner";
+
 
 
   void _updateUI(String text) {
     setState(() {
       _selectedText = text;
+      selectedButton = text;
+
     });
   }
 
@@ -124,28 +128,50 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ],
     );
   }
-  Widget _buildButton(String text,bool lock) {
+  Widget _buildButton(String text, bool lock) {
+    bool isSelected = selectedButton == text;
+
     return InkWell(
+      highlightColor: Colors.transparent,  // Remove the highlight effect
+      splashColor: Colors.transparent,     // Remove the splash effect
       onTap: () => _updateUI(text),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 3),
-        padding: EdgeInsets.symmetric(horizontal: 2,vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 10),
         decoration: BoxDecoration(
-          color: lock ==true?Colors.transparent:AppColors.appColor,
+          color: isSelected
+              ? AppColors.appColor // Change the color if selected
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: lock ==false?Colors.transparent:AppColors.whiteColor,width: 1)
+          border: Border.all(
+            color: isSelected
+                ? Colors.transparent
+                : AppColors.whiteColor,
+            width: 1,
+          ),
         ),
-        child: Center(child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(text,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-            lock == true?AppImages.image(AppImages.levelLock,height: 14,width: 14):SizedBox(),
-          ],
-        )),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: AppTextStyles.athleticStyle(
+                  fontSize: 12,
+                  fontFamily: AppTextStyles.sfPro700,
+                  color: isSelected ? AppColors.whiteColor : AppColors.whiteColor,
+                ),
+              ),
+              lock == true
+                  ? AppImages.image(AppImages.levelLock, height: 14, width: 14)
+                  : SizedBox(),
+            ],
+          ),
+        ),
       ),
     );
-  }
 
+  }
   // Widget gridComponent (){
   //   List level =["Beginner", "Advanced", "Pro", "Master"];
   //   return  GridView.count(
@@ -216,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-              CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,)
+              // CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 1.5,vertical: 9.5,font: 14,)
             ],
           ),
         ),

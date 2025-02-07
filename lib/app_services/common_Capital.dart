@@ -7,3 +7,11 @@ class CommonCapital{
     }).join(' ');
   }
 }
+
+
+class GlobleValue{
+
+  static int selectedIndex = 0;
+  static   int button = 0;
+
+}

@@ -63,6 +63,10 @@ class _FAQPageState extends State<FAQPage> {
                           ),
                         ),
                       ],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+
+                      collapsedBackgroundColor: Colors.transparent, // Remove background when collapsed
+                      backgroundColor: Colors.transparent, //
                     ),
                   );
                 }),

@@ -55,10 +55,11 @@ class AppImages {
   static const String terms = "assets/images/termIcon.png";
   static const String privacy = "assets/images/privacyIcon.png";
   static const String faq = "assets/images/faqIcon.png";
-  static const String contact = "assets/images/castIcon.png";
+  static const String contact = "assets/images/contactIcon.png";
   static const String signOut = "assets/images/signOutIcon.png";
   static const String drawerEdit = "assets/images/drawerEdit.png";
   static const String drawerIcon = "assets/images/drawerIcon.png";
+  static const String downArrow = "assets/images/downArrow.png";
 
 
   /// Returns an Image widget for a specific asset.

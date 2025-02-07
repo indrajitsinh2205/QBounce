@@ -21,10 +21,10 @@ class FAQData {
     {
       "title": "What’s the shipping process like?",
       "content": "We ship all orders via trusted carriers like USPS, FedEx, DHL, and GLS. You'll receive an email with a tracking number once your order is shipped.\n\n"
-          "**Shipping Times:**\n"
-          "- **USA & United Kingdom**: Free tracked delivery (5-7 days), Express (1-2 days).\n"
-          "- **Europe**: Free tracked delivery (12-16 days), Express (1-3 days).\n"
-          "- **Rest of the World**: Free tracked delivery (12-16 days), Express (2-4 days)."
+          "Shipping Times:\n"
+          "- USA & United Kingdom**: Free tracked delivery (5-7 days), Express (1-2 days).\n"
+          "- Europe: Free tracked delivery (12-16 days), Express (1-3 days).\n"
+          "- Rest of the World**: Free tracked delivery (12-16 days), Express (2-4 days)."
     },
     {
       "title": "What age group is the QBounce Mat suitable for?",

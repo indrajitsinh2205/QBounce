@@ -121,17 +121,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(label, style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
           SizedBox(height: 10),
           DropdownButtonFormField<String>(
+            focusColor: Colors.transparent,
             dropdownColor: Colors.black,
             value: selectedValue,
-            items: options.map((e) => DropdownMenuItem(value: e, child: Text(e,style: AppTextStyles.getOpenSansGoogleFont( 12, AppColors.whiteColor,false)),)).toList(),
+            items: options.map((e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                e,
+                style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor, false),
+              ),
+            )).toList(),
             onChanged: onChanged,
+            icon: AppImages.image(AppImages.downArrow, height: 20, width: 10),
             decoration: InputDecoration(
               filled: true,
               fillColor: AppColors.faq,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border: InputBorder.none, // Removes the default border
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8), // Rounded corners with radius 8
+                borderSide: BorderSide(color: Colors.transparent), // No visible border
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8), // Rounded corners with radius 8
+                borderSide: BorderSide(color: Colors.transparent), // No visible border
+              ),
             ),
           ),
-        ],
+         ],
       ),
     );
   }

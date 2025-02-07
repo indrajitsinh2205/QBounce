@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../../common_widget/common_button.dart';
 import '../../../constant/app_color.dart';
@@ -15,6 +16,8 @@ class LeaderBoard extends StatefulWidget {
 }
 
 class _LeaderBoardState extends State<LeaderBoard> {
+  int selectedIndex = 0;  // Default selected index
+
   List score =["Overall", "Monthly", "Weekly", ];
 
   @override
@@ -31,7 +34,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
               children: [
                 Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
                 SizedBox(width: 20,),
-                widget.scoreBool==false?SizedBox():CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 12.0,vertical: 5.5,font: 18,)
+                widget.scoreBool==false?SizedBox():CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,font: 14,)
               ],
             ),
           ),
@@ -40,22 +43,42 @@ class _LeaderBoardState extends State<LeaderBoard> {
             margin: EdgeInsets.only(top: 25),
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             height: 50,
-            child: ListView.separated(
-              // shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                physics: NeverScrollableScrollPhysics(),
-                // padding: EdgeInsets.only(top: 25.54),
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal:  25,/*vertical:  10*/),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,  // Space between the items
+              children: List.generate(score.length, (index) {
+                return InkWell(
+                  splashColor: Colors.transparent,     // Remove the splash effect
+
+                  onTap: () {
+
+                    setState(() {
+                      selectedIndex = index;  // Update the selected index when tapped
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 25),
                     decoration: BoxDecoration(
-                        color:index==0?AppColors.appColor:AppColors.scoreUnselect,
-                        borderRadius: BorderRadius.circular(12)
+                      color: index == selectedIndex
+                          ? AppColors.appColor  // Selected color
+                          : AppColors.scoreUnselect, // Unselected color
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Center(child: Text(score[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
-                  );
-                }, separatorBuilder: (context, index) => SizedBox(width: 10,), itemCount: score.length),
+                    child: Center(
+                      child: Text(
+                        score[index],
+                        style: AppTextStyles.athleticStyle(
+                          fontSize: 14,
+                          fontFamily: AppTextStyles.sfPro700,
+                          color: index == selectedIndex?AppColors.blackColor:AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
           ),
+
           SizedBox(height: 25,),
           Container(
             decoration: AppImages.background(AppImages.leaderBG),

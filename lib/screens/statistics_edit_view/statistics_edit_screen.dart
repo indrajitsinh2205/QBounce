@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:q_bounce/app_services/navigation_service.dart';
+import 'package:q_bounce/common_widget/common_app_bar.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_strings.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_update_bloc/statistics_update_view_model/post_statistics_update_request.dart';
 
+import '../../app_services/common_Capital.dart';
 import '../../common_widget/common_text_field.dart';
 import '../../common_widget/custom_snackbar.dart';
 import '../../constant/app_text_style.dart';
@@ -197,6 +199,11 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         return GestureDetector(
           onTap: () {
+            setState(() {
+              GlobleValue.selectedIndex=0;
+            });
+
+
             // PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
             //   location: _locationController.text,
             //   opponentTeam: _opponentController.text,

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_bounce/app_services/navigation_service.dart';
+import 'package:q_bounce/common_widget/common_alert.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
+import 'package:q_bounce/common_widget/web_view.dart';
 import 'package:q_bounce/screens/how_to_cast_screen_view/how_to_cast_screen.dart';
 import 'package:q_bounce/screens/static_leader_board.dart';
 import 'package:q_bounce/screens/your_stats_screen_view/your_stats_screen.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import '../app_services/common_Capital.dart';
 import '../constant/app_color.dart';
 import '../constant/app_images.dart';
 import '../constant/app_strings.dart';
@@ -25,13 +30,16 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget actions;
   final bool? button;
   final bool? saveButton;
-  final VoidCallback voidCallback;
+  final VoidCallback voidCallback1;
+  final VoidCallback voidCallback2;
 
   CommonAppBar({
     required this.title,
     required this.actions,
     this.button = false,
-    required this.voidCallback, this.saveButton,
+    required this.voidCallback1,
+    required this.voidCallback2,
+    this.saveButton,
   });
 
   @override
@@ -57,7 +65,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           button == false
               ? saveButton == true ?InkWell(
           onTap: () {
-    voidCallback();
+    voidCallback2();
     },
       child: Container(
         width: 81,
@@ -73,7 +81,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     ):SizedBox()
               : InkWell(
             onTap: () {
-              voidCallback();
+              voidCallback1();
             },
             child: Container(
               width: 81,
@@ -106,58 +114,58 @@ class DrawerScreen extends StatefulWidget {
 
 class _DrawerScreenState extends State<DrawerScreen> {
   Widget _selectedScreen = HomeScreen(); // Default screen
-  int _selectedIndex = 0;
-  int button = 0;
+ // static  int _selectedIndex = 0;
+// static  int button = 0;
 
 
   // Method to update the selected screen based on BottomNavigationBar item tapped
   void _onItemTapped(int index) {
     setState(() {
       // This ensures that when tapping the same index, the widget gets rebuilt
-      if (_selectedIndex == index) {
+      if (GlobleValue.selectedIndex == index) {
         // Change _selectedScreen to a new instance of the same screen.
         if (index == 0) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = HomeScreen(key: UniqueKey());  // Assign a new key to force rebuild
         } else if (index == 1) {
           setState(() {
-            button =1;
+            GlobleValue.button =1;
           });
           _selectedScreen = YourStatsScreen(key: UniqueKey());
         } else if (index == 2) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = CartScreen(key: UniqueKey());
         } else if (index == 3) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = StaticLeaderBoard(key: UniqueKey());
         }
       } else {
         // If the index has changed, assign the new screen
-        _selectedIndex = index;
+        GlobleValue.selectedIndex = index;
         if (index == 0) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = HomeScreen();
         } else if (index == 1) {
           setState(() {
-            button =1;
+            GlobleValue.button =1;
           });
           _selectedScreen = YourStatsScreen();
         } else if (index == 2) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = CartScreen();
         } else if (index == 3) {
           setState(() {
-            button =0;
+            GlobleValue.button =0;
           });
           _selectedScreen = StaticLeaderBoard();
         }
@@ -172,10 +180,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: CommonAppBar(
-          voidCallback: () {
+          voidCallback1: () {
             print("0.");
             setState(() {
-              _selectedIndex=0;
+              GlobleValue.selectedIndex=1;
+              GlobleValue.button=0;
               _selectedScreen = MultiBlocProvider(
                 providers: [
                   BlocProvider<StatisticsEditBloc>(
@@ -192,10 +201,17 @@ class _DrawerScreenState extends State<DrawerScreen> {
               );
             });
           },
-          button: button==1?true:false,
-          saveButton: button == 2?true:false,
+          button: GlobleValue.button==1?true:false,
+          saveButton: GlobleValue.button == 2?true:false,
           title: '',
           actions: AppImages.image(AppImages.logo, height: 30),
+          voidCallback2: () {
+            setState(() {
+              GlobleValue.selectedIndex=0;
+              GlobleValue.button=0;
+              _selectedScreen = HomeScreen();
+            });
+          },
         ),
         drawer: Drawer(
           child: Container(
@@ -208,11 +224,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: <Widget>[
-                  
+
                       InkWell(
                         onTap: () {
                           setState(() {
-                            button=2;
+                            GlobleValue.button=2;
                             _selectedScreen = ProfileScreen();
                           });
                           Navigator.pop(context); // Close drawer
@@ -261,12 +277,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                          leading:AppImages.image(AppImages.howToUse),
+                          leading:AppImages.image(AppImages.howToUse,height: 20,width: 20),
                           title: Text('How To Use',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
                               _selectedScreen = HowToUseScreen();
-                              button=0;
+                              GlobleValue.button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -280,12 +296,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                  
+
                           leading: AppImages.image(AppImages.cast,height: 20,width: 20),
                           title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              button=0;                              _selectedScreen = HowToCastScreen();
+                              GlobleValue.button=0;                              _selectedScreen = HowToCastScreen();
 
                             });
                             Navigator.pop(context); // Close drawer
@@ -300,12 +316,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                  
+
                           leading: AppImages.image(AppImages.terms,height: 20,width: 20),
                           title: Text('Teams & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              button=0;
+                              GlobleValue.button=0;
                               _selectedScreen = TermsAndConditonsScreen();
                             });
                             Navigator.pop(context); // Close drawer
@@ -320,13 +336,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                  
+
                           leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
                           title: Text('privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
                               _selectedScreen = PrivacyPolicyScreen();
-                              button=0;
+                              GlobleValue.button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -340,19 +356,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                  
+
                           leading: AppImages.image(AppImages.faq,height: 20,width: 20),
                           title: Text('Faq',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
                               _selectedScreen = FAQPage();
-                              button=0;
+                              GlobleValue.button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
                         ),
                       ),
-                  
+
                       Container(
                         margin: EdgeInsets.only(top: 10),
                         decoration: BoxDecoration(
@@ -361,19 +377,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         ),
                         child: ListTile(
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                  
+
                           leading: AppImages.image(AppImages.contact,height: 20,width: 20),
                           title: Text('Contact Us',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
                               _selectedScreen = ContactUsScreen();
-                              button=0;
+                              GlobleValue.button=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
                         ),
                       ),
-                  
+
                     ],
                   ),
                 ),
@@ -387,10 +403,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     leading:AppImages.image(AppImages.signOut,height: 30,width: 30),
                     title: Text('Sign Out',style: AppTextStyles.athleticStyle(fontSize: 16  , color: AppColors.whiteColor.withOpacity(0.5),fontFamily: AppTextStyles.sfPro700),),
                     onTap: () {
-                      setState(() {
-                        // _selectedScreen = HowToUseScreen();
-                      });
-                      Navigator.pop(context); // Close drawer
+                        CommonAlert.showAlertDialog(context,"SignOut","You want to signOut",() {
+                          NavigationService.navigateTo(NavigationService.signIn);
+                        },);
+                      // Navigator.pop(context); // Close drawer
                     },
                   ),
                 ),
@@ -426,33 +442,41 @@ class _DrawerScreenState extends State<DrawerScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: BottomNavigationBar(
-
                 backgroundColor: AppColors.bNavBar,
                 selectedItemColor: AppColors.appColor,
-                unselectedItemColor: AppColors.faq,
+                unselectedItemColor: AppColors.unSelectedNav,
                 type: BottomNavigationBarType.fixed,
                 elevation: 0.0,
-                currentIndex: _selectedIndex,
+                currentIndex: GlobleValue.selectedIndex,
                 onTap: _onItemTapped,  // Update selected screen based on tapped index
-                items: const <BottomNavigationBarItem>[
+                items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
-                    icon: ImageIcon(AssetImage(AppImages.home)),
-                    label: '',
+                    icon: Center(
+                      child: ImageIcon(AssetImage(AppImages.home), size: 24),
+                    ),
+                    label: '', // Keep this empty to remove labels
                   ),
                   BottomNavigationBarItem(
-                    icon: ImageIcon(AssetImage(AppImages.state)),
-                    label: '',
+                    icon: Center(
+                      child: ImageIcon(AssetImage(AppImages.state), size: 24),
+                    ),
+                    label: '', // Keep this empty to remove labels
                   ),
                   BottomNavigationBarItem(
-                    icon: ImageIcon(AssetImage(AppImages.cart)),
-                    label: '',
+                    icon: Center(
+                      child: ImageIcon(AssetImage(AppImages.cart), size: 24),
+                    ),
+                    label: '', // Keep this empty to remove labels
                   ),
                   BottomNavigationBarItem(
-                    icon: ImageIcon(AssetImage(AppImages.leader)),
-                    label: '',
+                    icon: Center(
+                      child: ImageIcon(AssetImage(AppImages.leader), size: 24),
+                    ),
+                    label: '', // Keep this empty to remove labels
                   ),
                 ],
-              ),
+              )
+
             ),
           ),
         ),
@@ -460,6 +484,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
     );
   }
 }
+
+
+
+
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -468,15 +496,53 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  bool isLoading = true;
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Text("Cart Screen".toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)),
-      ),
-    );
+    return
+      Container(
+        color: Colors.transparent,
+        child: Expanded(
+          child: Stack(
+            children: [
+              FlutterFlowWebView(
+                content: "https://qbouncepro.com/",
+                verticalScroll: true,
+                horizontalScroll: false,
+                onPageStarted: (url) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                },
+                onPageFinished: (url) {
+                    setState(() {
+                      isLoading = false;
+                  });
+                },
+              ),
+              if (isLoading)
+                Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.appColor,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
   }
 }
+
+
+
+
+
+
+
 
 
 

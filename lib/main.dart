@@ -25,10 +25,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       scaffoldMessengerKey: ScaffoldMessengerHelper.scaffoldMessengerKey, // Set the key here
-
       navigatorKey: NavigationService.navigatorKey,
       onGenerateRoute: NavigationService.generateRoute,
-      initialRoute: '/',
+      initialRoute: NavigationService.drawer,
       debugShowCheckedModeBanner: false,
     );
   }

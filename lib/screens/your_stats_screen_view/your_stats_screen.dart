@@ -6,6 +6,7 @@ import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_strings.dart';
 
+import '../../common_widget/common_alert.dart';
 import '../../constant/app_text_style.dart';
 
 class YourStatsScreen extends StatefulWidget {
@@ -66,7 +67,12 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                           child: AppImages.image(AppImages.edit, height: 35, width: 35, fit: BoxFit.fitWidth),
                         ),
                         InkWell(
-                          onTap: () => _showAlertDialog(context),
+                          onTap: () {
+                            CommonAlert.showAlertDialog(context,AppStrings.yesDelete,AppStrings.alertDesc,() {
+                              Navigator.pop(context);
+                            },);
+                            // Navigator.pop(context); // Close drawer
+                          },
                           child: Container(
                             margin: EdgeInsets.symmetric(horizontal: 6),
                             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -156,70 +162,6 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
           ],
         ),
       ),
-    );
-  }
-  void _showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.alertColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Rounded corners
-          ),
-          title: Center(
-            child: AppImages.image(
-              AppImages.confirmDelete,
-              height: 78,
-              width: 80,
-              fit: BoxFit.fitWidth,
-            ),
-          ),
-          content: SizedBox(
-            width: 300, // Set a fixed width for the dialog
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Prevent infinite height
-              children: [
-                Text(
-                  AppStrings.areYouSure,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.athleticStyle(
-                    fontSize: 24,
-                    fontFamily: AppTextStyles.sfPro700,
-                    color: AppColors.whiteColor,
-                  ),
-                ),
-                SizedBox(height: 8), // Add spacing
-                Text(
-                  AppStrings.alertDesc,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.getOpenSansBoldGoogleFont(
-                    18, AppColors.whiteColor, false,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribute buttons evenly
-              children: [
-                InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: CommonButton(title: AppStrings.cancel, color: AppColors.faq,horizontal: 10,font: 14,)),
-                SizedBox(width: 10,),
-                InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: CommonButton(title: AppStrings.yesDelete, color: AppColors.appColor,horizontal: 10,font: 14,)),
-              ],
-            ),
-          ],
-        );
-      },
     );
   }
 
