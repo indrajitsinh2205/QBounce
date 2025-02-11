@@ -2,14 +2,14 @@
 
 import 'dart:io';
 
+import '../../../../app_services/app_preferences.dart';
 import '../../../../network/base_api_configuration/api_end_point.dart';
 
 
 enum ProfileType { getProfile,updateProfile,}
 
 class ProfileApiEndpoint implements APIEndpoint {
-  String sessionToken = "P8VMqoUXndNfHENZW03hmNocAiKPbWQKdGeRPvpHdOVuN2ViNw0bqIy8ja4ARdoueCBuRdB0i1uCjQF0rE40BalZaOmh2w7Pc89EAaDsaX6TA8UWsZHU7nwXaXW201QV";
-
+  String? sessionToken;
   final ProfileType type;
   final Map<String, dynamic>? requestBody;
   final Map<String, dynamic>? requestParam;
@@ -19,7 +19,12 @@ class ProfileApiEndpoint implements APIEndpoint {
 
 
   ProfileApiEndpoint(this.type, {this.requestBody, this.requestParam, this.pathParam,this.stringPathParam, this.intPathParam,});
-
+  Future<void> initialize() async {
+    sessionToken = await AppPreferences().getToken();
+    if (sessionToken == null) {
+      throw Exception('No session token found');
+    }
+  }
   @override
   Map<String, dynamic>? get body => requestBody;
   @override
@@ -31,7 +36,7 @@ class ProfileApiEndpoint implements APIEndpoint {
     HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Origin': '*',
-    "x-session-token":sessionToken,
+    "x-session-token":sessionToken ?? '',
   };
 
   @override

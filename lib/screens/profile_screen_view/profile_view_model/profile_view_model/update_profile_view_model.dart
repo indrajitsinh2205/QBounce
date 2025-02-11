@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:q_bounce/screens/profile_screen_view/profile_view_model/profile_view_model/profile_endpoint.dart';
+import '../../../../app_services/app_preferences.dart';
 import '../../../../network/base_api_configuration/api_service.dart';
 import '../profile_response_model/get_profile_response.dart';
 import '../profile_response_model/profile_request_model.dart';
@@ -21,11 +22,14 @@ class UpdateProfileViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-
+    String? sessionToken = await AppPreferences().getToken();
+    if (sessionToken == null) {
+      throw Exception('No session token found');
+    }
     try {
       final uri = Uri.parse('https://qbounce.api.appmatictech.com/api/user_info'); // Replace with the correct endpoint
       var request = http.MultipartRequest('POST', uri);
-      request.headers['x-session-token']="P8VMqoUXndNfHENZW03hmNocAiKPbWQKdGeRPvpHdOVuN2ViNw0bqIy8ja4ARdoueCBuRdB0i1uCjQF0rE40BalZaOmh2w7Pc89EAaDsaX6TA8UWsZHU7nwXaXW201QV";
+      request.headers['x-session-token']=sessionToken;
       // Adding text fields to the multipart request
       request.fields['first_name'] = data.firstName ?? '';
       request.fields['last_name'] = data.lastName ?? '';
