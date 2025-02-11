@@ -151,14 +151,14 @@ class _TrainingScreenState extends State<TrainingScreen> with SingleTickerProvid
                   } else if (state is TrainingLoaded) {
                     var data = state.trainingResponse.data;
 
-                    if (data?.unlocked.isEmpty == true) {
+                    if (data?.unlocked?.isEmpty == true) {
                       showVideo = false;
                     } else {
                       showVideo = true;
                     }
 
-                    if (data?.unlocked.isNotEmpty == true && data!.unlocked.first.id != null) {
-                      currentVideoId = data.unlocked.first.id.toString();
+                    if (data?.unlocked?.isNotEmpty == true && data!.unlocked?.first.id != null) {
+                      currentVideoId = data.unlocked?.first.id.toString();
                       context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
                     }
 

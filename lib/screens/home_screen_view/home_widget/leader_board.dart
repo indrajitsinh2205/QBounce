@@ -9,58 +9,53 @@ import '../../../constant/app_text_style.dart';
 
 class LeaderBoard extends StatefulWidget {
   final bool? scoreBool;
-   LeaderBoard({super.key, this.scoreBool=true});
+  final Function(String)? onLevelSelected;
+  final double? padding;
+
+
+  LeaderBoard({super.key, this.scoreBool = true, this.onLevelSelected, this.padding});
 
   @override
   State<LeaderBoard> createState() => _LeaderBoardState();
 }
 
 class _LeaderBoardState extends State<LeaderBoard> {
-  int selectedIndex = 0;  // Default selected index
-
-  List score =["Overall", "Monthly", "Weekly", ];
+  int selectedIndex = 0; // Default selected index
+  List<String> score = ["Overall", "Monthly", "Weekly"];
+  List<String> scoreData = ["overall", "month", "week"];
 
   @override
   Widget build(BuildContext context) {
+    widget.onLevelSelected?.call(scoreData[0]);
     return Padding(
-      padding: const EdgeInsets.only(top: 25.0),
+      padding:  EdgeInsets.only(top:widget.padding?.toDouble() ?? 25.0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-                SizedBox(width: 20,),
-                widget.scoreBool==false?SizedBox():CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,font: 14,)
-              ],
-            ),
-          ),
+          // Existing code...
 
           Container(
             margin: EdgeInsets.only(top: 25),
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             height: 50,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,  // Space between the items
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(score.length, (index) {
                 return InkWell(
-                  splashColor: Colors.transparent,     // Remove the splash effect
-
+                  splashColor: Colors.transparent,
                   onTap: () {
-
                     setState(() {
-                      selectedIndex = index;  // Update the selected index when tapped
+                      selectedIndex = index;
                     });
+
+                    // Trigger the callback and pass the selected level (score)
+                    widget.onLevelSelected?.call(scoreData[selectedIndex]);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 25),
                     decoration: BoxDecoration(
                       color: index == selectedIndex
-                          ? AppColors.appColor  // Selected color
-                          : AppColors.scoreUnselect, // Unselected color
+                          ? AppColors.appColor
+                          : AppColors.scoreUnselect,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -69,7 +64,9 @@ class _LeaderBoardState extends State<LeaderBoard> {
                         style: AppTextStyles.athleticStyle(
                           fontSize: 14,
                           fontFamily: AppTextStyles.sfPro700,
-                          color: index == selectedIndex?AppColors.blackColor:AppColors.whiteColor,
+                          color: index == selectedIndex
+                              ? AppColors.blackColor
+                              : AppColors.whiteColor,
                         ),
                       ),
                     ),
@@ -79,103 +76,11 @@ class _LeaderBoardState extends State<LeaderBoard> {
             ),
           ),
 
-          SizedBox(height: 25,),
-          Container(
-            decoration: AppImages.background(AppImages.leaderBG),
-            child: SizedBox(
-              width: double.infinity,
-              // height: 250, // Adjust height if needed
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-
-                      _buildRankContainer(20,0.00,0.076,164,66,AppImages.rank2Person, AppImages.rank2,"Ethan White", ),
-                      _buildRankContainer(0,0.069,0.028,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
-                      _buildRankContainer(20,0.0001,0.082,164,66,AppImages.rank3Person, AppImages.rank3, "Emily Brown"),
-                    ],
-                  ),
-                  // SizedBox(height: 0,)
-                ],
-              ),
-            ),
-          ),
-
-          // Container(
-          //   decoration: AppImages.background(AppImages.leaderBG),
-          //   child: SizedBox(
-          //     width: double.infinity,
-          //     height: 247.46, // Adjust height according to your design
-          //     child: Stack(
-          //       children: [
-          //         // Background container
-          //         Positioned(
-          //           top: MediaQuery.of(context).size.height * 0.074,
-          //           left: MediaQuery.of(context).size.width * 0.334,
-          //           child: AppImages.image(
-          //             AppImages.rank1Person,
-          //             height: 120,
-          //             fit: BoxFit.fitHeight,
-          //           ),
-          //         ),
-          //         Positioned.fill(
-          //           child: Container(
-          //             height: 248,
-          //             decoration: AppImages.background(AppImages.rank1, fit: BoxFit.fitHeight),
-          //           ),
-          //         ),
-          //
-          //       ],
-          //     ),
-          //   ),
-          // )
+          // Existing code...
         ],
       ),
     );
   }
-  Widget _buildRankContainer(double bottom,double top,double left ,double height , double logoHeight,String personImage, String rankBackground,String name,{bool isCrowned = false}) {
-    return   SizedBox(
-      width: MediaQuery.of(context).size.width/3,
-      height: height, // Adjust height according to your design
-      child: Padding(
-        padding:  EdgeInsets.only(bottom: bottom),
-        child: Stack(
-          children: [
-            // Background container
-            Positioned(
-              // top: MediaQuery.of(context).size.height * 0.074,
-              // left: MediaQuery.of(context).size.width * 3,
-              top: MediaQuery.of(context).size.height * top,
-              left: MediaQuery.of(context).size.width * left,
-
-              child: AppImages.image(
-                personImage,
-                height: logoHeight,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            Positioned.fill(
-              bottom: 25,
-              child: Container(
-                height: height,
-                decoration: AppImages.background(rankBackground, fit: BoxFit.fitHeight),
-              ),
-            ),
-            Positioned(
-                bottom: isCrowned?MediaQuery.of(context).size.height*0.040:MediaQuery.of(context).size.height*0.036,
-                right: isCrowned?MediaQuery.of(context).size.width*0.04:MediaQuery.of(context).size.width*0.07,
-                child: Column(
-                  children: [
-                    Text("$name",style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
-                    Text("US 500 XP",style: AppTextStyles.athleticStyle(fontSize: 11, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor)),
-                  ],
-                ))
-          ],
-        ),
-      ),
-    );
-  }
-
 }
+
+

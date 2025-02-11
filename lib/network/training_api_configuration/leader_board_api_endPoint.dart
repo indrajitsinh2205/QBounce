@@ -3,10 +3,10 @@ import 'dart:io';
 import '../../network/base_api_configuration/api_end_point.dart';
 
 
-enum LeaderBoardType { leaderboard}
+enum LeaderBoardType { leaderboard,contactUS}
 
 class LeaderBoardApiEndpoint implements APIEndpoint {
-  String sessionToken = "PiL3E2Xm6KHL22A7a2MHYAec0SEhcYJAHXkLP2SvwrRdWd47K64lM3Ey9b1rpkTcxF45fB8ptLx5cc85c0gEc1GnexrpyCgt0aPHFGU9BMD5144UqQAHzrz1iJL7R1Fn";
+  String sessionToken = "P8VMqoUXndNfHENZW03hmNocAiKPbWQKdGeRPvpHdOVuN2ViNw0bqIy8ja4ARdoueCBuRdB0i1uCjQF0rE40BalZaOmh2w7Pc89EAaDsaX6TA8UWsZHU7nwXaXW201QV";
 
   final LeaderBoardType type;
   final Map<String, dynamic>? requestBody;
@@ -47,7 +47,9 @@ class LeaderBoardApiEndpoint implements APIEndpoint {
     // case LeaderBoardType.getFood:
     //   return pathParam != null ? 'search/item/?$pathParam' : 'search/item';
       case LeaderBoardType.leaderboard:
-        return 'leaderboard/$stringPathParam';
+          return 'leaderboard/$stringPathParam';
+      case LeaderBoardType.contactUS:
+        return 'inquiries/store';
 
     }
   }

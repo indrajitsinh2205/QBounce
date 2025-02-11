@@ -31,21 +31,22 @@ class TrainingViewModel extends ChangeNotifier {
       print("response.statusCode ${response.statusCode}");
       // print("response.query ${query}");
       if (response.statusCode == 200) {
-        print("food ${response.body}");
+        print("level ${response.body}");
         // Decode the JSON response to a Map
         final jsonResponse = jsonDecode(response.body);
 
         // Parse the JSON response into a TrainingResponse object
         TrainingResponse trainingResponse = TrainingResponse.fromJson(jsonResponse);
 
-        print("foods: ${trainingResponse.data}");
+        print("levels: ${trainingResponse.data}");
         return trainingResponse;
       }
       else {
-        print("error");
+        print("error11");
         _errorMessage = 'Error: ${response.body}';
       }
     } catch (e) {
+      print("errorr $e");
       _errorMessage = 'An unexpected error occurred: $e';
     } finally {
       _isLoading = false;

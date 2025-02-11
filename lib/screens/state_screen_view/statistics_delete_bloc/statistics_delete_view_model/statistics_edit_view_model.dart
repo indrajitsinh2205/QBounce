@@ -5,10 +5,6 @@ import 'package:q_bounce/screens/state_screen_view/statistic_api_endpoint/statis
 import 'package:q_bounce/screens/state_screen_view/statistics_delete_bloc/statistics_delete_view_model/statistics_delete_response.dart';
 
 import '../../../../network/base_api_configuration/api_service.dart';
-
-
-
-
 class StatisticsDeleteViewModel extends ChangeNotifier {
   final apiService = ApiService();
 

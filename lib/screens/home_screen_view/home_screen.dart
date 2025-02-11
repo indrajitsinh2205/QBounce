@@ -1,14 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
+import 'package:q_bounce/screens/home_screen_view/get_level_profile_view_model/get_level_profile_response.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/gridComponent.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../common_widget/common_tab_bar.dart';
 import '../../constant/app_strings.dart';
+import '../leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
+import '../leaderboard_screen_view/leaderboard_bloc/leader_board_event.dart';
+import '../leaderboard_screen_view/leaderboard_bloc/leader_board_state.dart';
+import '../leaderboard_screen_view/leaderboard_view_model/LeaderBoardResponse.dart';
+import '../training_screen_view/training_bloc/training_program_bloc.dart';
+import '../training_screen_view/training_program_bloc/training_program_bloc.dart';
+import '../training_screen_view/training_program_bloc/training_program_event.dart';
+import '../training_screen_view/training_program_bloc/training_program_state.dart';
+import '../training_screen_view/training_view_model/TrainingResponse.dart';
+import 'get_level_profile_bloc/get_level_profile_bloc.dart';
+import 'home_widget/build_rank_container.dart';
 import 'home_widget/leader_board.dart';
 import 'home_widget/video_component.dart';
 import 'level_widget.dart';
@@ -21,9 +34,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin  {
-  late TabController _tabController;
   String? _selectedText; // Null means show default UI
-  late VideoPlayerController _controller;
   String? selectedButton = "Beginner";
 
 
@@ -44,13 +55,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
-    _controller = VideoPlayerController.networkUrl(Uri.parse(
-        'https://qbounce-production.s3.us-east-2.amazonaws.com/videos/VIDEO_1.mp4'))
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+    context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
+
     super.initState();
   }
 
@@ -77,7 +83,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            _selectedText == null?defaultUI():LevelScreen(text: _selectedText.toString(), videoPlayerController: _controller,)
+            _selectedText == null?defaultUI():MultiBlocProvider(
+                providers: [
+                  BlocProvider<TrainingProgramBloc>(
+                    create: (BuildContext context) => TrainingProgramBloc(),
+                  ),
+                  BlocProvider<TrainingVideoBloc>(
+                    create: (BuildContext context) => TrainingVideoBloc(),
+                  ),
+    BlocProvider<LevelProfileBloc>(
+    create: (BuildContext context) => LevelProfileBloc(),
+                  ),
+                ],
+                child: LevelScreen(text: _selectedText.toString(), ))
           ],
         )
       ),
@@ -86,45 +104,172 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget defaultUI(){
     return Column(
       children: [
-        // CommonTabBar(
-        //   initialIndex: 0,
-        //   tabTitles: ["Beginner", "Advanced", "Pro", "Master"],
-        //   Box: true,
-        //   controller: _tabController,
-        // ),
-        // SizedBox(
-        //   width: double.infinity,
-        //   height: 247.46, // Adjust height according to your design
-        //   child: Stack(
-        //     children: [
-        //       // Background container
-        //       Positioned(
-        //         top: MediaQuery.of(context).size.height * 0.074,
-        //         left: MediaQuery.of(context).size.width * 0.334,
-        //         child: AppImages.image(
-        //           AppImages.rank1Person,
-        //           height: 120,
-        //           fit: BoxFit.fitHeight,
-        //         ),
-        //       ),
-        //       Positioned.fill(
-        //         child: Container(
-        //           height: 248,
-        //           decoration: AppImages.background(AppImages.rank1, fit: BoxFit.fitHeight),
-        //         ),
-        //       ),
-        //
-        //     ],
-        //   ),
-        // ),
-        _buildRankContainer(0,0.069,0.028,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
+        BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
+          builder: (context, state) {
+            if (state is LeaderBoardLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is LeaderBoardLoaded) {
+              print("Loaded");
+              final leadersData = state.leaderBoardResponse.data.leaders;
+              return BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
+                builder: (context, state) {
+                  if (state is LeaderBoardLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is LeaderBoardLoaded) {
+                    print("Loaded");
+                    final leadersData = state.leaderBoardResponse.data.leaders;
+                    return leadersData.length > 0?
+                    BuildRankContainer(
+                      bottom: 0,
+                      top: 0.071,
+                      left: 0.022,
+                      height: 248,
+                      logoHeight: 105,
+                      personImage: leadersData[0].user.media.isNotEmpty
+                          ? leadersData[0].user.media[0].originalUrl
+                          : '',
+                      rankBackground: AppImages.rank1,
+                      name: leadersData[0].user.firstName + leadersData[0].user.lastName,
+                      isCrowned: true,
+                    ):Container();
+                  } else if (state is LeaderBoardError) {
+                    return Center(child: Text('${state.errorMessage}'));
+                  } else {
+                    return Center(child: Text('Something Went Wrong'));
+                  }
+                },
+              );
+            } else if (state is LeaderBoardError) {
+              return Center(child: Text('${state.errorMessage}'));
+            } else {
+              return Center(child: Text('Something Went Wrong'));
+            }
+          },
+        ),
 
         Gridcomponent(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: VideoComponent(),
+        TrainingViewData(),
+        LeaderBoard(
+          padding: 0,
+          scoreBool: false,
+          onLevelSelected: (level) {
+            print("Selected Level: $level");
+
+            context.read<LeaderBoardBloc>().add(FetchLeaderBoard(level));
+          },
         ),
-        LeaderBoard(),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 00.0, vertical: 0),
+          child: Expanded(
+            child: BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
+              builder: (context, state) {
+                if (state is LeaderBoardLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is LeaderBoardLoaded) {
+                  print("Loaded");
+                  final leadersData = state.leaderBoardResponse.data.leaders;
+                  return userList(leadersData);
+                } else if (state is LeaderBoardError) {
+                  return Center(child: Text('${state.errorMessage}'));
+                } else {
+                  return Center(child: Text('Something Went Wrong'));
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  Widget TrainingViewData(){
+    return  BlocBuilder<TrainingProgramBloc, TrainingProgramState>(
+      builder: (context, state) {
+        if (state is TrainingLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else if (state is TrainingLoaded) {
+          var data = state.trainingResponse.data;
+          print("datadata:$data");
+
+          return Container(
+            child: TrainingView(
+                unLockedData: data?.unlocked,
+                lockedData: data?.locked),
+          );
+        } else if (state is TrainingError) {
+          return Center(child: Text('${state.errorMessage}'));
+        } else {
+          return Center(child: Text('Something Went Wrong'));
+        }
+      },
+    );
+  }
+  Widget TrainingView({List<Unlocked>? unLockedData, List<Locked>? lockedData}) {
+    return Column(
+      children: [
+
+        VideoComponent(data:unLockedData, isUnlocked:true),
+        VideoComponent(data:lockedData,isUnlocked: false),
+      ],
+    );
+  }
+
+  Widget userList(List<Leaders> leaders) {
+    for (int i = 0; i < 3 && i < leaders.length; i++) {
+      final leader = leaders[i];
+      final media = leader.user.media ?? [];
+      final mediaUrl = media.isNotEmpty ? media[0].originalUrl : null;
+    }
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (leaders.length > 1 && leaders[1].user.media.isNotEmpty)
+              BuildRankContainer(
+                bottom: 20,
+                top: 0.0020,
+                left: 0.085,
+                height: 170,
+                logoHeight: 63,
+                personImage: leaders[1].user.media.isNotEmpty
+                    ? leaders[1].user.media.first.originalUrl
+                    : '',
+                rankBackground: AppImages.rank2,
+                name: '${leaders[1].user.firstName} ${leaders[1].user.lastName}',
+              ),
+            if (leaders.isNotEmpty && leaders[0].user.media.isNotEmpty)
+              BuildRankContainer(
+                bottom: 0,
+                top: 0.071,
+                left: 0.022,
+                height: 248,
+                logoHeight: 105,
+                personImage: leaders[0].user.media.isNotEmpty
+                    ? leaders[0].user.media.first.originalUrl
+                    : '',
+                rankBackground: AppImages.rank1,
+                name: '${leaders[0].user.firstName} ${leaders[0].user.lastName}',
+                isCrowned: true,
+              ),
+            if (leaders.length > 2 && leaders[2].user.media.isNotEmpty)
+              BuildRankContainer(
+                bottom: 20,
+                top: 0.00,
+                left: 0.076,
+                height: 164,
+                logoHeight: 66,
+                personImage: leaders[2].user.media.isNotEmpty
+                    ? leaders[2].user.media.first.originalUrl
+                    : '',
+                rankBackground: AppImages.rank3,
+                name: '${leaders[2].user.firstName} ${leaders[2].user.lastName}',
+              ),
+          ],
+        ),
+
       ],
     );
   }
@@ -171,157 +316,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
     );
 
-  }
-  // Widget gridComponent (){
-  //   List level =["Beginner", "Advanced", "Pro", "Master"];
-  //   return  GridView.count(
-  //     padding: EdgeInsets.only(top: 25,right: 20,left: 20),
-  //     crossAxisCount: 2,
-  //     crossAxisSpacing:26.0,
-  //     mainAxisSpacing: 10.0,
-  //     shrinkWrap: true,
-  //     childAspectRatio:1.6,
-  //     physics: NeverScrollableScrollPhysics(),
-  //     children: List.generate(level.length, (index) {
-  //       return Container(
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(12),
-  //           border: Border.all(color: AppColors.whiteColor)
-  //         ),
-  //         child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //           children: [
-  //             Padding(
-  //               padding: const EdgeInsets.only(left: 23),
-  //               child: AppImages.image(AppImages.ballIcon,height: 30,width: 30),
-  //             ),
-  //             // SizedBox(width: 10,),
-  //             Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text("Level $index",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),),
-  //                 Text(level[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),)
-  //               ],
-  //             ),
-  //             SizedBox(width: 10,),
-  //           ],
-  //         ),
-  //       );
-  //     },),
-  //   );
-  // }
-  // Widget videoComponent(){
-  //   List video =["Triple threat", "Pound", "Cross", ];
-  //
-  //     return ListView.separated(
-  //         shrinkWrap: true,
-  //         physics: NeverScrollableScrollPhysics(),
-  //         padding: EdgeInsets.only(top: 25.54,right: 20,left: 20),
-  //         itemBuilder: (context, index) {
-  //       return Container(
-  //         padding: EdgeInsets.only(left: 25,top: 18.5,bottom: 18.5),
-  //         decoration: BoxDecoration(
-  //           color: AppColors.appColor,
-  //           borderRadius: BorderRadius.circular(8)
-  //         ),
-  //         child: Text(video[index],style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-  //       );
-  //     }, separatorBuilder: (context, index) => SizedBox(height: 10,), itemCount: video.length);
-  // }
-  Widget leaderBoard(){
-    List score =["Overall", "Monthly", "Weekly", ];
-    return Padding(
-      padding: const EdgeInsets.only(top: 25.0),
-      child: Column(
-        children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-              // CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 1.5,vertical: 9.5,font: 14,)
-            ],
-          ),
-        ),
-
-      Container(
-        margin: EdgeInsets.only(top: 25),
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        height: 50,
-        child: ListView.separated(
-            // shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            physics: NeverScrollableScrollPhysics(),
-            // padding: EdgeInsets.only(top: 25.54),
-            itemBuilder: (context, index) {
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal:  25,/*vertical:  10*/),
-                decoration: BoxDecoration(
-                    color:index==0?AppColors.appColor:AppColors.scoreUnselect,
-                    borderRadius: BorderRadius.circular(35)
-                ),
-                child: Center(child: Text(score[index],style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),)),
-              );
-            }, separatorBuilder: (context, index) => SizedBox(width: 10,), itemCount: score.length),
-      ),
-          SizedBox(height: 25,),
-    Container(
-    decoration: AppImages.background(AppImages.leaderBG),
-    child: SizedBox(
-    width: double.infinity,
-    // height: 250, // Adjust height if needed
-    child: Column(
-      children: [
-        Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-
-        _buildRankContainer(20,0.00,0.076,164,66,AppImages.rank2Person, AppImages.rank2,"Ethan White", ),
-          _buildRankContainer(0,0.071,0.022,248,105,AppImages.rank1Person, AppImages.rank1,"Rupert Johnson",isCrowned: true),
-          _buildRankContainer(20,0.00,0.076,164,66,AppImages.rank3Person, AppImages.rank3, "Emily Brown"),
-        ],
-        ),
-        // SizedBox(height: 0,)
-      ],
-    ),
-    ),
-    ),
-
-    // Container(
-          //   decoration: AppImages.background(AppImages.leaderBG),
-          //   child: SizedBox(
-          //     width: double.infinity,
-          //     height: 247.46, // Adjust height according to your design
-          //     child: Stack(
-          //       children: [
-          //         // Background container
-          //         Positioned(
-          //           top: MediaQuery.of(context).size.height * 0.074,
-          //           left: MediaQuery.of(context).size.width * 0.334,
-          //           child: AppImages.image(
-          //             AppImages.rank1Person,
-          //             height: 120,
-          //             fit: BoxFit.fitHeight,
-          //           ),
-          //         ),
-          //         Positioned.fill(
-          //           child: Container(
-          //             height: 248,
-          //             decoration: AppImages.background(AppImages.rank1, fit: BoxFit.fitHeight),
-          //           ),
-          //         ),
-          //
-          //       ],
-          //     ),
-          //   ),
-          // )
-        ],
-      ),
-    );
   }
   Widget _buildRankContainer(double bottom,double top,double left ,double height , double logoHeight,String personImage, String rankBackground,String name,{bool isCrowned = false}) {
     return   SizedBox(

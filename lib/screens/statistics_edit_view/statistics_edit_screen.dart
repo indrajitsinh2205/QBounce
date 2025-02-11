@@ -13,6 +13,8 @@ import '../../app_services/common_Capital.dart';
 import '../../common_widget/common_text_field.dart';
 import '../../common_widget/custom_snackbar.dart';
 import '../../constant/app_text_style.dart';
+import '../state_screen_view/statistics_bloc/statistics_bloc.dart';
+import '../state_screen_view/statistics_delete_bloc/statistics_delete_bloc.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_bloc.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_event.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_state.dart';
@@ -23,6 +25,7 @@ import '../state_screen_view/statistics_store_bloc/statistics_store_view_model/s
 import '../state_screen_view/statistics_update_bloc/statistics_update_bloc.dart';
 import '../state_screen_view/statistics_update_bloc/statistics_update_event.dart';
 import '../state_screen_view/statistics_update_bloc/statistics_update_state.dart';
+import '../your_stats_screen_view/your_stats_screen.dart';
 
 class StatisticsEditScreen extends StatefulWidget {
   var Id;
@@ -41,24 +44,37 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
   final TextEditingController _STLController = TextEditingController();
   final TextEditingController _BLKController = TextEditingController();
 
-  String selectedDate = ""; 
+  String selectedDate = "";
 
   Future<void> _selectDate(BuildContext context) async {
+    DateTime? initialDate;
+
+    // Validate and parse selectedDate if it's not empty
+    if (selectedDate.isNotEmpty) {
+      try {
+        initialDate = DateFormat('yyyy-MM-dd').parse(selectedDate);
+      } catch (e) {
+        initialDate = DateTime.now(); // Fallback if parsing fails
+      }
+    } else {
+      initialDate = DateTime.now();
+    }
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate.isEmpty ? DateTime.now() : DateTime.parse(selectedDate), 
+      initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
 
     if (pickedDate != null) {
-      String formattedDate = DateFormat(AppStrings.dateFormat).format(pickedDate); 
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
       setState(() {
         selectedDate = formattedDate;
+        print(selectedDate);
       });
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -143,7 +159,19 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         if(state is StatisticsUpdateLoaded){
           Future.delayed(Duration(milliseconds: 100), () {
-            NavigationService.navigateTo(NavigationService.statistics);
+            setState(() {
+              GlobleValue.button.value =1;
+            });
+            GlobleValue.selectedScreen.value = MultiBlocProvider(
+                providers: [
+                  BlocProvider<StatisticsBloc>(
+                    create: (BuildContext context) => StatisticsBloc(),
+                  ),
+                  BlocProvider<StatisticsDeleteBloc>(
+                    create: (BuildContext context) => StatisticsDeleteBloc(),
+                  ),
+                ],
+                child: YourStatsScreen());
           });
 
 
@@ -194,27 +222,35 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         if(state is StatisticsStoreLoaded){
           Future.delayed(Duration(milliseconds: 100), () {
-            NavigationService.navigateTo(NavigationService.statistics);
+            setState(() {
+              GlobleValue.button.value =1;
+            });
+            GlobleValue.selectedScreen.value = MultiBlocProvider(
+                providers: [
+                  BlocProvider<StatisticsBloc>(
+                    create: (BuildContext context) => StatisticsBloc(),
+                  ),
+                  BlocProvider<StatisticsDeleteBloc>(
+                    create: (BuildContext context) => StatisticsDeleteBloc(),
+                  ),
+                ],
+                child: YourStatsScreen());
+            // NavigationService.navigateTo(NavigationService.statistics);
           });
         }
         return GestureDetector(
           onTap: () {
-            setState(() {
-              GlobleValue.selectedIndex=0;
-            });
-
-
-            // PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
-            //   location: _locationController.text,
-            //   opponentTeam: _opponentController.text,
-            //   pointsScored: _PTSController.text,
-            //   rebounds: _REBController.text,
-            //   assists: _ASTController.text,
-            //   steals: _STLController.text,
-            //   blockedShots: _BLKController.text,
-            //   gameDate: selectedDate,
-            // );
-            // BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
+            PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
+              location: _locationController.text,
+              opponentTeam: _opponentController.text,
+              pointsScored: _PTSController.text,
+              rebounds: _REBController.text,
+              assists: _ASTController.text,
+              steals: _STLController.text,
+              blockedShots: _BLKController.text,
+              gameDate: selectedDate,
+            );
+            BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
           },
           child: CommonButton(title: "Save", color: AppColors.appColor)
         );

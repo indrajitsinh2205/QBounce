@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:q_bounce/app_services/app_preferences.dart';
 import 'package:q_bounce/app_services/navigation_service.dart';
 import 'package:q_bounce/common_widget/common_alert.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/common_widget/web_view.dart';
 import 'package:q_bounce/screens/how_to_cast_screen_view/how_to_cast_screen.dart';
+import 'package:q_bounce/screens/profile_screen_view/update_profile_bloc/update_profile_bloc.dart';
 import 'package:q_bounce/screens/static_leader_board.dart';
 import 'package:q_bounce/screens/your_stats_screen_view/your_stats_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -13,17 +16,25 @@ import '../constant/app_color.dart';
 import '../constant/app_images.dart';
 import '../constant/app_strings.dart';
 import '../constant/app_text_style.dart';
+import '../screens/contact_us_screen_view/contact_us_bloc/contact_us_bloc.dart';
 import '../screens/contact_us_screen_view/contact_us_screen.dart';
 import '../screens/faq_screen_view/faq_screen.dart';
 import '../screens/home_screen_view/home_screen.dart';
 import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
+import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../screens/privacy_policy_screen_view/privacy_policy_screen.dart';
+import '../screens/profile_screen_view/get_profile_bloc/get_profile_bloc.dart';
+import '../screens/profile_screen_view/get_profile_bloc/get_profile_event.dart';
 import '../screens/profile_screen_view/profile_screen.dart';
+import '../screens/profile_screen_view/profile_singleton.dart';
+import '../screens/state_screen_view/statistics_bloc/statistics_bloc.dart';
+import '../screens/state_screen_view/statistics_delete_bloc/statistics_delete_bloc.dart';
 import '../screens/state_screen_view/statistics_edit_bloc/statistics_edit_bloc.dart';
 import '../screens/state_screen_view/statistics_store_bloc/statistics_store_bloc.dart';
 import '../screens/state_screen_view/statistics_update_bloc/statistics_update_bloc.dart';
 import '../screens/statistics_edit_view/statistics_edit_screen.dart';
 import '../screens/terms_and_conditons_screen_view/terms_and_conditons_screen.dart';
+import '../screens/training_screen_view/training_program_bloc/training_program_bloc.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -69,7 +80,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         actions: [
           button == false
-              ? saveButton == true
+              ? /*saveButton == true
               ? InkWell(
             onTap: () {
               voidCallback2();
@@ -85,8 +96,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 vertical: 2,
               ),
             ),
-          )
-              : SizedBox()
+          */ SizedBox()
               : InkWell(
             onTap: () {
               voidCallback1();
@@ -120,68 +130,125 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  Widget _selectedScreen = HomeScreen(); // Default screen
- // static  int _selectedIndex = 0;
-// static  int button = 0;
-
-
-  // Method to update the selected screen based on BottomNavigationBar item tapped
   void _onItemTapped(int index) {
     setState(() {
-      // This ensures that when tapping the same index, the widget gets rebuilt
-      if (GlobleValue.selectedIndex == index) {
-        // Change _selectedScreen to a new instance of the same screen.
+      if (GlobleValue.selectedIndex.value == index) {
         if (index == 0) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = HomeScreen(key: UniqueKey());  // Assign a new key to force rebuild
+          GlobleValue.selectedScreen.value = MultiBlocProvider(
+              providers: [
+                BlocProvider<LeaderBoardBloc>(
+                  create: (context) => LeaderBoardBloc(),
+                ),
+                BlocProvider<TrainingProgramBloc>(
+                  create: (context) => TrainingProgramBloc(),
+                ),
+
+              ],
+              child: HomeScreen(key: UniqueKey()));
         } else if (index == 1) {
           setState(() {
-            GlobleValue.button =1;
+            GlobleValue.button.value =1;
           });
-          _selectedScreen = YourStatsScreen(key: UniqueKey());
+          GlobleValue.selectedScreen.value = MultiBlocProvider(
+              providers: [
+                BlocProvider<StatisticsBloc>(
+                  create: (BuildContext context) => StatisticsBloc(),
+                ),
+                BlocProvider<StatisticsDeleteBloc>(
+                  create: (BuildContext context) => StatisticsDeleteBloc(),
+                ),
+              ],
+              child: YourStatsScreen(key: UniqueKey()));
         } else if (index == 2) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = CartScreen(key: UniqueKey());
+          GlobleValue.selectedScreen.value = CartScreen(key: UniqueKey());
         } else if (index == 3) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = StaticLeaderBoard(key: UniqueKey());
+          GlobleValue.selectedScreen.value = BlocProvider<LeaderBoardBloc>(
+              create: (context) => LeaderBoardBloc(),
+              child: StaticLeaderBoard());
         }
       } else {
         // If the index has changed, assign the new screen
-        GlobleValue.selectedIndex = index;
+        GlobleValue.selectedIndex.value = index;
         if (index == 0) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = HomeScreen();
+          GlobleValue.selectedScreen.value = MultiBlocProvider(
+              providers: [
+                BlocProvider<LeaderBoardBloc>(
+                  create: (context) => LeaderBoardBloc(),
+                ),
+                BlocProvider<TrainingProgramBloc>(
+                  create: (context) => TrainingProgramBloc(),
+                ),
+                BlocProvider<TrainingProgramBloc>(
+                  create: (context) => TrainingProgramBloc(),
+                ),
+              ],
+              child: HomeScreen());
         } else if (index == 1) {
           setState(() {
-            GlobleValue.button =1;
+            GlobleValue.button.value =1;
           });
-          _selectedScreen = YourStatsScreen();
+          GlobleValue.selectedScreen.value = MultiBlocProvider(
+             providers: [
+               BlocProvider<StatisticsBloc>(
+                 create: (BuildContext context) => StatisticsBloc(),
+               ),
+               BlocProvider<StatisticsDeleteBloc>(
+                 create: (BuildContext context) => StatisticsDeleteBloc(),
+               ),
+             ],
+              child: YourStatsScreen());
         } else if (index == 2) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = CartScreen();
+          GlobleValue.selectedScreen.value = CartScreen();
         } else if (index == 3) {
           setState(() {
-            GlobleValue.button =0;
+            GlobleValue.button.value =0;
           });
-          _selectedScreen = StaticLeaderBoard();
+          GlobleValue.selectedScreen.value = BlocProvider<LeaderBoardBloc>(
+              create: (context) => LeaderBoardBloc(),
+              child: StaticLeaderBoard());
         }
       }
     });
   }
+  String? _userName;
+  String? _profile;
+@override
+  void initState() {
+    // TODO: implement initState
+  context.read<ProfileBloc>().add(FetchProfile());
+  _loadUserName();
+  print(_userName);
 
+  super.initState();
+  }
+  void _loadUserName() async {
+    String? name = await AppPreferences().getName();
+    String? profile = await AppPreferences().getImage();
+    setState(() {
+      _userName = name ?? 'Guest';
+      _profile = Uri.tryParse(profile ?? '')?.hasAbsolutePath ?? false
+          ? profile
+          : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
+    });
+  }
   @override
   Widget build(BuildContext context) {
+
     return Container(
       decoration: AppImages.background(AppImages.appBackGround),
       child: Scaffold(
@@ -190,9 +257,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
           voidCallback1: () {
             print("0.");
             setState(() {
-              GlobleValue.selectedIndex=1;
-              GlobleValue.button=0;
-              _selectedScreen = MultiBlocProvider(
+              GlobleValue.selectedIndex.value=0;
+              GlobleValue.button.value=0;
+              GlobleValue.selectedScreen.value = MultiBlocProvider(
                 providers: [
                   BlocProvider<StatisticsEditBloc>(
                     create: (BuildContext context) => StatisticsEditBloc(),
@@ -208,15 +275,33 @@ class _DrawerScreenState extends State<DrawerScreen> {
               );
             });
           },
-          button: GlobleValue.button==1?true:false,
-          saveButton: GlobleValue.button == 2?true:false,
+          button: GlobleValue.button.value==1?true:false,
+          saveButton: GlobleValue.button.value == 2?true:false,
           title: '',
           actions: AppImages.image(AppImages.logo, height: 30),
           voidCallback2: () {
             setState(() {
-              GlobleValue.selectedIndex=0;
-              GlobleValue.button=0;
-              _selectedScreen = HomeScreen();
+              final profile = Provider.of<ProfileNotifier>(context, listen: false).profile;
+              print("SaveData : ${profile.toJson()}");
+              print("SaveData1 : ${ProfileData()}");
+              GlobleValue.selectedIndex.value=0;
+              GlobleValue.button.value=0;
+              BlocProvider(
+                create: (context) =>ProfileUpdateBloc() ,
+              );
+              GlobleValue.selectedScreen.value = MultiBlocProvider(
+                  providers: [
+                    BlocProvider<LeaderBoardBloc>(
+                      create: (context) => LeaderBoardBloc(),
+                    ),
+                    BlocProvider<TrainingProgramBloc>(
+                      create: (context) => TrainingProgramBloc(),
+                    ),
+                    BlocProvider<TrainingProgramBloc>(
+                      create: (context) => TrainingProgramBloc(),
+                    ),
+                  ],
+                  child: HomeScreen());
             });
           },
         ),
@@ -235,8 +320,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            GlobleValue.button=2;
-                            _selectedScreen = ProfileScreen();
+                            GlobleValue.button.value=2;
+                            GlobleValue.selectedScreen.value = MultiBlocProvider(
+                                providers: [
+                                  BlocProvider<ProfileBloc>(
+                                    create: (context) => ProfileBloc(),
+                                  ),BlocProvider<ProfileUpdateBloc>(
+                                    create: (context) => ProfileUpdateBloc(),
+                                  ),
+                                ],
+                                child: ProfileScreen());
                           });
                           Navigator.pop(context); // Close drawer
                         },
@@ -257,15 +350,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
-                                child: AppImages.image(AppImages.playerB,height: 40,width: 40),
+                                child: Image.network(_profile.toString(),height: 40,width: 40),
                               ),
                               SizedBox(width: 10,),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Michael Johnson",style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-                                    Text(overflow: TextOverflow.ellipsis,"MichaelJohnson@gmail.com",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
+                                    Text(_userName.toString(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                                    Text(overflow: TextOverflow.ellipsis,"$_userName@gmail.com",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
                                   ],
                                 ),
                               ),
@@ -288,8 +381,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('How To Use',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              _selectedScreen = HowToUseScreen();
-                              GlobleValue.button=0;
+                              GlobleValue.selectedScreen.value = HowToUseScreen();
+                              GlobleValue.button.value=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -308,7 +401,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              GlobleValue.button=0;                              _selectedScreen = HowToCastScreen();
+                              GlobleValue.button.value=0;                              GlobleValue.selectedScreen.value = HowToCastScreen();
 
                             });
                             Navigator.pop(context); // Close drawer
@@ -328,8 +421,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('Teams & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              GlobleValue.button=0;
-                              _selectedScreen = TermsAndConditonsScreen();
+                              GlobleValue.button.value=0;
+                              GlobleValue.selectedScreen.value = TermsAndConditonsScreen();
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -348,8 +441,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              _selectedScreen = PrivacyPolicyScreen();
-                              GlobleValue.button=0;
+                              GlobleValue.selectedScreen.value = PrivacyPolicyScreen();
+                              GlobleValue.button.value=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -368,8 +461,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('Faq',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              _selectedScreen = FAQPage();
-                              GlobleValue.button=0;
+                              GlobleValue.selectedScreen.value = FAQPage();
+                              GlobleValue.button.value=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -389,8 +482,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           title: Text('Contact Us',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
-                              _selectedScreen = ContactUsScreen();
-                              GlobleValue.button=0;
+                              GlobleValue.selectedScreen.value = MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<ContactUsBloc>(
+                                      create: (context) => ContactUsBloc(),
+                                    ),
+                                  ],
+
+                                  child: ContactUsScreen());
+                              GlobleValue.button.value=0;
                             });
                             Navigator.pop(context); // Close drawer
                           },
@@ -423,7 +523,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
           ),
         ),
 
-        body: _selectedScreen,
+        body:  ValueListenableBuilder(
+        valueListenable: GlobleValue.selectedScreen,
+        builder: (context, selectedScreen, child) {
+          return selectedScreen ?? Container();  // Show a default widget if no screen is set
+        },
+      ),
+
         // BottomNavigationBar for screen switching
         bottomNavigationBar: Container(
           margin: EdgeInsets.only(bottom: 15,left: 15,right: 15),
@@ -454,7 +560,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 unselectedItemColor: AppColors.unSelectedNav,
                 type: BottomNavigationBarType.fixed,
                 elevation: 0.0,
-                currentIndex: GlobleValue.selectedIndex,
+                currentIndex: GlobleValue.selectedIndex.value,
                 onTap: _onItemTapped,  // Update selected screen based on tapped index
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(

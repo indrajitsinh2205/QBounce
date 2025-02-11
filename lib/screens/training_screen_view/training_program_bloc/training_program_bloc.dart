@@ -16,7 +16,7 @@ class TrainingProgramBloc extends Bloc<TrainingProgramEvent, TrainingProgramStat
     emit(TrainingLoading());
     try {
       final response = await TrainingViewModel().getTraining(event.query);
-      print("response1 ${response}");
+      print("response1 ii${response?.data}ii");
       if (response != null) {
         emit(TrainingLoaded(response));
       } else {

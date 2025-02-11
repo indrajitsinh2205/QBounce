@@ -1,3 +1,10 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../screens/home_screen_view/home_screen.dart';
+import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
+import '../screens/training_screen_view/training_program_bloc/training_program_bloc.dart';
+
 class CommonCapital{
   static String capitalizeEachWord(String text) {
     if (text.isEmpty) return text;
@@ -9,9 +16,21 @@ class CommonCapital{
 }
 
 
-class GlobleValue{
-
-  static int selectedIndex = 0;
-  static   int button = 0;
-
+class GlobleValue {
+  static ValueNotifier<int> selectedIndex = ValueNotifier<int>(0);
+  static ValueNotifier<int> button = ValueNotifier<int>(0);
+  static ValueNotifier<Widget> selectedScreen = ValueNotifier<Widget>(MultiBlocProvider(
+  providers: [
+  BlocProvider<LeaderBoardBloc>(
+  create: (context) => LeaderBoardBloc(),
+  ),
+  BlocProvider<TrainingProgramBloc>(
+  create: (context) => TrainingProgramBloc(),
+  ),
+  BlocProvider<TrainingProgramBloc>(
+  create: (context) => TrainingProgramBloc(),
+  ),
+  ],
+  child: HomeScreen(),
+  ));
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:q_bounce/screens/leaderboard_screen_view/leaderboard_screen.dart';
+import 'package:q_bounce/screens/sign_in_screen_view/confirm_otp_bloc/confirm_otp_bloc.dart';
+import 'package:q_bounce/screens/sign_in_screen_view/send_otp_bloc/send_otp_bloc.dart';
 import 'package:q_bounce/screens/sign_in_screen_view/sign_in_screen.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_screen.dart';
 import 'package:q_bounce/screens/training_screen_view/training_bloc/training_program_bloc.dart';
@@ -9,6 +12,8 @@ import '../common_widget/common_app_bar.dart';
 import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
 import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../screens/on_boarding_screen_view/on_boarding_screen.dart';
+import '../screens/profile_screen_view/get_profile_bloc/get_profile_bloc.dart';
+import '../screens/profile_screen_view/profile_singleton.dart';
 import '../screens/state_screen_view/statistics_bloc/statistics_bloc.dart';
 import '../screens/state_screen_view/statistics_delete_bloc/statistics_delete_bloc.dart';
 import '../screens/state_screen_view/statistics_edit_bloc/statistics_edit_bloc.dart';
@@ -18,6 +23,7 @@ import '../screens/statistics_edit_view/statistics_edit_screen.dart';
 import '../screens/training_screen_view/training_program_bloc/training_program_bloc.dart';
 import '../screens/training_screen_view/training_progress_bloc/training_progress_bloc.dart';
 import '../screens/training_screen_view/training_screen.dart';
+import 'app_preferences.dart';
 
 
 class NavigationService {
@@ -53,12 +59,44 @@ class NavigationService {
       );
     }
   }
-
+  // Future<String> getSession() async {
+  //   String? sessionToken = await AppPreferences().getToken();
+  //   print("Session Token: $sessionToken");
+  //
+  //   if (sessionToken == null) {
+  //     throw Exception('No session token found');
+  //   }
+  //
+  //   return sessionToken;
+  // }
   /// Handles route logic with switch-case
   static Widget _handleRoute(RouteSettings settings, var dashboardMessage) {
     switch (settings.name) {
+
       case '/':
-        return OnboardingScreen();
+        return FutureBuilder<String?>(
+          future: AppPreferences().getToken(), // Fetch the token
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator()); // Show a loading indicator while fetching token
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData && snapshot.data != null) {
+              print("snapshot.data ${snapshot.data}");
+              return MultiBlocProvider
+                (
+                  providers: [
+                    ChangeNotifierProvider(create: (context) => ProfileNotifier()),
+                    BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),)
+                  ],
+                  child: DrawerScreen());
+            } else {
+              print("snapshot.data ${snapshot.data}");
+              return OnboardingScreen();
+            }
+          },
+        );
+
       case 'training':
         return MultiBlocProvider(
             providers: [
@@ -116,11 +154,18 @@ class NavigationService {
             ],
             child: LeaderboardScreen());
       case signIn:
-        return SignInScreen();
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<SendOTPBloc>(create: (context) => SendOTPBloc(),),
+              BlocProvider<ConfirmOTPBloc>(create: (context) => ConfirmOTPBloc(),)
+            ],
+            child: SignInScreen());
       case howToUse:
         return HowToUseScreen();
         case drawer:
-        return DrawerScreen();
+        return BlocProvider<ProfileBloc>(
+            create: (context) => ProfileBloc(),
+            child: DrawerScreen());
 
       default:
         return _errorScreen();

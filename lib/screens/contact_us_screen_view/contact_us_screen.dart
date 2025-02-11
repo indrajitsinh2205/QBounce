@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common_widget/common_button.dart';
 import '../../common_widget/common_text_field.dart';
+import '../../common_widget/custom_snackbar.dart';
 import '../../constant/app_color.dart';
 import '../../constant/app_strings.dart';
 import '../../constant/app_text_style.dart';
+import 'contact_us_bloc/contact_us_bloc.dart';
+import 'contact_us_bloc/contact_us_event.dart';
+import 'contact_us_bloc/contact_us_state.dart';
+import 'contact_us_view_model/contact_us_request_model.dart';
 
   class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -19,8 +25,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final TextEditingController _lNameController = TextEditingController();
   final TextEditingController _uMailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
-  final TextEditingController _STLController = TextEditingController();
-  final TextEditingController _BLKController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -64,7 +68,48 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           SizedBox(height: 15),
           Row(
             children: [
-              CommonButton(title: AppStrings.save,color: AppColors.appColor,),
+              BlocConsumer<ContactUsBloc, ContactUsState>(
+                listener: (context, state) {
+                  if (state is ContactUsLoaded) {
+                    ScaffoldMessengerHelper.showMessage(state.contactUsResponse.message.toString());
+                  }
+                },
+                builder: (context, state) {
+                  if(state is ContactUsLoading){
+                    return CircularProgressIndicator(color: AppColors.appColor,);
+                  }
+                  if(state is ContactUsLoaded){
+                    // Future.delayed(Duration(milliseconds: 100), () {
+                    //   setState(() {
+                    //     GlobleValue.button.value =1;
+                    //   });
+                    //   GlobleValue.selectedScreen.value = MultiBlocProvider(
+                    //       providers: [
+                    //         BlocProvider<StatisticsBloc>(
+                    //           create: (BuildContext context) => StatisticsBloc(),
+                    //         ),
+                    //         BlocProvider<StatisticsDeleteBloc>(
+                    //           create: (BuildContext context) => StatisticsDeleteBloc(),
+                    //         ),
+                    //       ],
+                    //       child: YourStatsScreen());
+                    //   // NavigationService.navigateTo(NavigationService.statistics);
+                    // });
+                  }
+                  return GestureDetector(
+                      onTap: () {
+                        ContactUsRequestModel postData = ContactUsRequestModel(
+                       email: _uMailController.text,
+                          firstName: _fNameController.text,
+                          lastName: _lNameController.text,
+                         message: _messageController.text
+                        );
+                        BlocProvider.of<ContactUsBloc>(context).add(FetchContactUs( postData));
+                      },
+                      child: CommonButton(title: AppStrings.save,color: AppColors.appColor,),
+                  );
+                },
+              ),
               Spacer()
             ],
           )        ],
