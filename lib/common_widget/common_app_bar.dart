@@ -349,8 +349,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
-                                child: Image.network(_profile.toString(),height: 40,width: 40),
+                              height: 40,width: 40,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(image: NetworkImage(_profile.toString()),fit: BoxFit.fill),
+                                  borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
+                                // child: Image.network(_profile.toString(),height: 40,width: 40),
                               ),
                               SizedBox(width: 10,),
                               Expanded(

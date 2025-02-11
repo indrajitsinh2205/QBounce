@@ -5,6 +5,7 @@ import 'package:q_bounce/screens/state_screen_view/statistic_api_endpoint/statis
 import 'package:q_bounce/screens/state_screen_view/statistics_delete_bloc/statistics_delete_view_model/statistics_delete_response.dart';
 
 import '../../../../network/base_api_configuration/api_service.dart';
+import '../../../app_services/common_Capital.dart';
 import '../auth_response_model/confirm_otp_response.dart';
 import 'auth_endPoint.dart';
 class ConfirmOtpViewModel extends ChangeNotifier {
@@ -35,7 +36,7 @@ class ConfirmOtpViewModel extends ChangeNotifier {
         final jsonResponse = jsonDecode(response.body);
 
         ConfirmOtpResponse confirmOtpResponse = ConfirmOtpResponse.fromJson(jsonResponse);
-
+        GlobleValue.session.value=confirmOtpResponse.data.toString();
         print("statistics: ${confirmOtpResponse.data}");
         return confirmOtpResponse;
       }

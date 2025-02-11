@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 
@@ -33,6 +34,18 @@ class _OTPFieldState extends State<OTPField> {
     widget.controller.text = otpValue;
   }
 
+  void _handleChange(String value, int index) {
+    // Update OTP controller when text changes
+    _updateOTPController();
+    if (value.isNotEmpty && index < controllers.length - 1) {
+      // Move to next field when a character is typed
+      FocusScope.of(context).nextFocus();
+    } else if (value.isEmpty && index > 0) {
+      // Move to previous field when text is deleted
+      FocusScope.of(context).previousFocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -59,19 +72,19 @@ class _OTPFieldState extends State<OTPField> {
                   keyboardType: TextInputType.number,
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
+                  maxLength: 1, // Ensures only one character is entered
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly, // Ensures only digits are entered
+                  ],
                   decoration: InputDecoration(
+                    counterText: "", // Hides the counter
                     contentPadding: const EdgeInsets.all(10.0),
                     hintText: '0',
                     hintStyle: AppTextStyles.getOpenSansGoogleFont(
                         14, AppColors.whiteColor.withOpacity(0.5), false),
                     border: InputBorder.none,
                   ),
-                  onChanged: (value) {
-                    _updateOTPController();
-                    if (value.isNotEmpty && index < controllers.length - 1) {
-                      FocusScope.of(context).nextFocus();
-                    }
-                  },
+                  onChanged: (value) => _handleChange(value, index),
                 ),
               ),
             );

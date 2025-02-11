@@ -54,13 +54,13 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                 } else if (state is StatisticsLoaded) {
                   statisticsData = state.getStatisticsResponse.data ?? [];
                   if (statisticsData.isEmpty) {
-                    return Center(child: Text(AppStrings.noSTData));
+                    return Center(child: Text(AppStrings.noSTData.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
                   }
                   return statisticTable(statisticsData);
                 } else if (state is StatisticsError) {
-                  return Center(child: Text(state.errorMessage, style: TextStyle(color: Colors.red)));
+                  return Center(child: Text(state.errorMessage.toUpperCase(), style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
                 } else {
-                  return Center(child: Text(AppStrings.somethingW));
+                  return Center(child: Text(AppStrings.somethingW.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
                 }
               },
             ),

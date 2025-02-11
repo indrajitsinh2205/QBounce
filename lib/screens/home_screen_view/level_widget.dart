@@ -19,6 +19,7 @@ import '../training_screen_view/training_bloc/training_program_state.dart';
 import '../training_screen_view/training_program_bloc/training_program_bloc.dart';
 import '../training_screen_view/training_program_bloc/training_program_event.dart';
 import '../training_screen_view/training_program_bloc/training_program_state.dart';
+import '../training_screen_view/training_progress_bloc/training_progress_bloc.dart';
 import '../training_screen_view/training_view_model/TrainingResponse.dart';
 import 'get_level_profile_bloc/get_level_profile_state.dart';
 import 'get_level_profile_view_model/get_level_profile_response.dart';
@@ -110,7 +111,9 @@ class _LevelScreenState extends State<LevelScreen> {
                             //     initializeVideoPlayer(videoData.videoUrl!, videoData.id.toString());
                             //   }
                             // }
-                            return  VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData);
+                            return  BlocProvider<TrainingProgressBloc>(
+                               create: (context) => TrainingProgressBloc(),
+                                child: VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData));
 
                           } else if (videoState is TrainingVideoError) {
                             return Center(child: Text('${videoState.errorMessage}'));
@@ -139,9 +142,8 @@ class _LevelScreenState extends State<LevelScreen> {
       children: [
         // _buildListView(unLockedData, true),
         // _buildListView(lockedData, false),
-
-        VideoComponent(data:unLockedData, isUnlocked:true),
-        VideoComponent(data:lockedData,isUnlocked: false),
+        VideoComponent(data:unLockedData, isUnlocked:true,text: widget.text,),
+        VideoComponent(data:lockedData,isUnlocked: false,text: widget.text,),
       ],
     );
   }
@@ -183,7 +185,7 @@ class _LevelScreenState extends State<LevelScreen> {
                           border: Border.all(color: Color(0xFFD74B16),width: 2)
                       ),
                       child:
-                      AppImages.image(AppImages.ballImage,height: 75,width: 75)
+                     Image.network(levelData.image.toString()??'https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg',height: 75,width: 75)
                     // Image.asset("assets/ball.png",height: 75,width: 75,),
                   ),
                   SizedBox(width: 20,),
@@ -232,7 +234,11 @@ class _LevelScreenState extends State<LevelScreen> {
                               style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w800),
                             ),
                             Text(
-                              item['point']==null?0.toString():item['point']!,
+                              item['point'] == "null" || item['point'] == null
+                                  ? "0"
+                                  : (double.tryParse(item['point']!) != null
+                                  ? (double.parse(item['point']!) / 100000).toStringAsFixed(1)
+                                  : "0"),
                               style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: 	FontWeight.w700),
                             ),
                             SizedBox(height: 2,)

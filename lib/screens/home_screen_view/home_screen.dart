@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           },
         ),
 
-        Gridcomponent(),
+        Gridcomponent(selectedButton:selectedButton.toString()),
         TrainingViewData(),
         LeaderBoard(
           padding: 0,
@@ -209,8 +209,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
 
-        VideoComponent(data:unLockedData, isUnlocked:true),
-        VideoComponent(data:lockedData,isUnlocked: false),
+        VideoComponent(data:unLockedData, isUnlocked:true,text: 'beginner'),
+        VideoComponent(data:lockedData,isUnlocked: false,text: 'beginner'),
       ],
     );
   }

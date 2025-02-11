@@ -156,7 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                             child: CommonButton(
                               title: AppStrings.submit,
-                              color: AppColors.appColor,
+                              color:  AppColors.appColor,
                             ),
                           );
                         },
