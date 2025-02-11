@@ -1,11 +1,11 @@
 import 'dart:io';
 import '../../app_services/app_preferences.dart';
+import '../../app_services/common_Capital.dart';
 import '../../network/base_api_configuration/api_end_point.dart';
 
 enum LeaderBoardType { leaderboard, contactUS }
 
 class LeaderBoardApiEndpoint implements APIEndpoint {
-  String? sessionToken;
   final LeaderBoardType type;
   final Map<String, dynamic>? requestBody;
   final Map<String, dynamic>? requestParam;
@@ -15,12 +15,6 @@ class LeaderBoardApiEndpoint implements APIEndpoint {
   LeaderBoardApiEndpoint(this.type, {this.requestBody, this.requestParam, this.pathParam, this.stringPathParam});
 
   // Asynchronous initialization for sessionToken
-  Future<void> initialize() async {
-    sessionToken = await AppPreferences().getToken();
-    if (sessionToken == null) {
-      throw Exception('No session token found');
-    }
-  }
 
   @override
   Map<String, dynamic>? get body => requestBody;
@@ -35,7 +29,7 @@ class LeaderBoardApiEndpoint implements APIEndpoint {
     HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Origin': '*',
-    'x-session-token': sessionToken ?? '',
+    'x-session-token': GlobleValue.session.value ?? '',
   };
 
   @override

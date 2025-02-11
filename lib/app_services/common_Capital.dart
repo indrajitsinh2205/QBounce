@@ -18,6 +18,7 @@ class CommonCapital{
 
 class GlobleValue {
   static ValueNotifier<int> selectedIndex = ValueNotifier<int>(0);
+  static ValueNotifier<String> session = ValueNotifier<String>('');
   static ValueNotifier<int> button = ValueNotifier<int>(0);
   static ValueNotifier<Widget> selectedScreen = ValueNotifier<Widget>(MultiBlocProvider(
   providers: [

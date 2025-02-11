@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:q_bounce/screens/profile_screen_view/profile_view_model/profile_view_model/profile_endpoint.dart';
 import '../../../../app_services/app_preferences.dart';
+import '../../../../app_services/common_Capital.dart';
 import '../../../../network/base_api_configuration/api_service.dart';
 import '../profile_response_model/get_profile_response.dart';
 import '../profile_response_model/profile_request_model.dart';
@@ -29,7 +30,7 @@ class UpdateProfileViewModel extends ChangeNotifier {
     try {
       final uri = Uri.parse('https://qbounce.api.appmatictech.com/api/user_info'); // Replace with the correct endpoint
       var request = http.MultipartRequest('POST', uri);
-      request.headers['x-session-token']=sessionToken;
+      request.headers['x-session-token']=GlobleValue.session.value;
       // Adding text fields to the multipart request
       request.fields['first_name'] = data.firstName ?? '';
       request.fields['last_name'] = data.lastName ?? '';

@@ -192,7 +192,13 @@ class _LevelScreenState extends State<LevelScreen> {
                     children: [
                       Text("${levelData.firstName} ${levelData.lastName}",style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
                       Row(
-                        children: List.generate(levelData.stars!.toInt(), (index) => Icon(Icons.star, color: Colors.yellow)),
+                        children: List.generate(5, (index) {
+                          // Check if levelData.stars matches the index for yellow color
+                          return Icon(
+                            Icons.star,
+                            color: (index < levelData.stars!.toInt()) ? Colors.yellow : Colors.white,
+                          );
+                        }),
                       )
                     ],
                   ),

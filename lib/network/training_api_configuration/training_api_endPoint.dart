@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import '../../app_services/app_preferences.dart';
+import '../../app_services/common_Capital.dart';
 import '../../network/base_api_configuration/api_end_point.dart';
 
 
 enum TrainingType { beginner,training_video,trainingProgress,profile}
 
 class TrainingApiEndpoint implements APIEndpoint {
-  String? sessionToken;
   final TrainingType type;
   final Map<String, dynamic>? requestBody;
   final Map<String, dynamic>? requestParam;
@@ -15,12 +15,7 @@ class TrainingApiEndpoint implements APIEndpoint {
   final String? stringPathParam;
 
   TrainingApiEndpoint(this.type, {this.requestBody, this.requestParam, this.pathParam,this.stringPathParam});
-  Future<void> initialize() async {
-    sessionToken = await AppPreferences().getToken();
-    if (sessionToken == null) {
-      throw Exception('No session token found');
-    }
-  }
+
   @override
   Map<String, dynamic>? get body => requestBody;
   @override
@@ -32,7 +27,7 @@ class TrainingApiEndpoint implements APIEndpoint {
     HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Origin': '*',
-    "x-session-token":sessionToken ?? '',
+    "x-session-token":GlobleValue.session.value?? '',
   };
 
   @override

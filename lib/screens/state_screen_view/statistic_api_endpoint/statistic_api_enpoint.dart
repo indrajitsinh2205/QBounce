@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../../app_services/app_preferences.dart';
+import '../../../app_services/common_Capital.dart';
 import '../../../network/base_api_configuration/api_end_point.dart';
 
 
@@ -8,7 +9,6 @@ import '../../../network/base_api_configuration/api_end_point.dart';
 enum StatisticsType { statistics,statisticsStore,statisticsEdit,statisticsUpdate,statisticsDelete}
 
 class StatisticsApiEndpoint implements APIEndpoint {
-  String? sessionToken ;
 
   final StatisticsType type;
   final Map<String, dynamic>? requestBody;
@@ -18,12 +18,7 @@ class StatisticsApiEndpoint implements APIEndpoint {
   final int? intPathParam;
 
   StatisticsApiEndpoint(this.type,  {this.requestBody, this.requestParam,this.intPathParam, this.pathParam,this.stringPathParam});
-  Future<void> initialize() async {
-    sessionToken = await AppPreferences().getToken();
-    if (sessionToken == null) {
-      throw Exception('No session token found');
-    }
-  }
+
   @override
   Map<String, dynamic>? get body => requestBody;
   @override
@@ -35,7 +30,7 @@ class StatisticsApiEndpoint implements APIEndpoint {
     HttpHeaders.acceptHeader: 'application/json; charset=utf-8',
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Origin': '*',
-    "x-session-token":sessionToken ??'',
+    "x-session-token":GlobleValue.session.value??'',
   };
 
   @override
