@@ -12,6 +12,8 @@ import '../../../constant/app_images.dart';
 import '../../../constant/app_text_style.dart';
 import '../../training_screen_view/training_bloc/training_program_bloc.dart';
 import '../../training_screen_view/training_bloc/training_program_event.dart';
+import '../../training_screen_view/training_program_bloc/training_program_bloc.dart';
+import '../../training_screen_view/training_program_bloc/training_program_event.dart';
 import '../../training_screen_view/training_progress_bloc/training_progress_bloc.dart';
 import '../../training_screen_view/training_progress_bloc/training_progress_event.dart';
 
@@ -19,7 +21,9 @@ class VideoDetailsComponent extends StatefulWidget {
   final int videoIndex;
   final Data? data;
   final String? text;
-  const VideoDetailsComponent({super.key, required this.videoIndex, this.data, this.text});
+  final Function() onRebuildParent;  // Callback to notify the parent to rebuild
+
+  const VideoDetailsComponent({super.key, required this.videoIndex, this.data, this.text, required this.onRebuildParent});
 
   @override
   State<VideoDetailsComponent> createState() => _VideoDetailsComponentState();
@@ -96,41 +100,30 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
           isLoading = false;
           isVideoLoaded = true;
         });
+
         _videoPlayerController!.addListener(() {
           if (_videoPlayerController!.value.position == _videoPlayerController!.value.duration) {
-            // Video has completed
-            if(!isVideoCompleted){
+            // Video completed
+            if (!isVideoCompleted) {
               print("Video completed");
               setState(() {
                 isVideoCompleted = true;
               });
 
+              // Fetch training progress
+              context.read<TrainingProgressBloc>().add(
+                FetchTrainingProgress({"trainingId": widget.data?.id}),
+              );
 
-
-              context.read<TrainingProgressBloc>().add(FetchTrainingProgress({"trainingId": widget.data?.id}));
-
-
-              context.read<TrainingVideoBloc>().add(FetchTrainingVideo(widget.data!.id!.toString()));
-              final state = context.read<TrainingVideoBloc>().state;
-              if(state is TrainingVideoLoaded){
-                print("complete");
-                setState(() {
-
-                });
-              }
-
-              // Update numericCount and notify listeners
-              GlobleValue.numericCount.value+1;
-              GlobleValue.numericCount.notifyListeners();
-              // setState(() {});
+              // Fetch new video data and trigger a rebuild
+              context.read<TrainingVideoBloc>().add(
+                FetchTrainingVideo(widget.data!.id!.toString()),
+              );
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // Call the parent callback to notify it to rebuild
+                widget.onRebuildParent();
+              });
             }
-
-
-          }
-          else{
-            setState(() {
-              isVideoCompleted=false;
-            });
           }
         });
 
@@ -158,74 +151,116 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
     super.dispose();
   }
 
-  bool isVideoCompleted = false; // Track video completion
+  bool isVideoCompleted = false;
+
+    void _rebuildPage() {
+      // Trigger the fetch event again to update data
+      context.read<TrainingProgramBloc>().add(FetchTraining(widget.text.toString()));
+
+      // Schedule the rebuild of the parent after the current frame is done
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Call the parent callback to notify it to rebuild
+        widget.onRebuildParent();
+      });
+    }
+
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TrainingVideoBloc, TrainingVideoState>(
-      builder: (context, state) {
-        int? displayCount = isVideoCompleted ? GlobleValue.numericCount.value : widget.data?.count?.toInt();
+    return Column(
+      children: [
+        BlocBuilder<TrainingVideoBloc, TrainingVideoState>(
+          builder: (context, state) {
+            int? displayCount = isVideoCompleted ? GlobleValue.numericCount.value : widget.data?.count?.toInt();
 
-        return Padding(
-          padding: EdgeInsets.only(left: 0, right: 0, bottom: 25),
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (!isVideoPlaying)
-                        Image.network(
-                          widget.data!.thumbnailUrl.toString(),
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      if (isLoading) CircularProgressIndicator(color: Colors.white),
-                      if (isVideoLoaded && !isVideoPlaying)
-                        GestureDetector(
-                          onTap: _playVideo,
-                          child: Icon(Icons.play_circle_fill, size: 80, color: Colors.white),
-                        ),
-                      if (isVideoPlaying && _chewieController != null)
-                        Chewie(controller: _chewieController!),
-                    ],
+            return Padding(
+              padding: EdgeInsets.only(left: 0, right: 0, bottom: 25),
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          if (!isVideoPlaying)
+                            Image.network(
+                              widget.data!.thumbnailUrl.toString(),
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          if (isLoading) CircularProgressIndicator(color: Colors.white),
+                          if (isVideoLoaded && !isVideoPlaying)
+                            GestureDetector(
+                              onTap: _playVideo,
+                              child: Icon(Icons.play_circle_fill, size: 80, color: Colors.white),
+                            ),
+                          if (isVideoPlaying && _chewieController != null)
+                            Chewie(controller: _chewieController!),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 18.5),
-                decoration: BoxDecoration(
-                  color: AppColors.appColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.data!.categoryName.toString(),
-                      style: AppTextStyles.athleticStyle(
-                        fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
-                      ),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 18.5),
+                    decoration: BoxDecoration(
+                      color: AppColors.appColor,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    Text(
-                      "$displayCount/3",
-                      style: AppTextStyles.athleticStyle(
-                        fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.data!.title.toString(),
+                          style: AppTextStyles.athleticStyle(
+                            fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
+                          ),
+                        ),
+                        Text(
+                          "${displayCount! >= 3 ? 3 : displayCount}/3",
+                          style: AppTextStyles.athleticStyle(
+                            fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 18.5),
+                    decoration: BoxDecoration(
+                      color: AppColors.appColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "XP Reward Points",
+                          style: AppTextStyles.athleticStyle(
+                            fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
+                          ),
+                        ),
+                        Text(
+                          widget.data!.xp.toString(),
+                          style: AppTextStyles.athleticStyle(
+                            fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  detailsComponent(),
+                ],
               ),
-              SizedBox(height: 15),
-              detailsComponent(),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -284,3 +319,4 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
     );
   }
 }
+

@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (leaders.length > 1 && leaders[1].user.media.isNotEmpty)
+            if (leaders.length > 1 )
               BuildRankContainer(
                 point: leaders[1].totalRewardPoints.toString(),
                 bottom: 20,
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 rankBackground: AppImages.rank2,
                 name: '${leaders[1].user.firstName} ${leaders[1].user.lastName}',
               ),
-            if (leaders.isNotEmpty && leaders[0].user.media.isNotEmpty)
+            if (leaders.isNotEmpty )
               BuildRankContainer(
                 point: leaders[0].totalRewardPoints.toString(),
 
@@ -263,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 name: '${leaders[0].user.firstName} ${leaders[0].user.lastName}',
                 isCrowned: true,
               ),
-            if (leaders.length > 2 && leaders[2].user.media.isNotEmpty)
+            if (leaders.length > 2 )
               BuildRankContainer(
                 point: leaders[2].totalRewardPoints.toString(),
 

@@ -44,15 +44,13 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
   final TextEditingController _STLController = TextEditingController();
   final TextEditingController _BLKController = TextEditingController();
 
-  String selectedDate = "";
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? initialDate;
 
-    // Validate and parse selectedDate if it's not empty
-    if (selectedDate.isNotEmpty) {
+    if (GlobleValue.selectedDate.value.isNotEmpty) {
       try {
-        initialDate = DateFormat('yyyy-MM-dd').parse(selectedDate);
+        initialDate = DateFormat('yyyy-MM-dd').parse(GlobleValue.selectedDate.value);
       } catch (e) {
         initialDate = DateTime.now(); // Fallback if parsing fails
       }
@@ -69,9 +67,10 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
 
     if (pickedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+
       setState(() {
-        selectedDate = formattedDate;
-        print(selectedDate); // To confirm the selected date
+        // Update the ValueNotifier and use setState to notify UI
+        GlobleValue.selectedDate.value = formattedDate;
       });
     }
   }
@@ -91,7 +90,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         _ASTController.clear();
         _STLController.clear();
         _BLKController.clear();
-        selectedDate = "";
+        GlobleValue.selectedDate.value = "";
       });
     }
   }
@@ -120,8 +119,8 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                   _ASTController.text = state.getStatisticsEditResponse.data!.statistics!.assists.toString();
                   _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
                   _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
-                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
-                }
+                  GlobleValue.selectedDate.value = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
+                 }
                 return FormUI();
               } else if (state is StatisticsEditError) {
                 return Center(child: Text(state.errorMessage, style: TextStyle(color: Colors.red)));
@@ -191,7 +190,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                  _ASTController.text.isEmpty||
                  _STLController.text.isEmpty||
                  _BLKController.text.isEmpty||
-                 selectedDate.isEmpty
+                 GlobleValue.selectedDate.value.isEmpty
             ){
               ScaffoldMessengerHelper.showMessage("All field are required");
 
@@ -205,7 +204,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 assists: _ASTController.text,
                 steals: _STLController.text,
                 blockedShots: _BLKController.text,
-                gameDate: selectedDate,
+                gameDate: GlobleValue.selectedDate.value,
               );
               BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
             }
@@ -262,7 +261,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 _ASTController.text.isEmpty||
                 _STLController.text.isEmpty||
                 _BLKController.text.isEmpty||
-                selectedDate.isEmpty
+                GlobleValue.selectedDate.value.isEmpty
             ){
               ScaffoldMessengerHelper.showMessage("All field are required");
 
@@ -275,7 +274,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 assists: _ASTController.text,
                 steals: _STLController.text,
                 blockedShots: _BLKController.text,
-                gameDate: selectedDate,
+                gameDate: GlobleValue.selectedDate.value,
               );
               BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore(postData));
 
@@ -356,10 +355,18 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate,
-                    style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
+                  child:
+                  ValueListenableBuilder<String>(
+                    valueListenable: GlobleValue.selectedDate,
+                    builder: (context, selectedDate, child) {
+                      return Text(
+                        selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate,
+                        style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
+                      );
+                    },
                   ),
+
+
                 ),
                 IconButton(
                   onPressed: () {

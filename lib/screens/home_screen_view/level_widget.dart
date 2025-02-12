@@ -44,6 +44,11 @@ class _LevelScreenState extends State<LevelScreen> {
   void _fetchLevelProfile() {
     context.read<LevelProfileBloc>().add(FetchLevelProfile());
   }
+  void _rebuildParent() {
+    setState(() {
+      // This will trigger a rebuild of the parent widget
+    });
+  }
   @override
   Widget build(BuildContext context) {
     context.read<TrainingProgramBloc>().add(FetchTraining(widget.text));
@@ -53,6 +58,7 @@ class _LevelScreenState extends State<LevelScreen> {
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
+
           SizedBox(height: 30,),
           BlocBuilder<LevelProfileBloc, LevelProfileState>(
             builder: (context, state) {
@@ -79,7 +85,6 @@ class _LevelScreenState extends State<LevelScreen> {
                 return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
               } else if (state is TrainingLoaded) {
                 var data = state.trainingResponse.data;
-
                 if (data?.unlocked?.isEmpty == true) {
                   showVideo = false;
                 } else {
@@ -120,7 +125,7 @@ class _LevelScreenState extends State<LevelScreen> {
                                  BlocProvider<TrainingProgramBloc>(
                             create: (context) => TrainingProgramBloc(),),
                                ],
-                                child: VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData,text: widget.text,));
+                                child: VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData,text: widget.text, onRebuildParent: _rebuildParent,));
 
                           } else if (videoState is TrainingVideoError) {
                             return Center(child: Text('${videoState.errorMessage}'));
@@ -155,6 +160,7 @@ class _LevelScreenState extends State<LevelScreen> {
     );
   }
  Widget levelProfile(LevelData levelData){
+    print("levelData.image ${levelData.image}");
    List<Map<String, String>> stateData = [
      {"name": "PTS", "point": levelData.averagePointsScored.toString()},
      {"name": "REB", "point": levelData.averageRebounds.toString()},
@@ -192,7 +198,7 @@ class _LevelScreenState extends State<LevelScreen> {
                           border: Border.all(color: Color(0xFFD74B16),width: 2)
                       ),
                       child:
-                     Image.network(levelData.image.toString()??'https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg',height: 75,width: 75)
+                     Image.network(levelData.image.toString(),height: 75,width: 75)
                     // Image.asset("assets/ball.png",height: 75,width: 75,),
                   ),
                   SizedBox(width: 20,),

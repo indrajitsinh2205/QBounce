@@ -105,7 +105,7 @@ Widget statisticTable(List<StatisticsData> statistics){
                   onTap: () {
 
                     setState(() {
-                      GlobleValue.button.value = 20;
+                      GlobleValue.button.value = 0;
                       GlobleValue.selectedIndex.value = 0;
                       print("Data of button ${GlobleValue.selectedIndex.value}");
                       print("Data of button ${GlobleValue.button.value}");

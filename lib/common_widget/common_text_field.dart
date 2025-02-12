@@ -34,7 +34,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
             cursorColor: AppColors.appColor,
             readOnly:widget.readOnly as bool ,
             maxLines:widget.textArea==true?4: 1,
-            keyboardType: widget.numType == true ? TextInputType.number : TextInputType.name,
+            keyboardType: widget.numType == true ? TextInputType.number : TextInputType.emailAddress,
             controller: widget.controller,style: AppTextStyles.getOpenSansGoogleFont(13, AppColors.whiteColor, false),
             decoration: InputDecoration(
               prefixIcon: widget.icon??null,

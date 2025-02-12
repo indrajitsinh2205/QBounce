@@ -7,12 +7,14 @@ import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/screens/profile_screen_view/profile_singleton.dart';
 import 'package:video_player/video_player.dart';
 
+import 'app_services/global_image_manager.dart';
 import 'app_services/navigation_service.dart';
 import 'common_widget/custom_snackbar.dart';
 
-void main() {
+void main()async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  final globalImageManager = GlobalImageManager();
+  await globalImageManager.loadProfileImage();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

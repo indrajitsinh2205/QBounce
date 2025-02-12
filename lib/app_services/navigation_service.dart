@@ -26,6 +26,7 @@ import '../screens/training_screen_view/training_program_bloc/training_program_b
 import '../screens/training_screen_view/training_progress_bloc/training_progress_bloc.dart';
 import '../screens/training_screen_view/training_screen.dart';
 import 'app_preferences.dart';
+import 'global_image_manager.dart';
 
 
 class NavigationService {
@@ -89,6 +90,7 @@ class NavigationService {
               return MultiBlocProvider
                 (
                   providers: [
+                    ChangeNotifierProvider.value(value:  GlobalImageManager()),
                     ChangeNotifierProvider(create: (context) => ProfileNotifier()),
                     BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),)
                   ],
@@ -166,9 +168,13 @@ class NavigationService {
       case howToUse:
         return HowToUseScreen();
         case drawer:
-        return BlocProvider<ProfileBloc>(
-            create: (context) => ProfileBloc(),
-            child: DrawerScreen());
+        return MultiBlocProvider(
+                providers: [
+                  ChangeNotifierProvider.value(value:  GlobalImageManager()),
+                 BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),)
+
+                ],
+                child: DrawerScreen());
 
       default:
         return _errorScreen();

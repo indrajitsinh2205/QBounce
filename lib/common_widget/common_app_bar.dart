@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import 'package:q_bounce/screens/static_leader_board.dart';
 import 'package:q_bounce/screens/your_stats_screen_view/your_stats_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../app_services/common_Capital.dart';
+import '../app_services/global_image_manager.dart';
 import '../constant/app_color.dart';
 import '../constant/app_images.dart';
 import '../constant/app_strings.dart';
@@ -79,40 +82,29 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         actions: [
-          button == false
-              ? /*saveButton == true
-              ? InkWell(
-            onTap: () {
-              voidCallback2();
+          ValueListenableBuilder<int>(
+            valueListenable: GlobleValue.button,
+            builder: (context, isSaveEnabled, child) {
+              return isSaveEnabled==1? InkWell(
+                onTap: () {
+                  voidCallback1();
+                },
+                child: Container(
+                  width: 81,
+                  height: 38,
+                  child: CommonButton(
+                    title: "+ Add Match",
+                    color: AppColors.appColor,
+                    horizontal: 5,
+                    font: 10,
+                    vertical: 2,
+                  ),
+                ),
+              ):Container();
             },
-            child: Container(
-              width: 81,
-              height: 38,
-              child: CommonButton(
-                title: "Save",
-                color: AppColors.appColor,
-                horizontal: 5,
-                font: 10,
-                vertical: 2,
-              ),
-            ),
-          */ SizedBox()
-              : InkWell(
-            onTap: () {
-              voidCallback1();
-            },
-            child: Container(
-              width: 81,
-              height: 38,
-              child: CommonButton(
-                title: "+ Add Match",
-                color: AppColors.appColor,
-                horizontal: 5,
-                font: 10,
-                vertical: 2,
-              ),
-            ),
           ),
+
+
         ],
       ),
     );
@@ -227,6 +219,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
   String? _userName;
   String? _profile;
+  String? _email;
 @override
   void initState() {
     // TODO: implement initState
@@ -239,11 +232,14 @@ class _DrawerScreenState extends State<DrawerScreen> {
   void _loadUserName() async {
     String? name = await AppPreferences().getName();
     String? profile = await AppPreferences().getImage();
+    String? email = await AppPreferences().getEmail();
     setState(() {
       _userName = name ?? 'Guest';
       _profile = Uri.tryParse(profile ?? '')?.hasAbsolutePath ?? false
           ? profile
           : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
+      _email = email ?? '';
+      GlobalImageManager().updateText(name?? '');
     });
   }
   @override
@@ -277,6 +273,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
           },
           button: GlobleValue.button.value==1?true:false,
           saveButton: GlobleValue.button.value == 2?true:false,
+          
+          
           title: '',
           actions: AppImages.image(AppImages.logo, height: 30),
           voidCallback2: () {
@@ -291,6 +289,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               );
               GlobleValue.selectedScreen.value = MultiBlocProvider(
                   providers: [
+                    ChangeNotifierProvider.value(value:  GlobalImageManager()),
                     BlocProvider<LeaderBoardBloc>(
                       create: (context) => LeaderBoardBloc(),
                     ),
@@ -348,20 +347,126 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                              height: 40,width: 40,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(image: NetworkImage(_profile.toString()),fit: BoxFit.fill),
-                                  borderRadius: BorderRadius.circular(100),border: Border.all(color: AppColors.whiteColor,width: 0.2),),
-                                // child: Image.network(_profile.toString(),height: 40,width: 40),
+                              Consumer<GlobalImageManager>(
+                                builder: (context, imageManager, child) {
+                                  if (!mounted) {
+                                    return SizedBox.shrink();
+                                  }
+
+
+                                  try {
+                                    if (imageManager.profileImagePath.isNotEmpty) {
+                                      return Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Image.file(
+                                          File(imageManager.profileImagePath),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    } else {
+                                      return _profile!=null ?Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Image.network(
+                                          _profile.toString(),
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: CircularProgressIndicator(color: AppColors.appColor,),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                            return Image.asset(
+                                              'assets/images/placeholder.jpg',
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                          :Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Image.asset("assets/images/placeholder.jpg")
+                                      );
+                                    }
+                                  } catch (e) {
+                                    return Text('The image manager has been disposed.');
+                                  }
+                                },
                               ),
                               SizedBox(width: 10,),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(_userName.toString(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-                                    Text(overflow: TextOverflow.ellipsis,"$_userName@gmail.com",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
+                                    Consumer<GlobalImageManager>(
+                                      builder: (context, imageManager, child) {
+                                        if (!mounted) {
+                                          return SizedBox.shrink();
+                                        }
+
+                                        try {
+                                          if (imageManager.textData.isNotEmpty) {
+                                            return Text(
+                                              imageManager.textData, // Display the text data from GlobalImageManager
+                                              style: AppTextStyles.athleticStyle(
+                                                fontSize: 14,
+                                                fontFamily: AppTextStyles.sfPro700,
+                                                color: AppColors.whiteColor,
+                                              ),
+                                            );
+                                          } else {
+                                            return _userName != null
+                                                ? Text(
+                                              _userName.toString(),
+                                              style: AppTextStyles.athleticStyle(
+                                                fontSize: 14,
+                                                fontFamily: AppTextStyles.sfPro700,
+                                                color: AppColors.whiteColor,
+                                              ),
+                                            )
+                                                : Text(
+                                              'No data available', // Default text if no data
+                                              style: AppTextStyles.athleticStyle(
+                                                fontSize: 14,
+                                                fontFamily: AppTextStyles.sfPro700,
+                                                color: AppColors.whiteColor,
+                                              ),
+                                            );
+                                          }
+                                        } catch (e) {
+                                          return Text(
+                                            'The text manager has been disposed.',
+                                            style: AppTextStyles.athleticStyle(
+                                              fontSize: 14,
+                                              fontFamily: AppTextStyles.sfPro700,
+                                              color: AppColors.whiteColor,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    Text(overflow: TextOverflow.ellipsis,"$_email",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
                                   ],
                                 ),
                               ),
@@ -612,12 +717,50 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  String url='https://quietbounce.com/?trafficSource=qbounce.netlify.app';
+  bool isLoading = true;
+  late final WebViewController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            print("onPageStarted");
+            setState(() {
+              isLoading = true;
+            });
+          },
+          onUrlChange: (change) {
+            print("onUrlChange");
+            setState(() {
+              isLoading = false;
+            });
+          },
+          onPageFinished: (String url) {
+            print("onPageFinished");
+
+          },
+          onWebResourceError: (WebResourceError error) {
+            print("URL: ${error.url}, Description: ${error.description}");
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(url));
+  }
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Text("Cart Screen".toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)),
-      ),
+    return Stack(
+      children: [
+        WebViewWidget(controller: _controller),
+        if (isLoading)
+          const Center(
+            child: CircularProgressIndicator(color: AppColors.appColor,),
+          ),
+      ],
     );
   }
 }

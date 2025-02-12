@@ -17,15 +17,19 @@ import 'package:q_bounce/screens/profile_screen_view/update_profile_bloc/update_
 
 import '../../app_services/app_preferences.dart';
 import '../../app_services/common_Capital.dart';
+import '../../app_services/global_image_manager.dart';
 import '../../common_widget/common_button.dart';
 import '../../common_widget/common_text_field.dart';
 import '../../common_widget/custom_snackbar.dart';
 import '../../constant/app_color.dart';
 import '../../constant/app_strings.dart';
 import '../../constant/app_text_style.dart';
+import '../home_screen_view/home_screen.dart';
+import '../leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../state_screen_view/statistics_bloc/statistics_bloc.dart';
 import '../state_screen_view/statistics_delete_bloc/statistics_delete_bloc.dart';
 import '../state_screen_view/statistics_edit_bloc/statistics_edit_event.dart';
+import '../training_screen_view/training_program_bloc/training_program_bloc.dart';
 import '../your_stats_screen_view/your_stats_screen.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -59,6 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   File? _image;
   String? _userName;
   String? _profile;
+  bool imageValue = false;
   // ... existing code ...
 
   Future<void> _pickImage() async {
@@ -73,6 +78,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (convertedFile != null) {
         setState(() {
           _image = File(convertedFile.path);
+            GlobalImageManager().updateProfileImage(convertedFile.path ?? '');
+
         });
       }
     }
@@ -124,7 +131,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });}
   @override
   Widget build(BuildContext context) {
-    context.read<ProfileBloc>().add(FetchProfile());
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -132,85 +138,170 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
         child: SingleChildScrollView(
-          child: BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              if (state is ProfileLoaded) {
-                firstNameController.text = state.getProfileResponse.data!.firstName ?? '';
-                lastNameController.text = state.getProfileResponse.data!.lastName ?? '';
-                jerseyNumberController.text = state.getProfileResponse.data!.jerseyNumber.toString();
-                instagramHandleController.text = state.getProfileResponse.data!.instagram ?? '';
+          child: Column(
+            children: [
 
-                selectedGender = state.getProfileResponse.data!.gender ?? 'Male';
-                selectedPosition = state.getProfileResponse.data!.position ?? 'Power Forward';
-                AppPreferences().saveName(state.getProfileResponse.data!.firstName.toString());
-                AppPreferences().saveImage(state.getProfileResponse.data!.image.toString());
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.profile.toUpperCase(),
-                      style: AppTextStyles.athleticStyle(
-                        fontSize: 28,
-                        fontFamily: AppTextStyles.athletic,
-                        color: AppColors.whiteColor,
-                      ),
-                    ),
-                    Center(
-                      child: GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 50, bottom: 25),
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            color: AppColors.faq,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.appColor, width: 5),
+
+              BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  if (state is ProfileLoaded) {
+                    firstNameController.text = state.getProfileResponse.data!.firstName ?? '';
+                    lastNameController.text = state.getProfileResponse.data!.lastName ?? '';
+                    jerseyNumberController.text = state.getProfileResponse.data!.jerseyNumber.toString();
+                    instagramHandleController.text = state.getProfileResponse.data!.instagram ?? '';
+
+                    selectedGender = state.getProfileResponse.data!.gender ?? 'Male';
+                    selectedPosition = state.getProfileResponse.data!.position ?? 'Power Forward';
+                    AppPreferences().saveName(state.getProfileResponse.data!.firstName.toString());
+                    AppPreferences().saveImage(state.getProfileResponse.data!.image.toString());
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.profile.toUpperCase(),
+                          style: AppTextStyles.athleticStyle(
+                            fontSize: 28,
+                            fontFamily: AppTextStyles.athletic,
+                            color: AppColors.whiteColor,
                           ),
-                          child: _image == null
-                              ?_profile!=null?ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(_profile.toString())
-              ): Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Upload Image",
-                                style: AppTextStyles.athleticStyle(
-                                  fontSize: 16,
-                                  fontFamily: AppTextStyles.sfPro700,
-                                  color: AppColors.whiteColor,
-                                ),
-                              ),
-                              AppImages.image(AppImages.upload, height: 20, width: 20),
-                            ],
-                          )
-                              : ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(_image!.path),
-                              fit: BoxFit.cover,
+                        ),
+                        Center(
+                          child: InkWell(
+                            onTap: () async {
+                              // Assuming _pickImage is a method that opens a file picker
+                              await _pickImage(); // Call the image picker and update the state
+                            },
+                            child: Consumer<GlobalImageManager>(
+                              builder: (context, imageManager, child) {
+                                if (!mounted) {
+                                  return SizedBox.shrink();
+                                }
+
+                                try {
+                                  if (imageManager!.profileImagePath.isNotEmpty) {
+                                    imageValue = true;
+
+                                    return Center(
+                                      child: GestureDetector(
+                                        onTap: _pickImage,
+                                        child: Container(
+                                          margin: EdgeInsets.only(top: 25, bottom: 25),
+                                          height: 150,
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.faq,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: AppColors.appColor, width: 5),
+                                          ),
+                                          child: _image == null
+                                              ? _profile != null
+                                              ? ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Image.network(_profile.toString()))
+                                              : Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Upload Image",
+                                                style: AppTextStyles.athleticStyle(
+                                                  fontSize: 16,
+                                                  fontFamily: AppTextStyles.sfPro700,
+                                                  color: AppColors.whiteColor,
+                                                ),
+                                              ),
+                                              AppImages.image(AppImages.upload, height: 20, width: 20),
+                                            ],
+                                          )
+                                              : ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.file(
+                                              File(imageManager!.profileImagePath),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    imageValue = _profile != null;
+
+                                    return InkWell(
+                                      onTap: _pickImage,  // Corrected here
+                                      child: Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                                        child: _profile != null
+                                            ? Container(
+                                          margin: EdgeInsets.only(top: 50, bottom: 25),
+                                          height: 150,
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.faq,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: AppColors.appColor, width: 5),
+                                          ),
+                                          child: Image.network(
+                                            _profile.toString(),
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child; // Display the network image when fully loaded
+                                              } else {
+                                                // Show a loading spinner while the image loads
+                                                return Center(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: CircularProgressIndicator(color: AppColors.appColor),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                              return Image.asset(
+                                                'assets/images/placeholder.jpg', // Use placeholder if image fails to load
+                                                fit: BoxFit.cover,
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Container(
+                                          margin: EdgeInsets.only(top: 50, bottom: 25),
+                                          height: 150,
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.faq,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: AppColors.appColor, width: 5),
+                                          ),
+                                          child: Image.asset("assets/images/placeholder.jpg"),
+                                        ),
+                                      ),
+                                    ); // Default icon if no image
+                                  }
+                                } catch (e) {
+                                  return Text('The image manager has been disposed.');
+                                }
+                              },
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    dataFormWidget(),
-                    SizedBox(height: 20,),
-                    Row(
-                      children: [
-                        saveData(),
-                        Spacer()
+                        dataFormWidget(),
+                        SizedBox(height: 20,),
+                        Row(
+                          children: [
+                            saveData(),
+                            Spacer()
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                );
-              } else if (state is ProfileLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
-              } else {
-                return Center(child: Text("Something went wrong"));
-              }
-            },
+                    );
+                  } else if (state is ProfileLoading) {
+                    return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
+                  } else {
+                    return Center(child: Text("Something went wrong"));
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -221,6 +312,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       listener: (context, state) {
         if (state is ProfileUpdateLoaded) {
           ScaffoldMessengerHelper.showMessage(state.updateProfileResponse.message.toString());
+          setState(() {
+            GlobleValue.button.value =0;
+            GlobleValue.selectedIndex.value =0;
+          });
+          GlobleValue.selectedScreen.value = MultiBlocProvider(
+              providers: [
+                BlocProvider<LeaderBoardBloc>(
+                  create: (context) => LeaderBoardBloc(),
+                ),
+                BlocProvider<TrainingProgramBloc>(
+                  create: (context) => TrainingProgramBloc(),
+                ),
+
+              ],
+              child: HomeScreen(key: UniqueKey()));
         }
         // if (state is ProfileUpdateError) {
         //   ScaffoldMessengerHelper.showMessage(state.errorMessage.toString());
