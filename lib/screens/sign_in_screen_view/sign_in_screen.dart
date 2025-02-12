@@ -111,7 +111,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ? BlocBuilder<ConfirmOTPBloc, ConfirmOTPState>(
                         builder: (context, state) {
                           if (state is ConfirmOTPLoading) {
-                            return Center(child: CircularProgressIndicator());
+                            return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                           }
                           return InkWell(
                             onTap: () {
@@ -140,19 +140,27 @@ class _SignInScreenState extends State<SignInScreen> {
                           : BlocBuilder<SendOTPBloc, SendOTPState>(
                         builder: (context, state) {
                           if (state is SendOTPLoading) {
-                            return Center(child: CircularProgressIndicator());
+                            return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                           }
                           return InkWell(
                             onTap: () {
-                              if (_emailController.text.isEmpty) {
-                                ScaffoldMessengerHelper.showMessage("Please enter an email");
+                              String email = _emailController.text.trim();
 
+                              // Check if email is empty
+                              if (email.isEmpty) {
+                                ScaffoldMessengerHelper.showMessage("Please enter an email");
                                 return;
                               }
 
-                              BlocProvider.of<SendOTPBloc>(context).add(
-                                FetchSendOTP({"email": _emailController.text}),
-                              );
+                              // General email validation regex
+                              final RegExp emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                              if (!emailRegex.hasMatch(email)) {
+                                ScaffoldMessengerHelper.showMessage("Please enter a valid email address");
+                                return;
+                              }
+
+                              // If valid, proceed with sending OTP
+                              BlocProvider.of<SendOTPBloc>(context).add(FetchSendOTP({"email": email}));
                             },
                             child: CommonButton(
                               title: AppStrings.submit,

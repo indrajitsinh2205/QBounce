@@ -61,7 +61,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>  with SingleTicke
               child: BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
                 builder: (context, state) {
                   if (state is LeaderBoardLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                   } else if (state is LeaderBoardLoaded) {
                     final leadersData = state.leaderBoardResponse.data.leaders;
 

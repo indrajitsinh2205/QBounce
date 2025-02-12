@@ -25,7 +25,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (response != null) {
         emit(ProfileLoaded(response));
       } else {
-        emit(ProfileError('No data found'));
+        emit(ProfileError('Something went Wrong'));
       }
     } catch (e) {
       emit(ProfileError('An unexpected error occurred: $e'));

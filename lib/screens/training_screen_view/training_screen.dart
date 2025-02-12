@@ -147,7 +147,7 @@ class _TrainingScreenState extends State<TrainingScreen> with SingleTickerProvid
               child: BlocBuilder<TrainingProgramBloc, TrainingProgramState>(
                 builder: (context, state) {
                   if (state is TrainingLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                   } else if (state is TrainingLoaded) {
                     var data = state.trainingResponse.data;
 
@@ -188,7 +188,7 @@ class _TrainingScreenState extends State<TrainingScreen> with SingleTickerProvid
                           BlocBuilder<TrainingVideoBloc, TrainingVideoState>(
                             builder: (context, videoState) {
                               if (videoState is TrainingVideoLoading) {
-                                return Center(child: CircularProgressIndicator());
+                                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                               } else if (videoState is TrainingVideoLoaded) {
                                 var videoData = videoState.trainingVideoResponse.data;
                                 if (videoData != null && videoData.videoUrl != null) {
@@ -308,7 +308,7 @@ class _TrainingScreenState extends State<TrainingScreen> with SingleTickerProvid
                 ),
 
               if (isLoading)
-                const Center(child: CircularProgressIndicator()),
+                const Center(child: CircularProgressIndicator(color: AppColors.appColor,)),
 
               if (_chewieController != null && _chewieController!.videoPlayerController.value.isInitialized && !_chewieController!.videoPlayerController.value.isPlaying)
                 Positioned(

@@ -26,8 +26,7 @@ class ConfirmOTPBloc extends Bloc<ConfirmOTPEvent, ConfirmOTPState> {
         print("Response message: ${response.data}");  // Log the response message
         emit(ConfirmOTPLoaded(response));  // Emit the loaded state
       } else {
-        print("Error: No data found");
-        emit(ConfirmOTPError('No data found'));
+        emit(ConfirmOTPError('Something went Wrong'));
       }
 
 

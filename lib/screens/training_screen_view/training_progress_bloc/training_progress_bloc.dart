@@ -23,7 +23,7 @@ class TrainingProgressBloc extends Bloc<TrainingProgressEvent, TrainingProgressS
       if (response != null) {
         emit(TrainingProgressLoaded(response));
       } else {
-        emit(TrainingProgressError('No data found'));
+        emit(TrainingProgressError('Something went Wrong'));
       }
     } catch (e) {
       emit(TrainingProgressError('An unexpected error occurred: $e'));

@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/screens/profile_screen_view/profile_singleton.dart';
 import 'package:video_player/video_player.dart';
@@ -138,7 +139,7 @@ class _VideoSwitcherPageState extends State<VideoSwitcherPage> {
                     fit: BoxFit.cover,
                   ),
                 if (isLoading)
-                  CircularProgressIndicator(color: Colors.white),
+                  CircularProgressIndicator(color: AppColors.appColor),
                 if (isVideoLoaded && !isVideoPlaying)
                   GestureDetector(
                     onTap: _playVideo,

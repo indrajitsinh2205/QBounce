@@ -27,18 +27,23 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final TextEditingController _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(AppStrings.contactUs.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-            SizedBox(height: 10,),
-            Text(AppStrings.contactUsDesc,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
-            // SizedBox(height: 25,),
-            dataFormWidget()
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppStrings.contactUs.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
+              SizedBox(height: 10,),
+              Text(AppStrings.contactUsDesc,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
+              // SizedBox(height: 25,),
+              dataFormWidget()
+            ],
+          ),
         ),
       ),
     );
@@ -71,6 +76,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               BlocConsumer<ContactUsBloc, ContactUsState>(
                 listener: (context, state) {
                   if (state is ContactUsLoaded) {
+                    _uMailController.clear();
+                    _fNameController.clear();
+                    _lNameController.clear();
+                    _messageController.clear();
                     ScaffoldMessengerHelper.showMessage(state.contactUsResponse.message.toString());
                   }
                 },
@@ -98,6 +107,21 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   }
                   return GestureDetector(
                       onTap: () {
+                        String email = _uMailController.text.trim();
+                        final RegExp emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+
+                        if(
+                        _uMailController.text.isEmpty||
+                        _fNameController.text.isEmpty||
+                        _lNameController.text.isEmpty||
+                        _messageController.text.isEmpty
+                        ){
+                          ScaffoldMessengerHelper.showMessage("All field are required");
+                        }
+                        if (!emailRegex.hasMatch(email)) {
+                          ScaffoldMessengerHelper.showMessage("Please enter a valid email address");
+                          return;
+                        }
                         ContactUsRequestModel postData = ContactUsRequestModel(
                        email: _uMailController.text,
                           firstName: _fNameController.text,

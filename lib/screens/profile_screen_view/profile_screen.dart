@@ -124,87 +124,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });}
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-      child: SingleChildScrollView(
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoaded) {
-              firstNameController.text = state.getProfileResponse.data!.firstName ?? '';
-              lastNameController.text = state.getProfileResponse.data!.lastName ?? '';
-              jerseyNumberController.text = state.getProfileResponse.data!.jerseyNumber.toString();
-              instagramHandleController.text = state.getProfileResponse.data!.instagram ?? '';
+    context.read<ProfileBloc>().add(FetchProfile());
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+        child: SingleChildScrollView(
+          child: BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              if (state is ProfileLoaded) {
+                firstNameController.text = state.getProfileResponse.data!.firstName ?? '';
+                lastNameController.text = state.getProfileResponse.data!.lastName ?? '';
+                jerseyNumberController.text = state.getProfileResponse.data!.jerseyNumber.toString();
+                instagramHandleController.text = state.getProfileResponse.data!.instagram ?? '';
 
-              selectedGender = state.getProfileResponse.data!.gender ?? 'Male';
-              selectedPosition = state.getProfileResponse.data!.position ?? 'Power Forward';
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppStrings.profile.toUpperCase(),
-                    style: AppTextStyles.athleticStyle(
-                      fontSize: 28,
-                      fontFamily: AppTextStyles.athletic,
-                      color: AppColors.whiteColor,
+                selectedGender = state.getProfileResponse.data!.gender ?? 'Male';
+                selectedPosition = state.getProfileResponse.data!.position ?? 'Power Forward';
+                AppPreferences().saveName(state.getProfileResponse.data!.firstName.toString());
+                AppPreferences().saveImage(state.getProfileResponse.data!.image.toString());
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppStrings.profile.toUpperCase(),
+                      style: AppTextStyles.athleticStyle(
+                        fontSize: 28,
+                        fontFamily: AppTextStyles.athletic,
+                        color: AppColors.whiteColor,
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: GestureDetector(
-                      onTap: _pickImage,
-                      child: Container(
-                        margin: EdgeInsets.only(top: 50, bottom: 25),
-                        height: 150,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          color: AppColors.faq,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.appColor, width: 5),
-                        ),
-                        child: _image == null
-                            ?_profile!=null?ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(_profile.toString())
-            ): Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Upload Image",
-                              style: AppTextStyles.athleticStyle(
-                                fontSize: 16,
-                                fontFamily: AppTextStyles.sfPro700,
-                                color: AppColors.whiteColor,
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          margin: EdgeInsets.only(top: 50, bottom: 25),
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: AppColors.faq,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.appColor, width: 5),
+                          ),
+                          child: _image == null
+                              ?_profile!=null?ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(_profile.toString())
+              ): Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Upload Image",
+                                style: AppTextStyles.athleticStyle(
+                                  fontSize: 16,
+                                  fontFamily: AppTextStyles.sfPro700,
+                                  color: AppColors.whiteColor,
+                                ),
                               ),
+                              AppImages.image(AppImages.upload, height: 20, width: 20),
+                            ],
+                          )
+                              : ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(_image!.path),
+                              fit: BoxFit.cover,
                             ),
-                            AppImages.image(AppImages.upload, height: 20, width: 20),
-                          ],
-                        )
-                            : ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(_image!.path),
-                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  dataFormWidget(),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      saveData(),
-                      Spacer()
-                    ],
-                  )
-                ],
-              );
-            } else if (state is ProfileLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Center(child: Text("Something went wrong"));
-            }
-          },
+                    dataFormWidget(),
+                    SizedBox(height: 20,),
+                    Row(
+                      children: [
+                        saveData(),
+                        Spacer()
+                      ],
+                    )
+                  ],
+                );
+              } else if (state is ProfileLoading) {
+                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
+              } else {
+                return Center(child: Text("Something went wrong"));
+              }
+            },
+          ),
         ),
       ),
     );
@@ -215,6 +222,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is ProfileUpdateLoaded) {
           ScaffoldMessengerHelper.showMessage(state.updateProfileResponse.message.toString());
         }
+        // if (state is ProfileUpdateError) {
+        //   ScaffoldMessengerHelper.showMessage(state.errorMessage.toString());
+        // }
       },
       builder: (context, state) {
         if(state is ProfileUpdateLoading){
@@ -229,6 +239,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         return GestureDetector(
             onTap: () {
+              if(
+              lastNameController.text.isEmpty||
+              firstNameController.text.isEmpty||
+              selectedCountry!.isEmpty||
+              selectedGender!.isEmpty||
+              instagramHandleController.text.isEmpty||
+              jerseyNumberController.text.isEmpty||
+              selectedPosition!.isEmpty||
+              selectedTeam!.isEmpty
+              // _image!.path.isEmpty
+              ){
+                ScaffoldMessengerHelper.showMessage("All field are required");
+
+              }
               UpdateProfileRequest postData = UpdateProfileRequest(
                   lastName: lastNameController.text,
                   firstName: firstNameController.text,

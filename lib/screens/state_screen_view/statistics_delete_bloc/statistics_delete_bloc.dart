@@ -25,8 +25,7 @@ class StatisticsDeleteBloc extends Bloc<StatisticsDeleteEvent, StatisticsDeleteS
         print("Response message: ${response.message}");  // Log the response message
         emit(StatisticsDeleteLoaded(response));  // Emit the loaded state
       } else {
-        print("Error: No data found");
-        emit(StatisticsDeleteError('No data found'));
+        emit(StatisticsDeleteError('Something went Wrong'));
       }
 
 

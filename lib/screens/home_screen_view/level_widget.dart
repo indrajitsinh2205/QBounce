@@ -76,7 +76,7 @@ class _LevelScreenState extends State<LevelScreen> {
           BlocBuilder<TrainingProgramBloc, TrainingProgramState>(
             builder: (context, state) {
               if (state is TrainingLoading) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
               } else if (state is TrainingLoaded) {
                 var data = state.trainingResponse.data;
 
@@ -103,7 +103,7 @@ class _LevelScreenState extends State<LevelScreen> {
                       BlocBuilder<TrainingVideoBloc, TrainingVideoState>(
                         builder: (context, videoState) {
                           if (videoState is TrainingVideoLoading) {
-                            return Center(child: CircularProgressIndicator());
+                            return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                           } else if (videoState is TrainingVideoLoaded) {
                             var videoData = videoState.trainingVideoResponse.data;
                             // if (videoData != null && videoData.videoUrl != null) {
@@ -111,9 +111,16 @@ class _LevelScreenState extends State<LevelScreen> {
                             //     initializeVideoPlayer(videoData.videoUrl!, videoData.id.toString());
                             //   }
                             // }
-                            return  BlocProvider<TrainingProgressBloc>(
-                               create: (context) => TrainingProgressBloc(),
-                                child: VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData));
+                            return  MultiBlocProvider(
+                               providers: [
+                            BlocProvider<TrainingProgressBloc>(
+                            create: (context) => TrainingProgressBloc(),),
+                                 BlocProvider<TrainingVideoBloc>(
+                            create: (context) => TrainingVideoBloc(),),
+                                 BlocProvider<TrainingProgramBloc>(
+                            create: (context) => TrainingProgramBloc(),),
+                               ],
+                                child: VideoDetailsComponent(videoIndex:data!.currentVideoId!.toInt(),data:videoData,text: widget.text,));
 
                           } else if (videoState is TrainingVideoError) {
                             return Center(child: Text('${videoState.errorMessage}'));

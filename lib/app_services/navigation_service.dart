@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:q_bounce/app_services/common_Capital.dart';
+import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/screens/leaderboard_screen_view/leaderboard_screen.dart';
 import 'package:q_bounce/screens/sign_in_screen_view/confirm_otp_bloc/confirm_otp_bloc.dart';
 import 'package:q_bounce/screens/sign_in_screen_view/send_otp_bloc/send_otp_bloc.dart';
@@ -79,7 +80,7 @@ class NavigationService {
           future: AppPreferences().getToken(), // Fetch the token
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator()); // Show a loading indicator while fetching token
+              return Center(child: CircularProgressIndicator(color: AppColors.appColor,)); // Show a loading indicator while fetching token
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData && snapshot.data != null) {

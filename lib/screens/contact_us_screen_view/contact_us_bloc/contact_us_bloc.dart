@@ -28,7 +28,7 @@ class ContactUsBloc extends Bloc<ContactUsEvent, ContactUsState> {
       if (response != null) {
         emit(ContactUsLoaded(response));
       } else {
-        emit(ContactUsError('No data found'));
+        emit(ContactUsError('Something went Wrong'));
       }
     } catch (e) {
       emit(ContactUsError('An unexpected error occurred: $e'));

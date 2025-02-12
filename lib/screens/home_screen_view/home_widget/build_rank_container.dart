@@ -15,7 +15,8 @@ class BuildRankContainer extends StatelessWidget {
   final String rankBackground;
       final String name;
  final  bool? isCrowned ;
-   BuildRankContainer({super.key, required this.bottom, required this.top, required this.left, required this.height, required this.logoHeight, required this.personImage, required this.rankBackground, required this.name, this.isCrowned});
+ final  String point ;
+   BuildRankContainer({super.key, required this.bottom, required this.top, required this.left, required this.height, required this.logoHeight, required this.personImage, required this.rankBackground, required this.name, this.isCrowned, required this.point});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ class BuildRankContainer extends StatelessWidget {
                         child: Text(
                             overflow: TextOverflow.ellipsis,
                             "$name",style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor))),
-                    Text("US 500 XP",style: AppTextStyles.athleticStyle(fontSize: 11, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor)),
+                    Text("US $point XP",style: AppTextStyles.athleticStyle(fontSize: 11, fontFamily: AppTextStyles.sfPro500, color: AppColors.whiteColor)),
                   ],
                 ))
           ],

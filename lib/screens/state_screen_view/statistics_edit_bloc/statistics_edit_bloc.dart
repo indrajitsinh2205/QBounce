@@ -24,7 +24,7 @@ class StatisticsEditBloc extends Bloc<StatisticsEditEvent, StatisticsEditState> 
       if (response != null) {
         emit(StatisticsEditLoaded(response));
       } else {
-        emit(StatisticsEditError('No data found'));
+        emit(StatisticsEditError('Something went Wrong'));
       }
     } catch (e) {
       emit(StatisticsEditError('An unexpected error occurred: $e'));

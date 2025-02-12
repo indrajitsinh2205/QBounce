@@ -21,7 +21,7 @@ class StatisticsUpdateBloc extends Bloc<StatisticsUpdateEvent, StatisticsUpdateS
       if (response != null) {
         emit(StatisticsUpdateLoaded(response));
       } else {
-        emit(StatisticsUpdateError('No data found'));
+        emit(StatisticsUpdateError('Something went Wrong'));
       }
     } catch (e) {
       emit(StatisticsUpdateError('An unexpected error occurred: $e'));

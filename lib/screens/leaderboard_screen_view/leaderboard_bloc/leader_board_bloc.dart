@@ -22,7 +22,7 @@ class LeaderBoardBloc extends Bloc<LeaderBoardEvent, LeaderBoardState> {
       if (response != null) {
         emit(LeaderBoardLoaded(response));
       } else {
-        emit(LeaderBoardError('No data found'));
+        emit(LeaderBoardError('Something went Wrong'));
       }
     } catch (e) {
       emit(LeaderBoardError('An unexpected error occurred: $e'));

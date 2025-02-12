@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:q_bounce/screens/profile_screen_view/profile_view_model/profile_view_model/profile_endpoint.dart';
 import '../../../../app_services/app_preferences.dart';
 import '../../../../app_services/common_Capital.dart';
 import '../../../../network/base_api_configuration/api_service.dart';
@@ -23,14 +22,17 @@ class UpdateProfileViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+
     String? sessionToken = await AppPreferences().getToken();
     if (sessionToken == null) {
       throw Exception('No session token found');
     }
+
     try {
       final uri = Uri.parse('https://qbounce.api.appmatictech.com/api/user_info'); // Replace with the correct endpoint
       var request = http.MultipartRequest('POST', uri);
-      request.headers['x-session-token']=GlobleValue.session.value;
+      request.headers['x-session-token'] = GlobleValue.session.value;
+
       // Adding text fields to the multipart request
       request.fields['first_name'] = data.firstName ?? '';
       request.fields['last_name'] = data.lastName ?? '';
@@ -49,16 +51,15 @@ class UpdateProfileViewModel extends ChangeNotifier {
 
       // Send request
       final response = await request.send();
-      print(response);
-      print(response.statusCode);
-      final responseString = await response.stream.bytesToString();
-      final jsonResponse = jsonDecode(responseString);
-      print("jsonResponse $jsonResponse");
+      // final responseString = await response.stream.bytesToString();
+      // final jsonResponse = jsonDecode(responseString);
+      // print("jsonResponse $jsonResponse");
       if (response.statusCode == 200) {
         final responseString = await response.stream.bytesToString();
         final jsonResponse = jsonDecode(responseString);
-
-        UpdateProfileResponse updateProfileResponse = UpdateProfileResponse.fromJson(jsonResponse);
+        // Assuming your response model expects data in the format: {is_error: bool, data: [], message: string}
+        final updateProfileResponse = UpdateProfileResponse.fromJson(jsonResponse);
+        print("updateProfileResponse: $updateProfileResponse");
         return updateProfileResponse;
       } else {
         _errorMessage = 'Error: ${response.statusCode}';

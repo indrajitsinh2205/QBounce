@@ -28,8 +28,7 @@ class SignOutBloc extends Bloc<SignOutEvent, SignOutState> {
         print("Response message: ${response.message}");  // Log the response message
         emit(SignOutLoaded(response));  // Emit the loaded state
       } else {
-        print("Error: No data found");
-        emit(SignOutError('No data found'));
+        emit(SignOutError('Something went Wrong'));
       }
 
 

@@ -36,7 +36,7 @@ class ConfirmOtpViewModel extends ChangeNotifier {
         final jsonResponse = jsonDecode(response.body);
 
         ConfirmOtpResponse confirmOtpResponse = ConfirmOtpResponse.fromJson(jsonResponse);
-        GlobleValue.session.value=confirmOtpResponse.data.toString();
+        GlobleValue.session.value=confirmOtpResponse.data!.sessionToken!;
         print("statistics: ${confirmOtpResponse.data}");
         return confirmOtpResponse;
       }

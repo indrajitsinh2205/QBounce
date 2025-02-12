@@ -108,22 +108,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
           builder: (context, state) {
             if (state is LeaderBoardLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
             } else if (state is LeaderBoardLoaded) {
               print("Loaded");
               final leadersData = state.leaderBoardResponse.data.leaders;
               return BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
                 builder: (context, state) {
                   if (state is LeaderBoardLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                   } else if (state is LeaderBoardLoaded) {
                     print("Loaded");
                     final leadersData = state.leaderBoardResponse.data.leaders;
                     return leadersData.length > 0?
                     BuildRankContainer(
-                      bottom: 0,
-                      top: 0.071,
-                      left: 0.022,
+                      point: leadersData[0].totalRewardPoints.toString(),
+
+                      bottom: 0.008,
+                      top: 0.068,
+                      left: 0.028,
                       height: 248,
                       logoHeight: 105,
                       personImage: leadersData[0].user.media.isNotEmpty
@@ -149,7 +151,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
 
         Gridcomponent(selectedButton:selectedButton.toString()),
-        TrainingViewData(),
+        Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 20.0),
+          child: TrainingViewData(),
+        ),
         LeaderBoard(
           padding: 0,
           scoreBool: false,
@@ -166,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             child: BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
               builder: (context, state) {
                 if (state is LeaderBoardLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                 } else if (state is LeaderBoardLoaded) {
                   print("Loaded");
                   final leadersData = state.leaderBoardResponse.data.leaders;
@@ -187,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return  BlocBuilder<TrainingProgramBloc, TrainingProgramState>(
       builder: (context, state) {
         if (state is TrainingLoading) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
         } else if (state is TrainingLoaded) {
           var data = state.trainingResponse.data;
           print("datadata:$data");
@@ -230,6 +235,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           children: [
             if (leaders.length > 1 && leaders[1].user.media.isNotEmpty)
               BuildRankContainer(
+                point: leaders[1].totalRewardPoints.toString(),
                 bottom: 20,
                 top: 0.0020,
                 left: 0.085,
@@ -243,9 +249,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             if (leaders.isNotEmpty && leaders[0].user.media.isNotEmpty)
               BuildRankContainer(
-                bottom: 0,
-                top: 0.071,
-                left: 0.022,
+                point: leaders[0].totalRewardPoints.toString(),
+
+                bottom: 0.008,
+                top: 0.068,
+                left: 0.028,
                 height: 248,
                 logoHeight: 105,
                 personImage: leaders[0].user.media.isNotEmpty
@@ -257,11 +265,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             if (leaders.length > 2 && leaders[2].user.media.isNotEmpty)
               BuildRankContainer(
+                point: leaders[2].totalRewardPoints.toString(),
+
                 bottom: 20,
-                top: 0.00,
-                left: 0.076,
-                height: 164,
-                logoHeight: 66,
+                top: 0.0020,
+                left: 0.085,
+                height: 170,
+                logoHeight: 63,
                 personImage: leaders[2].user.media.isNotEmpty
                     ? leaders[2].user.media.first.originalUrl
                     : '',

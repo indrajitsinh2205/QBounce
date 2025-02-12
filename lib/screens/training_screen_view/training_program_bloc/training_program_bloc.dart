@@ -20,7 +20,7 @@ class TrainingProgramBloc extends Bloc<TrainingProgramEvent, TrainingProgramStat
       if (response != null) {
         emit(TrainingLoaded(response));
       } else {
-        emit(TrainingError('No data found'));
+        emit(TrainingError('Something went Wrong'));
       }
     } catch (e) {
       emit(TrainingError('An unexpected error occurred: $e'));

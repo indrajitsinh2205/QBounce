@@ -232,7 +232,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
     // TODO: implement initState
   context.read<ProfileBloc>().add(FetchProfile());
   _loadUserName();
-  print(_userName);
+  print("_userName $_userName");
 
   super.initState();
   }
@@ -441,7 +441,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
 
                           leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
-                          title: Text('privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                          title: Text('Privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                           onTap: () {
                             setState(() {
                               GlobleValue.selectedScreen.value = PrivacyPolicyScreen();

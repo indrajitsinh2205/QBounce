@@ -16,7 +16,7 @@ class AppStrings{
   static const String dateFormat = "DD-MM-YYYY";
 
   /// UI Message
-  static const String noSTData = "No statistics data available";
+  static const String noSTData = "No statistics data";
   static const String somethingW = "Something Went Wrong";
 
 

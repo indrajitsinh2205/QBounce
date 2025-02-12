@@ -24,7 +24,7 @@ class StatisticsStoreBloc extends Bloc<StatisticsStoreEvent, StatisticsStoreStat
       if (response != null) {
         emit(StatisticsStoreLoaded(response));
       } else {
-        emit(StatisticsStoreError('No data found'));
+        emit(StatisticsStoreError('Something went Wrong'));
       }
     } catch (e) {
       emit(StatisticsStoreError('An unexpected error occurred: $e'));

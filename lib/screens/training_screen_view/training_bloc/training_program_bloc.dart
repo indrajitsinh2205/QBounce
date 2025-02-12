@@ -19,7 +19,7 @@ class TrainingVideoBloc extends Bloc<TrainingVideoEvent, TrainingVideoState> {
       if (response != null) {
         emit(TrainingVideoLoaded(response));
       } else {
-        emit(TrainingVideoError('No data found'));
+        emit(TrainingVideoError('Something went Wrong'));
       }
     } catch (e) {
       emit(TrainingVideoError('An unexpected error occurred: $e'));

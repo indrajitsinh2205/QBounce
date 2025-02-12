@@ -42,7 +42,7 @@ class _StaticLeaderBoardState extends State<StaticLeaderBoard> {
               child: BlocBuilder<LeaderBoardBloc, LeaderBoardState>(
                 builder: (context, state) {
                   if (state is LeaderBoardLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
                   } else if (state is LeaderBoardLoaded) {
                     print("Loaded");
                     final leadersData = state.leaderBoardResponse.data.leaders;
@@ -74,40 +74,44 @@ class _StaticLeaderBoardState extends State<StaticLeaderBoard> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (leaders.length > 0)
+            if (leaders.length > 1)
               BuildRankContainer(
+                point: leaders[1].totalRewardPoints.toString(),
                 bottom: 20,
                 top: 0.0020,
                 left: 0.085,
                 height: 170,
                 logoHeight: 63,
-                personImage: leaders[0].user.media.isNotEmpty
-                    ? leaders[0].user.media[0].originalUrl
-                    : '',
-                rankBackground: AppImages.rank2,
-                name: leaders[0].user.firstName + leaders[0].user.lastName,
-              ),
-            if (leaders.length > 1)
-              BuildRankContainer(
-                bottom: 0,
-                top: 0.071,
-                left: 0.022,
-                height: 248,
-                logoHeight: 105,
                 personImage: leaders[1].user.media.isNotEmpty
                     ? leaders[1].user.media[0].originalUrl
                     : '',
-                rankBackground: AppImages.rank1,
+                rankBackground: AppImages.rank2,
                 name: leaders[1].user.firstName + leaders[1].user.lastName,
+              ),
+            if (leaders.length > 0)
+              BuildRankContainer(
+                point: leaders[0].totalRewardPoints.toString(),
+                bottom: 0.008,
+                top: 0.068,
+                left: 0.028,
+                height: 248,
+                logoHeight: 105,
+                personImage: leaders[0].user.media.isNotEmpty
+                    ? leaders[0].user.media[0].originalUrl
+                    : '',
+                rankBackground: AppImages.rank1,
+                name: leaders[0].user.firstName + leaders[0].user.lastName,
                 isCrowned: true,
               ),
             if (leaders.length > 2)
               BuildRankContainer(
+                point: leaders[2].totalRewardPoints.toString(),
+
                 bottom: 20,
-                top: 0.00,
-                left: 0.076,
-                height: 164,
-                logoHeight: 66,
+                top: 0.0020,
+                left: 0.085,
+                height: 170,
+                logoHeight: 63,
                 personImage: leaders[2].user.media.isNotEmpty
                     ? leaders[2].user.media[0].originalUrl
                     : '',

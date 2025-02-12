@@ -25,7 +25,7 @@ class LevelProfileBloc extends Bloc<LevelProfileEvent, LevelProfileState> {
       if (response != null) {
         emit(LevelProfileLoaded(response));
       } else {
-        emit(LevelProfileError('No data found'));
+        emit(LevelProfileError('Something went Wrong'));
       }
     } catch (e) {
       emit(LevelProfileError('An unexpected error occurred: $e'));

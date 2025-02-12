@@ -27,8 +27,7 @@ class SendOTPBloc extends Bloc<SendOTPEvent, SendOTPState> {
         print("Response message: ${response.message}");  // Log the response message
         emit(SendOTPLoaded(response));  // Emit the loaded state
       } else {
-        print("Error: No data found");
-        emit(SendOTPError('No data found'));
+        emit(SendOTPError('Something went Wrong'));
       }
 
 

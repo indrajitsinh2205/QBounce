@@ -54,13 +54,24 @@ class _YourStatsScreenState extends State<YourStatsScreen> {
                 } else if (state is StatisticsLoaded) {
                   statisticsData = state.getStatisticsResponse.data ?? [];
                   if (statisticsData.isEmpty) {
-                    return Center(child: Text(AppStrings.noSTData.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 100.0),
+                      child: Center(child: Text(AppStrings.noSTData.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 30, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor))),
+                    );
                   }
                   return statisticTable(statisticsData);
                 } else if (state is StatisticsError) {
-                  return Center(child: Text(state.errorMessage.toUpperCase(), style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
+                  return Padding(
+
+                    padding: const EdgeInsets.symmetric(vertical: 100.0),
+
+                    child: Center(child: Text(state.errorMessage.toUpperCase(), style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor))),
+                  );
                 } else {
-                  return Center(child: Text(AppStrings.somethingW.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor)));
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 100.0),
+                    child: Center(child: Text(AppStrings.somethingW.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor))),
+                  );
                 }
               },
             ),
@@ -92,9 +103,12 @@ Widget statisticTable(List<StatisticsData> statistics){
               children: [
                 InkWell(
                   onTap: () {
+
                     setState(() {
-                      GlobleValue.selectedIndex.value=1;
-                      GlobleValue.button.value=0;
+                      GlobleValue.button.value = 20;
+                      GlobleValue.selectedIndex.value = 0;
+                      print("Data of button ${GlobleValue.selectedIndex.value}");
+                      print("Data of button ${GlobleValue.button.value}");
                       GlobleValue.selectedScreen.value = MultiBlocProvider(
                         providers: [
                           BlocProvider<StatisticsEditBloc>(

@@ -29,7 +29,7 @@ import '../your_stats_screen_view/your_stats_screen.dart';
 
 class StatisticsEditScreen extends StatefulWidget {
   var Id;
-   StatisticsEditScreen({super.key,  this.Id});
+  StatisticsEditScreen({super.key,  this.Id});
 
   @override
   State<StatisticsEditScreen> createState() => _StatisticsEditScreenState();
@@ -71,10 +71,11 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
       setState(() {
         selectedDate = formattedDate;
-        print(selectedDate);
+        print(selectedDate); // To confirm the selected date
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -97,14 +98,19 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      child: Padding(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        color: Colors.transparent,
+        child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20),
-          child: widget.Id > 0?BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
+          child: widget.Id > 0
+              ? BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
             builder: (context, state) {
               if (state is StatisticsEditLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
+                return Center(child: CircularProgressIndicator(color: AppColors.appColor));
               } else if (state is StatisticsEditLoaded) {
                 if (widget.Id > 0) {
                   _locationController.text = state.getStatisticsEditResponse.data!.statistics!.location.toString();
@@ -114,7 +120,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                   _ASTController.text = state.getStatisticsEditResponse.data!.statistics!.assists.toString();
                   _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
                   _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
-                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10);
+                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
                 }
                 return FormUI();
               } else if (state is StatisticsEditError) {
@@ -123,11 +129,12 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 return Center(child: Text(AppStrings.somethingW, style: TextStyle(color: Colors.white)));
               }
             },
-          ):FormUI()
+          )
+              : FormUI(),
+        ),
       ),
     );
   }
-
 
   Widget FormUI() {
     return SingleChildScrollView(
@@ -138,70 +145,78 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              widget.Id > 0?updateData():saveData(),
-              // CommonButton(title: "cancel", color: AppColors.faq,),
+              widget.Id > 0 ? updateData() : saveData(),
             ],
           )
         ],
       ),
     );
   }
+
   Widget updateData() {
     return BlocConsumer<StatisticsUpdateBloc, StatisticsUpdateState>(
       listener: (context, state) {
         if (state is StatisticsUpdateLoaded) {
           ScaffoldMessengerHelper.showMessage(state.postStatisticsUpdateResponse.message.toString());
         }
+        if(state is StatisticsUpdateError){
+            ScaffoldMessengerHelper.showMessage(state.errorMessage.toString());
+        }
       },
       builder: (context, state) {
-        if(state is StatisticsUpdateLoading){
-          return CircularProgressIndicator(color: AppColors.appColor,);
+        if (state is StatisticsUpdateLoading) {
+          return CircularProgressIndicator(color: AppColors.appColor);
         }
-        if(state is StatisticsUpdateLoaded){
+        if (state is StatisticsUpdateLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              GlobleValue.button.value =1;
+              GlobleValue.button.value = 1;
+              GlobleValue.selectedIndex.value = 1;
             });
             GlobleValue.selectedScreen.value = MultiBlocProvider(
                 providers: [
-                  BlocProvider<StatisticsBloc>(
-                    create: (BuildContext context) => StatisticsBloc(),
-                  ),
-                  BlocProvider<StatisticsDeleteBloc>(
-                    create: (BuildContext context) => StatisticsDeleteBloc(),
-                  ),
+                  BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                  BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
                 ],
                 child: YourStatsScreen());
           });
-
-
         }
         return GestureDetector(
           onTap: () {
-            PostStatisticsUpdateRequestRequestModel postData = PostStatisticsUpdateRequestRequestModel(
-              location: _locationController.text,
-              opponentTeam: _opponentController.text,
-              pointsScored: _PTSController.text,
-              rebounds: _REBController.text,
-              assists: _ASTController.text,
-              steals: _STLController.text,
-              blockedShots: _BLKController.text,
-              gameDate: selectedDate,
-            );
-            BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
+            if(
+                 _locationController.text.isEmpty||
+                 _opponentController.text.isEmpty||
+                 _PTSController.text.isEmpty||
+                 _REBController.text.isEmpty||
+                 _ASTController.text.isEmpty||
+                 _STLController.text.isEmpty||
+                 _BLKController.text.isEmpty||
+                 selectedDate.isEmpty
+            ){
+              ScaffoldMessengerHelper.showMessage("All field are required");
+
+            }
+            else{
+              PostStatisticsUpdateRequestRequestModel postData = PostStatisticsUpdateRequestRequestModel(
+                location: _locationController.text,
+                opponentTeam: _opponentController.text,
+                pointsScored: _PTSController.text,
+                rebounds: _REBController.text,
+                assists: _ASTController.text,
+                steals: _STLController.text,
+                blockedShots: _BLKController.text,
+                gameDate: selectedDate,
+              );
+              BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
+            }
           },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: AppColors.appColor),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: AppColors.appColor),
             child: Text(
               AppStrings.update,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ),
         );
@@ -215,44 +230,66 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         if (state is StatisticsStoreLoaded) {
           ScaffoldMessengerHelper.showMessage(state.postStatisticsStoreResponse.message.toString());
         }
+        if (state is StatisticsStoreError) {
+          ScaffoldMessengerHelper.showMessage(state.errorMessage.toString());
+        }
       },
       builder: (context, state) {
-        if(state is StatisticsStoreLoading){
-          return CircularProgressIndicator(color: AppColors.appColor,);
+        if (state is StatisticsStoreLoading) {
+          return CircularProgressIndicator(color: AppColors.appColor);
         }
-        if(state is StatisticsStoreLoaded){
+        if (state is StatisticsStoreLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              GlobleValue.button.value =1;
+              GlobleValue.button.value = 1;
+              GlobleValue.selectedIndex.value = 1;
             });
             GlobleValue.selectedScreen.value = MultiBlocProvider(
                 providers: [
-                  BlocProvider<StatisticsBloc>(
-                    create: (BuildContext context) => StatisticsBloc(),
-                  ),
-                  BlocProvider<StatisticsDeleteBloc>(
-                    create: (BuildContext context) => StatisticsDeleteBloc(),
-                  ),
+                  BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                  BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
                 ],
                 child: YourStatsScreen());
-            // NavigationService.navigateTo(NavigationService.statistics);
           });
         }
         return GestureDetector(
           onTap: () {
-            PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
-              location: _locationController.text,
-              opponentTeam: _opponentController.text,
-              pointsScored: _PTSController.text,
-              rebounds: _REBController.text,
-              assists: _ASTController.text,
-              steals: _STLController.text,
-              blockedShots: _BLKController.text,
-              gameDate: selectedDate,
-            );
-            BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore( postData));
-          },
-          child: CommonButton(title: "Save", color: AppColors.appColor)
+            if(
+            _locationController.text.isEmpty||
+                _opponentController.text.isEmpty||
+                _PTSController.text.isEmpty||
+                _REBController.text.isEmpty||
+                _ASTController.text.isEmpty||
+                _STLController.text.isEmpty||
+                _BLKController.text.isEmpty||
+                selectedDate.isEmpty
+            ){
+              ScaffoldMessengerHelper.showMessage("All field are required");
+
+            }else{
+              PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
+                location: _locationController.text,
+                opponentTeam: _opponentController.text,
+                pointsScored: _PTSController.text,
+                rebounds: _REBController.text,
+                assists: _ASTController.text,
+                steals: _STLController.text,
+                blockedShots: _BLKController.text,
+                gameDate: selectedDate,
+              );
+              BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore(postData));
+
+            }
+           },
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: AppColors.appColor),
+            child: Text(
+              AppStrings.save,
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+          ),
         );
       },
     );
@@ -312,15 +349,15 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
           Container(
             padding: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: AppColors.faq),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: AppColors.faq),
                 color: AppColors.faq
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate, 
+                    selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate,
                     style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
                   ),
                 ),
@@ -336,26 +373,4 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         ],
       ),
     );
-  }
-
-  // Widget commonTextField(TextEditingController controller, String label, String hint, bool? numType) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 10.0),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-  //         TextField(
-  //           keyboardType: numType==true?TextInputType.number:TextInputType.name,
-  //           controller: controller,
-  //           decoration: InputDecoration(
-  //             border: OutlineInputBorder(),
-  //             hintText: hint,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-}
-
+  }}

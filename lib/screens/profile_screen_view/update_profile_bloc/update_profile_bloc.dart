@@ -21,11 +21,12 @@ class ProfileUpdateBloc extends Bloc<ProfileUpdateEvent, ProfileUpdateState> {
     emit(ProfileUpdateLoading());
     try {
       final response = await UpdateProfileViewModel().updateProfile(event.postData,event.image);
-      print("statisticsEditResponse1 ${response}");
-      if (response != null) {
-        emit(ProfileUpdateLoaded(response));
+      print("statisticsEditResponse1 ${response?.isError}");
+      if ( response!.isError=="false") {
+        print("response.data ${response?.data}");
+        emit(ProfileUpdateLoaded(response!));
       } else {
-        emit(ProfileUpdateError('No data found'));
+        emit(ProfileUpdateError('Something went Wrong'));
       }
     } catch (e) {
       emit(ProfileUpdateError('An unexpected error occurred: $e'));
