@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_bounce/app_services/app_preferences.dart';
 import 'package:q_bounce/app_services/navigation_service.dart';
 import 'package:q_bounce/screens/sign_in_screen_view/sign_out_bloc/sign_out_bloc.dart';
 
@@ -78,6 +79,8 @@ class CommonAlert {
                         onTap: () {
 
                           BlocProvider.of<SignOutBloc>(context).add(FetchSignOut());
+                          NavigationService.navigateTo(NavigationService.signIn);
+                          AppPreferences().removeToken();
                         },
                         child: Expanded(
                           child: CommonButton(title: confirm, color: AppColors.appColor,horizontal: 10,font: 14,),
