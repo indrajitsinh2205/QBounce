@@ -27,6 +27,7 @@ class _StaticLeaderBoardState extends State<StaticLeaderBoard> {
     return SingleChildScrollView(
       child: Column(
         children: [
+
           LeaderBoard(
             scoreBool: false,
             onLevelSelected: (level) {

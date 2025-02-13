@@ -10,7 +10,9 @@ import '../../training_screen_view/training_program_bloc/training_program_event.
 
 class Gridcomponent extends StatefulWidget {
   final String selectedButton;
-  const Gridcomponent({super.key, required this.selectedButton});
+  final void Function(String) onRebuildParent;
+
+  const Gridcomponent({super.key, required this.selectedButton, required this.onRebuildParent});
 
   @override
   State<Gridcomponent> createState() => _GridcomponentState();
@@ -46,7 +48,7 @@ class _GridcomponentState extends State<Gridcomponent> {
         return GestureDetector(
           onTap: () {
             setState(() {
-              selectedIndex = index;
+              selectedIndex = index;/*widget.onRebuildParent(level[index]);*/
             });
             context.read<TrainingProgramBloc>().add(FetchTraining(level[index]));
 

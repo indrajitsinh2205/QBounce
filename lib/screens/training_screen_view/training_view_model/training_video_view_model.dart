@@ -21,13 +21,13 @@ class TrainingVideoViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-
+    print("response.statusCode ${query}");
     try {
       final endpoint = TrainingApiEndpoint(
         TrainingType.training_video,
         stringPathParam: query,
       );
-
+ 
       final response = await apiService.callApi(endpoint);
       print("response.statusCode ${response.statusCode}");
       // print("response.query ${query}");

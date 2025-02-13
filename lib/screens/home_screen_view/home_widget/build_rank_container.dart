@@ -35,7 +35,26 @@ class BuildRankContainer extends StatelessWidget {
               top: MediaQuery.of(context).size.height * top,
               left: MediaQuery.of(context).size.width * left,
 
-              child:personImage ==null  || personImage.isEmpty?Icon(Icons.import_contacts): Container(
+              child:personImage ==null  || personImage.isEmpty? Container(
+                height: logoHeight,
+                width: logoHeight, // Ensure the container is square
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(logoHeight / 2), // Make it round based on height
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/placeholder.jpg"),
+                    fit: BoxFit.cover, // Ensure the image covers the area
+                  ),
+                ),
+                child: ClipOval( // Ensures the child image is round
+                  child: Image.asset(
+                    "assets/images/placeholder.jpg",
+                    height: logoHeight,
+                    width: logoHeight,
+                    fit: BoxFit.cover, // Ensures the image fills the circular space
+                  ),
+                ),
+              ): Container(
                 height: logoHeight,
                 width: logoHeight, // Ensure the container is square
                 decoration: BoxDecoration(

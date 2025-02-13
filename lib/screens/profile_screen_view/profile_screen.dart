@@ -64,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _userName;
   String? _profile;
   bool imageValue = false;
+  bool loadData = false;
   // ... existing code ...
 
   Future<void> _pickImage() async {
@@ -125,12 +126,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String? profile = await AppPreferences().getImage();
     setState(() {
       _userName = name ?? 'Guest';
-      _profile = Uri.tryParse(profile ?? '')?.hasAbsolutePath ?? false
+      _profile = profile!=null
           ? profile
           : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
-    });}
+   loadData=true;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
+    if(loadData==false){
+      _loadUserName();
+    }
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -195,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           child: _image == null
                                               ? _profile != null
-                                              ? ClipRRect(
+                                               ? ClipRRect(
                                               borderRadius: BorderRadius.circular(8),
                                               child: Image.network(_profile.toString()))
                                               : Column(

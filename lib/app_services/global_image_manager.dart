@@ -63,7 +63,9 @@ class GlobalImageManager extends ChangeNotifier {
 
 
     _profileImagePath = imagePath;
-    AppPreferences().saveImage(_profileImagePath);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('authimage', imagePath);
+    // AppPreferences().saveImage(_profileImagePath);
     if (!_disposed) {
       notifyListeners();
     }

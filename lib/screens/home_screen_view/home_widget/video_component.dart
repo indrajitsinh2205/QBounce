@@ -15,11 +15,14 @@ class VideoComponent extends StatefulWidget {
   final bool isUnlocked;
   final bool? padding;
   final String text;
+  final String? id;
+  final void Function(String id, String text)? onRebuildParent;
+
   const VideoComponent({
     super.key,
     this.data,
     required this.isUnlocked,
-    this.padding, required this.text,
+    this.padding, required this.text,  this.onRebuildParent, this.id,
   });
 
   @override
@@ -28,6 +31,7 @@ class VideoComponent extends StatefulWidget {
 
 class _VideoComponentState extends State<VideoComponent> {
   int? selectedIndex =0; // To track the selected item index
+  String? currentVideoId;
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +40,59 @@ class _VideoComponentState extends State<VideoComponent> {
       physics: NeverScrollableScrollPhysics(),
       padding: EdgeInsets.only(top: 25.54),
       itemBuilder: (context, index) {
+        // Assuming widget.data is a List<Unlocked>
         final item = widget.data?[index];
+        if (widget.data != null) {
+          for (int i = 0; i < widget.data!.length; i++) {
+            print('Index $i: id = ${widget.data![i].id}');
+          }
+        } else {
+          print('No data available');
+        }
 
-        // Determine if this item is selected
-        bool isSelected = selectedIndex == index;
+        int selectedIndexData = widget.data?.indexWhere((item) =>
+        item.id == int.parse(widget.id ?? "-1")
+        ) ?? -1;
+
+        print("selectedIndexData $selectedIndexData");
+        print("widgetId ${widget.id}");
+        print("widget.data?.toList() ${widget.data?.toList().toString()}");
+
+        bool isSelected = widget.id == null ? selectedIndex == index : selectedIndexData == index;
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   setState(() {
+        //     widget.id == null ? selectedIndex = index : selectedIndex = selectedIndexData;
+        //   });
+        // });
 
         return InkWell(
-          onTap: () {
-            setState(() {
-              print("selected index $index");
-              selectedIndex = index; // Update the selected index when clicked
-            });
+            onTap: () {
+              setState(() {
+                print("selected index: $index");
+                print("widget text: ${widget.text}");
 
-            if (widget.isUnlocked) {
-              final currentVideoId = item.id.toString();
-              context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId));
-            }
-          },
+                // Update selected index
+                selectedIndex = index;
+
+                // Update currentVideoId and call the parent callback if provided
+                 currentVideoId = item.id.toString();
+                widget.onRebuildParent?.call(item.categoryName, item.id.toString());
+
+                widget.onRebuildParent != null
+                    ?  currentVideoId
+                    :  currentVideoId;
+                print(widget.onRebuildParent != null
+                    ?  "currentVideoId $currentVideoId"
+                    :  "currentVideoId $currentVideoId");
+              });
+
+              // Proceed only if the video is unlocked
+              if (widget.isUnlocked) {
+                // Dispatch the event with the updated ID
+                print("currentVideoIdData$currentVideoId");
+                context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId.toString()));
+              }
+            },
           child: Container(
             padding: EdgeInsets.only(left: 25, top: 18.5, bottom: 18.5),
             decoration: BoxDecoration(

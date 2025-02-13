@@ -76,11 +76,14 @@ class CommonAlert {
                         return CircularProgressIndicator(color: AppColors.appColor,);
                       }
                       return InkWell(
-                        onTap: () {
+                        onTap: () async{
 
                           BlocProvider.of<SignOutBloc>(context).add(FetchSignOut());
                           NavigationService.navigateTo(NavigationService.signIn);
                           AppPreferences().removeToken();
+                          AppPreferences().removeEmail();
+                          AppPreferences().removeImage();
+                          AppPreferences().removeName();
                         },
                         child: Expanded(
                           child: CommonButton(title: confirm, color: AppColors.appColor,horizontal: 10,font: 14,),
@@ -89,7 +92,7 @@ class CommonAlert {
                     },
                     listener: (context, state) {
                       if (state is SignOutLoaded) {
-                        NavigationService.navigateTo(NavigationService.signIn);
+                        // NavigationService.navigateTo(NavigationService.signIn);
                         // setState(() {
                         //   statisticsData.removeWhere((element) => element.id == deletingId);
                         //   deletingId = null;

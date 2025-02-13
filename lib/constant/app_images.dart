@@ -42,6 +42,7 @@ class AppImages {
   static const String upload = "assets/images/upload.png";
   static const String levelLock = "assets/images/levelLock.png";
   static const String rightArrow = "assets/images/rightArrow.png";
+  static const String calenderIcon = "assets/images/calender_Icon.png";
 
   /// bottomSheet
   static const String home = "assets/images/home.png";

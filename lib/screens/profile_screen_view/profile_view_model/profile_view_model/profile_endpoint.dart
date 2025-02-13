@@ -7,7 +7,7 @@ import '../../../../app_services/common_Capital.dart';
 import '../../../../network/base_api_configuration/api_end_point.dart';
 
 
-enum ProfileType { getProfile,updateProfile,}
+enum ProfileType { getProfile,updateProfile,userDetails}
 
 class ProfileApiEndpoint implements APIEndpoint {
   final ProfileType type;
@@ -51,6 +51,8 @@ class ProfileApiEndpoint implements APIEndpoint {
         return 'user_info';
       case ProfileType.updateProfile:
         return 'user_info';
+        case ProfileType.userDetails:
+        return 'user-details';
 
     }
   }
@@ -62,6 +64,8 @@ class ProfileApiEndpoint implements APIEndpoint {
         return HttpMethod.GET;
       case ProfileType.updateProfile:
         return HttpMethod.POST;
+      case ProfileType.userDetails:
+        return HttpMethod.GET;
 
       default:
         return HttpMethod.POST;

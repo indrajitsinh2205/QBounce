@@ -23,6 +23,8 @@ import '../screens/contact_us_screen_view/contact_us_bloc/contact_us_bloc.dart';
 import '../screens/contact_us_screen_view/contact_us_screen.dart';
 import '../screens/faq_screen_view/faq_screen.dart';
 import '../screens/home_screen_view/home_screen.dart';
+import '../screens/home_screen_view/user_details_bloc/user_details_bloc.dart';
+import '../screens/home_screen_view/user_details_bloc/user_details_event.dart';
 import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
 import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../screens/privacy_policy_screen_view/privacy_policy_screen.dart';
@@ -38,6 +40,7 @@ import '../screens/state_screen_view/statistics_update_bloc/statistics_update_bl
 import '../screens/statistics_edit_view/statistics_edit_screen.dart';
 import '../screens/terms_and_conditons_screen_view/terms_and_conditons_screen.dart';
 import '../screens/training_screen_view/training_program_bloc/training_program_bloc.dart';
+import '../screens/training_screen_view/training_program_bloc/training_program_event.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -136,6 +139,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
                 BlocProvider<TrainingProgramBloc>(
                   create: (context) => TrainingProgramBloc(),
+                ), BlocProvider<UserDetailsBloc>(
+                  create: (context) => UserDetailsBloc(),
                 ),
 
               ],
@@ -184,6 +189,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
                 BlocProvider<TrainingProgramBloc>(
                   create: (context) => TrainingProgramBloc(),
+                ), BlocProvider<UserDetailsBloc>(
+                  create: (context) => UserDetailsBloc(),
                 ),
               ],
               child: HomeScreen());
@@ -224,6 +231,14 @@ class _DrawerScreenState extends State<DrawerScreen> {
   void initState() {
     // TODO: implement initState
   context.read<ProfileBloc>().add(FetchProfile());
+  // context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
+  context.read<UserDetailsBloc>().add(FetchUserDetails());
+  // context.read<TrainingProgramBloc>().add(FetchTraining('advanced'));
+
+  // context.read<TrainingProgramBloc>().add(FetchTraining('pro'));
+
+  // context.read<TrainingProgramBloc>().add(FetchTraining('master'));
+
   _loadUserName();
   print("_userName $_userName");
 
@@ -233,13 +248,14 @@ class _DrawerScreenState extends State<DrawerScreen> {
     String? name = await AppPreferences().getName();
     String? profile = await AppPreferences().getImage();
     String? email = await AppPreferences().getEmail();
+    String? image = await AppPreferences().getImage();
     setState(() {
       _userName = name ?? 'Guest';
       _profile = Uri.tryParse(profile ?? '')?.hasAbsolutePath ?? false
           ? profile
           : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
       _email = email ?? '';
-      GlobalImageManager().updateText(name?? '');
+      // AppPreferences().g
     });
   }
   @override
@@ -298,6 +314,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     ),
                     BlocProvider<TrainingProgramBloc>(
                       create: (context) => TrainingProgramBloc(),
+                    ), BlocProvider<UserDetailsBloc>(
+                      create: (context) => UserDetailsBloc(),
                     ),
                   ],
                   child: HomeScreen());

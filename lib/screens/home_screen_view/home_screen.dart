@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_bounce/app_services/common_Capital.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
 import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_text_style.dart';
 import 'package:q_bounce/screens/home_screen_view/get_level_profile_view_model/get_level_profile_response.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/gridComponent.dart';
+import 'package:q_bounce/screens/home_screen_view/user_details_bloc/user_details_bloc.dart';
+import 'package:q_bounce/screens/home_screen_view/user_details_bloc/user_details_event.dart';
+import 'package:q_bounce/screens/home_screen_view/user_details_bloc/user_details_state.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../app_services/app_preferences.dart';
@@ -37,16 +41,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin  {
   String? _selectedText; // Null means show default UI
   String? selectedButton = "Beginner";
+  String? _id ;
+  String? currentCategory='' ;
 
 
 
-  void _updateUI(String text) {
+  void _updateUI(String text, [String? id]) {
     setState(() {
       _selectedText = text;
-      selectedButton = text;
+      selectedButton = CommonCapital.capitalizeEachWord(text);
+      print("_selectedText $_selectedText");
+      print("selectedButton $selectedButton");
 
+      if (id != null) {
+        print("ID: $id");
+        _id=id;
+      }
     });
   }
+
 
   void resetUI() {
     setState(() {
@@ -57,12 +70,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
+    context.read<UserDetailsBloc>().add(FetchUserDetails());
+    context.read<UserDetailsBloc>().stream.listen((state) {
+      if (state is UserDetailsLoaded) {
+        // Fetch the training program based on the user's category
+        setState(() {
+          print("1234");
+          currentCategory = state.userDetailsResponse.data?.categoryName?.toLowerCase();
 
+        });
+         print("currentCategory $currentCategory");
+
+      }
+    });
     super.initState();
   }
-
+  final List<String> categories = ['Beginner', 'Advanced', 'Pro', 'Master'];
+  int _getCategoryIndex(String category) {
+    return categories.indexOf(category);
+  }
   @override
   Widget build(BuildContext context) {
+    print("currentCategory $currentCategory");
+    int currentIndex = _getCategoryIndex(CommonCapital.capitalizeEachWord(currentCategory.toString()));
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 25),
       child: SingleChildScrollView(
@@ -74,12 +105,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: _buildButton("Beginner",false)),
-                    Expanded(child: _buildButton("Advanced",true)),
-                    Expanded(child: _buildButton("Pro",true)),
-                    Expanded(child: _buildButton("Master",true)),
-                  ],
+                  children: categories.map((category) {
+                    int index = _getCategoryIndex(category);
+                    bool isLocked = index > currentIndex;
+                    return Expanded(
+                      child: _buildButton(category, isLocked),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
@@ -96,7 +128,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     create: (BuildContext context) => LevelProfileBloc(),
                   ),
                 ],
-                child: LevelScreen(text: _selectedText.toString(), ))
+    child: LevelScreen(
+    text: _selectedText.toString(),
+      id:_id
+
+    ))
           ],
         )
       ),
@@ -150,14 +186,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           },
         ),
 
-        Gridcomponent(selectedButton:selectedButton.toString()),
+        Gridcomponent(selectedButton:selectedButton.toString(), onRebuildParent:   _updateUI,),
         Padding(
           padding:  EdgeInsets.symmetric(horizontal: 20.0),
-          child: TrainingViewData(),
+          child: BlocProvider<TrainingVideoBloc>(
+              create: (context) => TrainingVideoBloc(),child: TrainingViewData()),
         ),
         LeaderBoard(
           padding: 0,
-          scoreBool: false,
+          scoreBool: true,
           onLevelSelected: (level) {
             print("Selected Level: $level");
 
@@ -214,8 +251,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
 
-        VideoComponent(data:unLockedData, isUnlocked:true,text: 'beginner'),
-        VideoComponent(data:lockedData,isUnlocked: false,text: 'beginner'),
+        VideoComponent(data:unLockedData, isUnlocked:true,text: 'beginner', onRebuildParent: _updateUI),
+        VideoComponent(data:lockedData,isUnlocked: false,text: 'beginner',onRebuildParent: _updateUI,),
       ],
     );
   }

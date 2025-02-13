@@ -13,6 +13,7 @@ class ApiService {
     }
     print("URI : $uri");
     print("Body : $body");
+    print("Header : $headers");
 
     late http.Response response;
     switch (endpoint.method) {

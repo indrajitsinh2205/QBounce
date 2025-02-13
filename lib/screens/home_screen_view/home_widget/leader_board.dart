@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app_services/common_Capital.dart';
 import '../../../common_widget/common_button.dart';
 import '../../../constant/app_color.dart';
 import '../../../constant/app_images.dart';
 import '../../../constant/app_strings.dart';
 import '../../../constant/app_text_style.dart';
+import '../../leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
+import '../../static_leader_board.dart';
 
 class LeaderBoard extends StatefulWidget {
   final bool? scoreBool;
@@ -31,7 +35,27 @@ class _LeaderBoardState extends State<LeaderBoard> {
       padding:  EdgeInsets.only(top:widget.padding?.toDouble() ?? 25.0),
       child: Column(
         children: [
-          // Existing code...
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(AppStrings.leaderBoard.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
+                SizedBox(width: 5,),
+                widget.scoreBool==false?SizedBox():InkWell(
+                    onTap: () {
+                      setState(() {
+                        GlobleValue.button.value =0;
+                        GlobleValue.selectedIndex.value =3;
+                      });
+                      GlobleValue.selectedScreen.value = BlocProvider<LeaderBoardBloc>(
+                          create: (context) => LeaderBoardBloc(),
+                          child: StaticLeaderBoard());
+                    },
+                    child: CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,))
+              ],
+            ),
+          ),
 
           Container(
             margin: EdgeInsets.only(top: 25),

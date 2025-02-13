@@ -6,6 +6,7 @@ import 'package:q_bounce/app_services/navigation_service.dart';
 import 'package:q_bounce/common_widget/common_app_bar.dart';
 import 'package:q_bounce/common_widget/common_button.dart';
 import 'package:q_bounce/constant/app_color.dart';
+import 'package:q_bounce/constant/app_images.dart';
 import 'package:q_bounce/constant/app_strings.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_update_bloc/statistics_update_view_model/post_statistics_update_request.dart';
 
@@ -43,14 +44,17 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
   final TextEditingController _ASTController = TextEditingController();
   final TextEditingController _STLController = TextEditingController();
   final TextEditingController _BLKController = TextEditingController();
+  final TextEditingController _DateController = TextEditingController();
 
+  String selectedDate = "";
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? initialDate;
 
-    if (GlobleValue.selectedDate.value.isNotEmpty) {
+    // Validate and parse selectedDate if it's not empty
+    if (selectedDate.isNotEmpty) {
       try {
-        initialDate = DateFormat('yyyy-MM-dd').parse(GlobleValue.selectedDate.value);
+        initialDate = DateFormat('yyyy-MM-dd').parse(selectedDate);
       } catch (e) {
         initialDate = DateTime.now(); // Fallback if parsing fails
       }
@@ -67,14 +71,14 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
 
     if (pickedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-
       setState(() {
-        // Update the ValueNotifier and use setState to notify UI
-        GlobleValue.selectedDate.value = formattedDate;
+        selectedDate = formattedDate;
+        print(selectedDate);
+        _DateController.text = selectedDate; // Update selectedDate
+
       });
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -90,26 +94,21 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         _ASTController.clear();
         _STLController.clear();
         _BLKController.clear();
-        GlobleValue.selectedDate.value = "";
+        selectedDate = "";
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Container(
-        color: Colors.transparent,
-        child: Padding(
+    return Container(
+      color: Colors.transparent,
+      child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20),
-          child: widget.Id > 0
-              ? BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
+          child: widget.Id > 0?BlocBuilder<StatisticsEditBloc, StatisticsEditState>(
             builder: (context, state) {
               if (state is StatisticsEditLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.appColor));
+                return Center(child: CircularProgressIndicator(color: AppColors.appColor,));
               } else if (state is StatisticsEditLoaded) {
                 if (widget.Id > 0) {
                   _locationController.text = state.getStatisticsEditResponse.data!.statistics!.location.toString();
@@ -119,7 +118,8 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                   _ASTController.text = state.getStatisticsEditResponse.data!.statistics!.assists.toString();
                   _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
                   _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
-                  GlobleValue.selectedDate.value = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
+                  // _DateController.text = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
+                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
                  }
                 return FormUI();
               } else if (state is StatisticsEditError) {
@@ -131,7 +131,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
           )
               : FormUI(),
         ),
-      ),
+
     );
   }
 
@@ -182,40 +182,30 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         return GestureDetector(
           onTap: () {
-            if(
-                 _locationController.text.isEmpty||
-                 _opponentController.text.isEmpty||
-                 _PTSController.text.isEmpty||
-                 _REBController.text.isEmpty||
-                 _ASTController.text.isEmpty||
-                 _STLController.text.isEmpty||
-                 _BLKController.text.isEmpty||
-                 GlobleValue.selectedDate.value.isEmpty
-            ){
-              ScaffoldMessengerHelper.showMessage("All field are required");
-
-            }
-            else{
-              PostStatisticsUpdateRequestRequestModel postData = PostStatisticsUpdateRequestRequestModel(
-                location: _locationController.text,
-                opponentTeam: _opponentController.text,
-                pointsScored: _PTSController.text,
-                rebounds: _REBController.text,
-                assists: _ASTController.text,
-                steals: _STLController.text,
-                blockedShots: _BLKController.text,
-                gameDate: GlobleValue.selectedDate.value,
-              );
-              BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
-            }
+            PostStatisticsUpdateRequestRequestModel postData = PostStatisticsUpdateRequestRequestModel(
+              location: _locationController.text,
+              opponentTeam: _opponentController.text,
+              pointsScored: _PTSController.text,
+              rebounds: _REBController.text,
+              assists: _ASTController.text,
+              steals: _STLController.text,
+              blockedShots: _BLKController.text,
+              gameDate: _DateController.text,
+            );
+            BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
           },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: AppColors.appColor),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.appColor),
             child: Text(
               AppStrings.update,
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600),
             ),
           ),
         );
@@ -253,6 +243,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         }
         return GestureDetector(
           onTap: () {
+            print("111111");
             if(
             _locationController.text.isEmpty||
                 _opponentController.text.isEmpty||
@@ -261,11 +252,10 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 _ASTController.text.isEmpty||
                 _STLController.text.isEmpty||
                 _BLKController.text.isEmpty||
-                GlobleValue.selectedDate.value.isEmpty
-            ){
+                _DateController.text.isEmpty
+            ) {
               ScaffoldMessengerHelper.showMessage("All field are required");
-
-            }else{
+            }
               PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
                 location: _locationController.text,
                 opponentTeam: _opponentController.text,
@@ -274,21 +264,12 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 assists: _ASTController.text,
                 steals: _STLController.text,
                 blockedShots: _BLKController.text,
-                gameDate: GlobleValue.selectedDate.value,
+                gameDate: selectedDate,
               );
-              BlocProvider.of<StatisticsStoreBloc>(context).add(FetchStatisticsStore(postData));
-
-            }
-           },
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: AppColors.appColor),
-            child: Text(
-              AppStrings.save,
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-          ),
+              BlocProvider.of<StatisticsStoreBloc>(context).add(
+                  FetchStatisticsStore(postData));
+            },
+          child: CommonButton(title: "Save", color: AppColors.appColor)
         );
       },
     );
@@ -356,24 +337,48 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
               children: [
                 Expanded(
                   child:
-                  ValueListenableBuilder<String>(
-                    valueListenable: GlobleValue.selectedDate,
-                    builder: (context, selectedDate, child) {
-                      return Text(
-                        selectedDate.isEmpty ? AppStrings.dateFormat : selectedDate,
-                        style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
-                      );
-                    },
+                  TextField(
+                    controller:  _DateController,
+                    readOnly: true,
+
+                    decoration: InputDecoration(
+
+                      hintText: selectedDate.isEmpty ?
+                      AppStrings.dateFormat :
+                      selectedDate,
+                      hintStyle: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
+                        enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(width: 1, color: Colors.transparent),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(width: 1, color: Colors.transparent),
+            ),
+            focusedBorder: OutlineInputBorder( // Ensures border stays the same when focused
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(width: 1, color: Colors.transparent),
+            ),
+                    ),
                   ),
 
 
                 ),
-                IconButton(
-                  onPressed: () {
-                    _selectDate(context); // Open date picker
-                  },
-                  icon: Icon(Icons.calendar_month,color: AppColors.whiteColor,),
+                InkWell(
+        onTap: () {
+          _selectDate(context); // Open date picker
+        },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: AppImages.image(AppImages.calenderIcon,height: 20,width: 20),
+                  ),
                 ),
+                // IconButton(
+                //   onPressed: () {
+                //     _selectDate(context); // Open date picker
+                //   },
+                //   icon: Icon(Icons.calendar_month,color: AppColors.whiteColor,),
+                // ),
               ],
             ),
           ),

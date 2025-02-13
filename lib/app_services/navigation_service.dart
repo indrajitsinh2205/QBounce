@@ -11,6 +11,7 @@ import 'package:q_bounce/screens/state_screen_view/statistics_screen.dart';
 import 'package:q_bounce/screens/training_screen_view/training_bloc/training_program_bloc.dart';
 
 import '../common_widget/common_app_bar.dart';
+import '../screens/home_screen_view/user_details_bloc/user_details_bloc.dart';
 import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
 import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../screens/on_boarding_screen_view/on_boarding_screen.dart';
@@ -92,7 +93,10 @@ class NavigationService {
                   providers: [
                     ChangeNotifierProvider.value(value:  GlobalImageManager()),
                     ChangeNotifierProvider(create: (context) => ProfileNotifier()),
-                    BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),)
+                    BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),),
+                    BlocProvider<TrainingProgramBloc>(create: (context) => TrainingProgramBloc(),),
+                    BlocProvider<UserDetailsBloc>(create: (context) => UserDetailsBloc(),)
+
                   ],
                   child: DrawerScreen());
             } else {
@@ -171,8 +175,9 @@ class NavigationService {
         return MultiBlocProvider(
                 providers: [
                   ChangeNotifierProvider.value(value:  GlobalImageManager()),
-                 BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),)
-
+                 BlocProvider<ProfileBloc>(create: (context) => ProfileBloc(),),
+                 BlocProvider<TrainingProgramBloc>(create: (context) => TrainingProgramBloc(),),
+                 BlocProvider<UserDetailsBloc>(create: (context) => UserDetailsBloc(),),
                 ],
                 child: DrawerScreen());
 
