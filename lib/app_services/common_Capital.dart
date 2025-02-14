@@ -22,6 +22,9 @@ class GlobleValue {
   static ValueNotifier<String> selectedDate = ValueNotifier<String>('');
   static ValueNotifier<int> button = ValueNotifier<int>(0);
   static ValueNotifier<int> numericCount = ValueNotifier<int>(0);
+  static ValueNotifier<int> currentIndex = ValueNotifier<int>(0);
+  static ValueNotifier<Widget?> overlayScreen = ValueNotifier<Widget?>(null);
+
   static ValueNotifier<Widget> selectedScreen = ValueNotifier<Widget>(MultiBlocProvider(
   providers: [
   BlocProvider<LeaderBoardBloc>(

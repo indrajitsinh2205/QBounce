@@ -28,70 +28,73 @@ class _HowToUseScreenState extends State<HowToUseScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
 
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(AppStrings.heyThere.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
-              Text(AppStrings.howToUse1,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
-              SizedBox(height: 25,),
-              Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                child: AppImages.image(
-                  AppImages.playerG,
-                  width: double.infinity,
-                  // height: 250,
-                  fit: BoxFit.fill,
+      body: Container(
+        decoration: AppImages.background(AppImages.appBackGround),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(AppStrings.heyThere.toUpperCase(),style: AppTextStyles.athleticStyle(fontSize: 32, fontFamily: AppTextStyles.athletic, color: AppColors.whiteColor),),
+                Text(AppStrings.howToUse1,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro400, color: AppColors.whiteColor),),
+                SizedBox(height: 25,),
+                Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                  child: AppImages.image(
+                    AppImages.playerG,
+                    width: double.infinity,
+                    // height: 250,
+                    fit: BoxFit.fill,
+                  ),
                 ),
-              ),
-              SizedBox(height: 14),
-              Text(
-                AppStrings.howItWorks,
-                style: AppTextStyles.athleticStyle(
-                  fontSize: 14,
-                  fontFamily: AppTextStyles.sfPro700,
-                  color: AppColors.whiteColor,
+                SizedBox(height: 14),
+                Text(
+                  AppStrings.howItWorks,
+                  style: AppTextStyles.athleticStyle(
+                    fontSize: 14,
+                    fontFamily: AppTextStyles.sfPro700,
+                    color: AppColors.whiteColor,
+                  ),
                 ),
-              ),
-              SizedBox(height: 1),
-              Text(
-                capitalizeEachWord(AppStrings.howItWorksDesc),
-                overflow: TextOverflow.visible,
-                style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor, false),
-              ),
-              SizedBox(height: 10,),
-              Text(AppStrings.howToUnlock,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-              SizedBox(height: 1,),
-              Text(
-                overflow: TextOverflow.visible,
-                capitalizeEachWord(  AppStrings.howToUnlockDesc),style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor, false),),
-              AppImages.image(AppImages.playerB,width: double.infinity,fit: BoxFit.fill ),
-              const SkillsGuideScreen(),
-              SizedBox(height: 25,),
-              AppImages.image(AppImages.howItGroup,width: double.infinity,fit: BoxFit.fill ),
-              SizedBox(height: 15,),
-              Text(AppStrings.howItStart,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-              Text(
-                overflow: TextOverflow.visible,
-                capitalizeEachWord(  AppStrings.howItStartDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
-              SizedBox(height: 20),
-              AppImages.image(AppImages.teacher, ),
-              SizedBox(height: 15,),
-              Text(AppStrings.maximize,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-              Text(
-                overflow: TextOverflow.visible,
-                capitalizeEachWord( AppStrings.maximizeDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
-
-              SizedBox(height: 20),
-              AppImages.image(AppImages.player, ),
-              SizedBox(height: 15,),
-              Text(AppStrings.masterTrain,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
-              Text(
-                overflow: TextOverflow.visible,
-                capitalizeEachWord( AppStrings.masterTrainDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
-            ],
+                SizedBox(height: 1),
+                Text(
+                  capitalizeEachWord(AppStrings.howItWorksDesc),
+                  overflow: TextOverflow.visible,
+                  style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor, false),
+                ),
+                SizedBox(height: 10,),
+                Text(AppStrings.howToUnlock,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                SizedBox(height: 1,),
+                Text(
+                  overflow: TextOverflow.visible,
+                  capitalizeEachWord(  AppStrings.howToUnlockDesc),style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor, false),),
+                AppImages.image(AppImages.playerB,width: double.infinity,fit: BoxFit.fill ),
+                const SkillsGuideScreen(),
+                SizedBox(height: 25,),
+                AppImages.image(AppImages.howItGroup,width: double.infinity,fit: BoxFit.fill ),
+                SizedBox(height: 15,),
+                Text(AppStrings.howItStart,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                Text(
+                  overflow: TextOverflow.visible,
+                  capitalizeEachWord(  AppStrings.howItStartDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
+                SizedBox(height: 20),
+                AppImages.image(AppImages.teacher, ),
+                SizedBox(height: 15,),
+                Text(AppStrings.maximize,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                Text(
+                  overflow: TextOverflow.visible,
+                  capitalizeEachWord( AppStrings.maximizeDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
+        
+                SizedBox(height: 20),
+                AppImages.image(AppImages.player, ),
+                SizedBox(height: 15,),
+                Text(AppStrings.masterTrain,style: AppTextStyles.athleticStyle(fontSize: 12, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),),
+                Text(
+                  overflow: TextOverflow.visible,
+                  capitalizeEachWord( AppStrings.masterTrainDesc),style: AppTextStyles.getOpenSansGoogleFont(10, AppColors.whiteColor, false),),
+              ],
+            ),
           ),
         ),
       ),

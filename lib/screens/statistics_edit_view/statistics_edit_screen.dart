@@ -30,7 +30,9 @@ import '../your_stats_screen_view/your_stats_screen.dart';
 
 class StatisticsEditScreen extends StatefulWidget {
   var Id;
-  StatisticsEditScreen({super.key,  this.Id});
+  final Function? voidCallbacksuccess;
+
+  StatisticsEditScreen({super.key,  this.Id, this.voidCallbacksuccess});
 
   @override
   State<StatisticsEditScreen> createState() => _StatisticsEditScreenState();
@@ -169,15 +171,19 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         if (state is StatisticsUpdateLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              GlobleValue.button.value = 1;
-              GlobleValue.selectedIndex.value = 1;
+              // GlobleValue.button.value = 1;
+              // GlobleValue.selectedIndex.value = 1;
+              // GlobleValue.currentIndex.value = 1;
+              // GlobleValue.overlayScreen.value = null;
+              widget.voidCallbacksuccess!();
+              GlobleValue.overlayScreen.value = MultiBlocProvider(
+                  providers: [
+                    BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                    BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
+                  ],
+                  child: YourStatsScreen());
             });
-            GlobleValue.selectedScreen.value = MultiBlocProvider(
-                providers: [
-                  BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
-                  BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
-                ],
-                child: YourStatsScreen());
+
           });
         }
         return GestureDetector(
@@ -230,15 +236,19 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         if (state is StatisticsStoreLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              GlobleValue.button.value = 1;
-              GlobleValue.selectedIndex.value = 1;
+              // GlobleValue.button.value = 1;
+              // GlobleValue.selectedIndex.value = 1;
+              // GlobleValue.currentIndex.value = 1;
+              // GlobleValue.overlayScreen.value = null;
+              widget.voidCallbacksuccess!();
+              GlobleValue.overlayScreen.value = MultiBlocProvider(
+                  providers: [
+                    BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                    BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
+                  ],
+                  child: YourStatsScreen());
             });
-            GlobleValue.selectedScreen.value = MultiBlocProvider(
-                providers: [
-                  BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
-                  BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
-                ],
-                child: YourStatsScreen());
+
           });
         }
         return GestureDetector(
@@ -338,11 +348,10 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 Expanded(
                   child:
                   TextField(
-                    controller:  _DateController,
+                    // controller:  _DateController,
                     readOnly: true,
-
+                    style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
                     decoration: InputDecoration(
-
                       hintText: selectedDate.isEmpty ?
                       AppStrings.dateFormat :
                       selectedDate,

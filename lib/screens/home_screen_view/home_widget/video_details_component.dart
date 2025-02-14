@@ -131,6 +131,19 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
           videoPlayerController: _videoPlayerController!,
           autoPlay: false,
           looping: false,
+          placeholder: Container(
+            color: Colors.black87,
+            child: Container(
+              child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                    new AlwaysStoppedAnimation<Color>(AppColors.appColor),
+                  )),
+            ),
+          ),
+
+                  cupertinoProgressColors: ChewieProgressColors(backgroundColor: AppColors.appColor,bufferedColor: AppColors.appColor,handleColor: AppColors.appColor,playedColor: AppColors.appColor),
+                  materialProgressColors:ChewieProgressColors(backgroundColor: AppColors.whiteColor,bufferedColor: AppColors.appColor,)
         );
       });
   }

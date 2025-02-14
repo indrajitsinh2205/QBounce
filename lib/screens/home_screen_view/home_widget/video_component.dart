@@ -30,8 +30,18 @@ class VideoComponent extends StatefulWidget {
 }
 
 class _VideoComponentState extends State<VideoComponent> {
-  int? selectedIndex =0; // To track the selected item index
+  int? selectedIndex;
   String? currentVideoId;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the initial selected index based on widget.id
+    int initialIndex = widget.data?.indexWhere((item) =>
+    item.id == int.tryParse(widget.id ?? "-1")) ??
+        -1;
+    selectedIndex = initialIndex >= 0 ? initialIndex : 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,73 +50,31 @@ class _VideoComponentState extends State<VideoComponent> {
       physics: NeverScrollableScrollPhysics(),
       padding: EdgeInsets.only(top: 25.54),
       itemBuilder: (context, index) {
-        // Assuming widget.data is a List<Unlocked>
         final item = widget.data?[index];
-        if (widget.data != null) {
-          for (int i = 0; i < widget.data!.length; i++) {
-            print('Index $i: id = ${widget.data![i].id}');
-          }
-        } else {
-          print('No data available');
-        }
-
-        int selectedIndexData = widget.data?.indexWhere((item) =>
-        item.id == int.parse(widget.id ?? "-1")
-        ) ?? -1;
-
-        print("selectedIndexData $selectedIndexData");
-        print("widgetId ${widget.id}");
-        print("widget.data?.toList() ${widget.data?.toList().toString()}");
-
-        bool isSelected = widget.id == null ? selectedIndex == index : selectedIndexData == index;
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   setState(() {
-        //     widget.id == null ? selectedIndex = index : selectedIndex = selectedIndexData;
-        //   });
-        // });
+        bool isSelected = selectedIndex == index;
 
         return InkWell(
-            onTap: () {
-              setState(() {
-                print("selected index: $index");
-                print("widget text: ${widget.text}");
+          onTap: () {
+            setState(() {
+              selectedIndex = index;
+              currentVideoId = item?.id.toString();
+              widget.onRebuildParent?.call(item?.categoryName, currentVideoId.toString());
 
-                // Update selected index
-                selectedIndex = index;
-
-                // Update currentVideoId and call the parent callback if provided
-                 currentVideoId = item.id.toString();
-                widget.onRebuildParent?.call(item.categoryName, item.id.toString());
-
-                widget.onRebuildParent != null
-                    ?  currentVideoId
-                    :  currentVideoId;
-                print(widget.onRebuildParent != null
-                    ?  "currentVideoId $currentVideoId"
-                    :  "currentVideoId $currentVideoId");
-              });
-
-              // Proceed only if the video is unlocked
               if (widget.isUnlocked) {
-                // Dispatch the event with the updated ID
-                print("currentVideoIdData$currentVideoId");
-                context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId.toString()));
+                context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
               }
-            },
+            });
+          },
           child: Container(
             padding: EdgeInsets.only(left: 25, top: 18.5, bottom: 18.5),
             decoration: BoxDecoration(
-              color:isSelected && widget.isUnlocked
-                  ? AppColors.appColor  // Set background color when item is selected
-                  : widget.isUnlocked
-                  ? Colors.transparent  // Background color for unlocked items
-                  : Colors.transparent,  // Transparent for locked items
+              color: isSelected && widget.isUnlocked
+                  ? AppColors.appColor
+                  : Colors.transparent,
               border: Border.all(
                 color: isSelected && widget.isUnlocked
-                    ? AppColors.appColor // Border color when selected
-                    : widget.isUnlocked
-                    ? AppColors.whiteColor.withOpacity(0.5)
-                    : AppColors.whiteColor.withOpacity(0.5), // Border for locked items
+                    ? AppColors.appColor
+                    : AppColors.whiteColor.withOpacity(0.5),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(8),
@@ -119,7 +87,7 @@ class _VideoComponentState extends State<VideoComponent> {
                     child: AppImages.image(AppImages.lock, height: 20, width: 20),
                   ),
                 Text(
-                  item.title,
+                  item?.title ?? '',
                   style: AppTextStyles.athleticStyle(
                     fontSize: 18,
                     fontFamily: AppTextStyles.sfPro700,
@@ -132,7 +100,7 @@ class _VideoComponentState extends State<VideoComponent> {
         );
       },
       separatorBuilder: (context, index) => SizedBox(height: 10),
-      itemCount: widget.data!.length,
+      itemCount: widget.data?.length ?? 0,
     );
   }
 }

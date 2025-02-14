@@ -24,7 +24,11 @@ import '../state_screen_view/statistics_update_bloc/statistics_update_bloc.dart'
 import '../statistics_edit_view/statistics_edit_screen.dart';
 
 class YourStatsScreen extends StatefulWidget {
-  const YourStatsScreen({super.key});
+  final Function? voidCallback;
+  final Function? voidCallbacksuccess;
+
+  YourStatsScreen({Key? key,  this.voidCallback, this.voidCallbacksuccess}) : super(key: key);
+
 
   @override
   State<YourStatsScreen> createState() => _YourStatsScreenState();
@@ -103,13 +107,16 @@ Widget statisticTable(List<StatisticsData> statistics){
               children: [
                 InkWell(
                   onTap: () {
-
                     setState(() {
+                      if(widget.voidCallback !=null){
+                        widget.voidCallback!();
+                      }
                       GlobleValue.button.value = 0;
                       GlobleValue.selectedIndex.value = 0;
                       print("Data of button ${GlobleValue.selectedIndex.value}");
                       print("Data of button ${GlobleValue.button.value}");
-                      GlobleValue.selectedScreen.value = MultiBlocProvider(
+                      print("Data of button ${GlobleValue.overlayScreen.value}");
+                      GlobleValue.overlayScreen.value = MultiBlocProvider(
                         providers: [
                           BlocProvider<StatisticsEditBloc>(
                             create: (BuildContext context) => StatisticsEditBloc(),
@@ -121,7 +128,7 @@ Widget statisticTable(List<StatisticsData> statistics){
                             create: (BuildContext context) => StatisticsStoreBloc(),
                           ),
                         ],
-                        child: StatisticsEditScreen(Id: latestGame.id),
+                        child: StatisticsEditScreen(Id: latestGame.id,voidCallbacksuccess: widget.voidCallbacksuccess,),
                       );
                     });
                   },

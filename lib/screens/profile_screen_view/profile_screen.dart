@@ -346,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if(state is ProfileUpdateLoaded){
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              GlobleValue.button.value =1;
+              // GlobleValue.button.value =1;
             });
           });
         }
