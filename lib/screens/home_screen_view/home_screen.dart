@@ -39,8 +39,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin  {
-  String? _selectedText; // Null means show default UI
-  String? selectedButton = "Beginner";
+  // String? _selectedText; // Null means show default UI
+  //  String? selectedButton = "Beginner";
   String? _id ;
   String? currentCategory='' ;
 
@@ -48,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   void _updateUI(String text, [String? id]) {
     setState(() {
-      _selectedText = text;
-      selectedButton = CommonCapital.capitalizeEachWord(text);
-      print("_selectedText $_selectedText");
-      print("selectedButton $selectedButton");
+      GlobleValue.selectedText.value = text;
+      GlobleValue.selectedButton.value = CommonCapital.capitalizeEachWord(text);
+      print("_selectedText ${GlobleValue.selectedText.value}");
+      print("selectedButton ${GlobleValue.selectedButton.value}");
 
       if (id != null) {
         print("ID: $id");
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   void resetUI() {
     setState(() {
-      _selectedText = null; // Reset to default UI
+      GlobleValue.selectedText.value = null; // Reset to default UI
     });
   }
 
@@ -116,23 +116,31 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            _selectedText == null?defaultUI():MultiBlocProvider(
-                providers: [
-                  BlocProvider<TrainingProgramBloc>(
-                    create: (BuildContext context) => TrainingProgramBloc(),
+            ValueListenableBuilder<String?>(
+              valueListenable: GlobleValue.selectedText,
+              builder: (context, value, child) {
+                return value == null
+                    ? defaultUI()
+                    : MultiBlocProvider(
+                  providers: [
+                    BlocProvider<TrainingProgramBloc>(
+                      create: (BuildContext context) => TrainingProgramBloc(),
+                    ),
+                    BlocProvider<TrainingVideoBloc>(
+                      create: (BuildContext context) => TrainingVideoBloc(),
+                    ),
+                    BlocProvider<LevelProfileBloc>(
+                      create: (BuildContext context) => LevelProfileBloc(),
+                    ),
+                  ],
+                  child: LevelScreen(
+                    text: value.toString(),
+                    id: _id,
                   ),
-                  BlocProvider<TrainingVideoBloc>(
-                    create: (BuildContext context) => TrainingVideoBloc(),
-                  ),
-    BlocProvider<LevelProfileBloc>(
-    create: (BuildContext context) => LevelProfileBloc(),
-                  ),
-                ],
-    child: LevelScreen(
-    text: _selectedText.toString(),
-      id:_id
+                );
+              },
+            )
 
-    ))
           ],
         )
       ),
@@ -186,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           },
         ),
 
-        Gridcomponent(selectedButton:selectedButton.toString(), onRebuildParent:   _updateUI,),
+        Gridcomponent(selectedButton:GlobleValue.selectedButton.value.toString(), onRebuildParent:   _updateUI,),
         Padding(
           padding:  EdgeInsets.symmetric(horizontal: 20.0),
           child: BlocProvider<TrainingVideoBloc>(
@@ -322,48 +330,53 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
   Widget _buildButton(String text, bool lock) {
-    bool isSelected = selectedButton == text;
+    return ValueListenableBuilder<String>(
+      valueListenable: GlobleValue.selectedButton,
+      builder: (context, selectedButtonValue, child) {
+        bool isSelected = selectedButtonValue == text;
 
-    return InkWell(
-      highlightColor: Colors.transparent,  // Remove the highlight effect
-      splashColor: Colors.transparent,     // Remove the splash effect
-      onTap: () => _updateUI(text),
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 3),
-        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.appColor // Change the color if selected
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected
-                ? Colors.transparent
-                : AppColors.whiteColor,
-            width: 1,
-          ),
-        ),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                text,
-                style: AppTextStyles.athleticStyle(
-                  fontSize: 12,
-                  fontFamily: AppTextStyles.sfPro700,
-                  color: isSelected ? AppColors.whiteColor : AppColors.whiteColor,
-                ),
+        return InkWell(
+          highlightColor: Colors.transparent, // Remove the highlight effect
+          splashColor: Colors.transparent, // Remove the splash effect
+          onTap: () => _updateUI(text),
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 3),
+            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.appColor // Change the color if selected
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isSelected ? Colors.transparent : AppColors.whiteColor,
+                width: 1,
               ),
-              lock == true
-                  ? AppImages.image(AppImages.levelLock, height: 14, width: 14)
-                  : SizedBox(),
-            ],
+            ),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    text,
+                    style: AppTextStyles.athleticStyle(
+                      fontSize: 12,
+                      fontFamily: AppTextStyles.sfPro700,
+                      color: isSelected
+                          ? AppColors.whiteColor
+                          : AppColors.whiteColor,
+                    ),
+                  ),
+                  lock == true
+                      ? AppImages.image(
+                      AppImages.levelLock, height: 14, width: 14)
+                      : SizedBox(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
-
   }
   Widget _buildRankContainer(double bottom,double top,double left ,double height , double logoHeight,String personImage, String rankBackground,String name,{bool isCrowned = false}) {
     return   SizedBox(

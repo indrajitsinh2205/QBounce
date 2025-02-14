@@ -38,7 +38,7 @@ class UserDetailsViewModel extends ChangeNotifier {
 
         print("statistics: ${userDetailsResponse.data}");
         AppPreferences().saveName(userDetailsResponse.data!.firstName.toString());
-        AppPreferences().saveImage(userDetailsResponse.data!.image.toString());
+          AppPreferences().saveImage(userDetailsResponse.data!.image.toString());
         // GlobalImageManager().updateProfileImage(userDetailsResponse.data?.image ?? '');
 
         return userDetailsResponse;

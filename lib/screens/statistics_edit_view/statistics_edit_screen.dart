@@ -48,15 +48,15 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
   final TextEditingController _BLKController = TextEditingController();
   final TextEditingController _DateController = TextEditingController();
 
-  String selectedDate = "";
+  // String selectedDate = "";
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? initialDate;
 
     // Validate and parse selectedDate if it's not empty
-    if (selectedDate.isNotEmpty) {
+    if (GlobleValue.selectedDate.value.isNotEmpty) {
       try {
-        initialDate = DateFormat('yyyy-MM-dd').parse(selectedDate);
+        initialDate = DateFormat('yyyy-MM-dd').parse(GlobleValue.selectedDate.value);
       } catch (e) {
         initialDate = DateTime.now(); // Fallback if parsing fails
       }
@@ -74,10 +74,8 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
     if (pickedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
       setState(() {
-        selectedDate = formattedDate;
-        print(selectedDate);
-        _DateController.text = selectedDate; // Update selectedDate
-
+        GlobleValue.selectedDate.value = formattedDate; // Update notifier value
+        _DateController.text = formattedDate;          // Update controller text
       });
     }
   }
@@ -96,7 +94,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         _ASTController.clear();
         _STLController.clear();
         _BLKController.clear();
-        selectedDate = "";
+        GlobleValue.selectedDate.value = "";
       });
     }
   }
@@ -121,7 +119,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                   _STLController.text = state.getStatisticsEditResponse.data!.statistics!.steals.toString();
                   _BLKController.text = state.getStatisticsEditResponse.data!.statistics!.blockedShots.toString();
                   // _DateController.text = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
-                  selectedDate = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
+                  GlobleValue.selectedDate.value = state.getStatisticsEditResponse.data!.statistics!.gameDate.toString().substring(0, 10); // Update selectedDate
                  }
                 return FormUI();
               } else if (state is StatisticsEditError) {
@@ -171,7 +169,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         if (state is StatisticsUpdateLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              // GlobleValue.button.value = 1;
+              GlobleValue.button.value = 1;
               // GlobleValue.selectedIndex.value = 1;
               // GlobleValue.currentIndex.value = 1;
               // GlobleValue.overlayScreen.value = null;
@@ -236,7 +234,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
         if (state is StatisticsStoreLoaded) {
           Future.delayed(Duration(milliseconds: 100), () {
             setState(() {
-              // GlobleValue.button.value = 1;
+              GlobleValue.button.value = 1;
               // GlobleValue.selectedIndex.value = 1;
               // GlobleValue.currentIndex.value = 1;
               // GlobleValue.overlayScreen.value = null;
@@ -274,7 +272,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 assists: _ASTController.text,
                 steals: _STLController.text,
                 blockedShots: _BLKController.text,
-                gameDate: selectedDate,
+                gameDate: GlobleValue.selectedDate.value,
               );
               BlocProvider.of<StatisticsStoreBloc>(context).add(
                   FetchStatisticsStore(postData));
@@ -334,64 +332,76 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppStrings.match,style: AppTextStyles.athleticStyle(fontSize: 14, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
-          SizedBox(height: 10,),
+          Text(AppStrings.match,
+              style: AppTextStyles.athleticStyle(
+                  fontSize: 14,
+                  fontFamily: AppTextStyles.sfPro700,
+                  color: AppColors.whiteColor)),
+          SizedBox(height: 10),
           Container(
             padding: EdgeInsets.only(left: 5),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: AppColors.faq),
-                color: AppColors.faq
-            ),
+                color: AppColors.faq),
             child: Row(
               children: [
                 Expanded(
-                  child:
-                  TextField(
-                    // controller:  _DateController,
-                    readOnly: true,
-                    style: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
-                    decoration: InputDecoration(
-                      hintText: selectedDate.isEmpty ?
-                      AppStrings.dateFormat :
-                      selectedDate,
-                      hintStyle: AppTextStyles.getOpenSansGoogleFont(12, AppColors.whiteColor.withOpacity(0.5), false),
-                        enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(width: 1, color: Colors.transparent),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(width: 1, color: Colors.transparent),
-            ),
-            focusedBorder: OutlineInputBorder( // Ensures border stays the same when focused
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(width: 1, color: Colors.transparent),
-            ),
-                    ),
+                  child: ValueListenableBuilder<String>(
+                    valueListenable: GlobleValue.selectedDate,
+                    builder: (context, selectedDate, child) {
+                      return TextField(
+                        controller: _DateController,
+                        readOnly: true,
+                        style: AppTextStyles.getOpenSansGoogleFont(
+                          12,
+                          AppColors.whiteColor.withOpacity(0.5),
+                          false,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: selectedDate.isEmpty
+                              ? AppStrings.dateFormat
+                              : selectedDate,
+                          hintStyle: AppTextStyles.getOpenSansGoogleFont(
+                            12,
+                            AppColors.whiteColor.withOpacity(0.5),
+                            false,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                            BorderSide(width: 1, color: Colors.transparent),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                            BorderSide(width: 1, color: Colors.transparent),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                            BorderSide(width: 1, color: Colors.transparent),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-
-
                 ),
                 InkWell(
-        onTap: () {
-          _selectDate(context); // Open date picker
-        },
+                  onTap: () {
+                    _selectDate(context); // Open date picker
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: AppImages.image(AppImages.calenderIcon,height: 20,width: 20),
+                    child: AppImages.image(AppImages.calenderIcon,
+                        height: 20, width: 20),
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     _selectDate(context); // Open date picker
-                //   },
-                //   icon: Icon(Icons.calendar_month,color: AppColors.whiteColor,),
-                // ),
               ],
             ),
           ),
         ],
       ),
     );
-  }}
+  }
+}

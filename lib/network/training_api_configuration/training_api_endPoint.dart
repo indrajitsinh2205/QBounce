@@ -42,11 +42,11 @@ class TrainingApiEndpoint implements APIEndpoint {
   @override
   String get path {
     switch (type) {
-      // case TrainingType.searchFood:
-      //   return  requestParam != null ? 'search/instant/?$requestParam' : 'search/instant';
-      // case TrainingType.getFood:
-      //   return pathParam != null ? 'search/item/?$pathParam' : 'search/item';
-        case TrainingType.beginner:
+    // case TrainingType.searchFood:
+    //   return  requestParam != null ? 'search/instant/?$requestParam' : 'search/instant';
+    // case TrainingType.getFood:
+    //   return pathParam != null ? 'search/item/?$pathParam' : 'search/item';
+      case TrainingType.beginner:
         return 'trainingPrograms/$stringPathParam';
       case TrainingType.training_video:
         return 'training_video/$stringPathParam';
@@ -67,10 +67,10 @@ class TrainingApiEndpoint implements APIEndpoint {
         return HttpMethod.GET;
       case TrainingType.profile:
         return HttpMethod.GET;
-      // case TrainingType.getFood:
-      //   return HttpMethod.GET;
-      // case TrainingType.getCommonFood:
-      //   return HttpMethod.POST;
+    // case TrainingType.getFood:
+    //   return HttpMethod.GET;
+    // case TrainingType.getCommonFood:
+    //   return HttpMethod.POST;
       default:
         return HttpMethod.POST;
     }

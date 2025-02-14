@@ -142,7 +142,7 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
             ),
           ),
 
-                  cupertinoProgressColors: ChewieProgressColors(backgroundColor: AppColors.appColor,bufferedColor: AppColors.appColor,handleColor: AppColors.appColor,playedColor: AppColors.appColor),
+                  cupertinoProgressColors: ChewieProgressColors(backgroundColor: AppColors.unSelectedNav,bufferedColor: AppColors.appColor,handleColor: AppColors.appColor,playedColor: AppColors.appColor),
                   materialProgressColors:ChewieProgressColors(backgroundColor: AppColors.whiteColor,bufferedColor: AppColors.appColor,)
         );
       });

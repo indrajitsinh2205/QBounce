@@ -19,6 +19,7 @@ import '../constant/app_color.dart';
 import '../constant/app_images.dart';
 import '../constant/app_strings.dart';
 import '../constant/app_text_style.dart';
+import '../screens/cart_screen_view/cart_screen.dart';
 import '../screens/contact_us_screen_view/contact_us_bloc/contact_us_bloc.dart';
 import '../screens/contact_us_screen_view/contact_us_screen.dart';
 import '../screens/faq_screen_view/faq_screen.dart';
@@ -441,7 +442,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                                 ),
                                               )
                                                   : Text(
-                                                'No data available', // Default text if no data
+                                                '', // Default text if no data
                                                 style: AppTextStyles.athleticStyle(
                                                   fontSize: 14,
                                                   fontFamily: AppTextStyles.sfPro700,
@@ -699,6 +700,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         elevation: 0.0,
                         currentIndex: currentIndex,
                         onTap: (index) {
+                          GlobleValue.selectedText.value=null;
+                          GlobleValue.selectedButton.value ='Beginner';
                           print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
                           // Update current index and remove overlay when switching tabs
                           if(GlobleValue.overlayScreen.value != null){
@@ -756,61 +759,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
 
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
-
-  @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  String url='https://quietbounce.com/?trafficSource=qbounce.netlify.app';
-  bool isLoading = true;
-  late final WebViewController _controller;
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (String url) {
-            print("onPageStarted");
-            setState(() {
-              isLoading = true;
-            });
-          },
-          onUrlChange: (change) {
-            print("onUrlChange");
-            setState(() {
-              isLoading = false;
-            });
-          },
-          onPageFinished: (String url) {
-            print("onPageFinished");
-
-          },
-          onWebResourceError: (WebResourceError error) {
-            print("URL: ${error.url}, Description: ${error.description}");
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(url));
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        WebViewWidget(controller: _controller),
-        if (isLoading)
-          const Center(
-            child: CircularProgressIndicator(color: AppColors.appColor,),
-          ),
-      ],
-    );
-  }
-}
 
 
 
