@@ -90,9 +90,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("WebView Example"),
-      ),
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           if (Platform.isIOS)

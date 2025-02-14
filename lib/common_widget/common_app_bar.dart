@@ -198,42 +198,59 @@ class _DrawerScreenState extends State<DrawerScreen> {
   String? _profile;
   String? _email;
   @override
+  @override
   void initState() {
-    // TODO: implement initState
-    context.read<ProfileBloc>().add(FetchProfile());
-    // context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
-    context.read<UserDetailsBloc>().add(FetchUserDetails());
-    // context.read<TrainingProgramBloc>().add(FetchTraining('advanced'));
-
-    // context.read<TrainingProgramBloc>().add(FetchTraining('pro'));
-
-    // context.read<TrainingProgramBloc>().add(FetchTraining('master'));
-
-    _loadUserName();
-    print("_userName $_userName");
-
     super.initState();
+
+    // Sequentially load data to prevent race conditions
+    _initializeData();
   }
+
+  Future<void> _initializeData() async {
+    try {
+      // Dispatch Bloc events with some delay to ensure proper execution
+      context.read<ProfileBloc>().add(FetchProfile());
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      context.read<UserDetailsBloc>().add(FetchUserDetails());
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // Optionally, dispatch other events if needed
+      // context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
+
+      // Load local preferences
+      await _loadUserName();
+    } catch (e) {
+      print("Error initializing data: $e");
+    }
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      String? name = await AppPreferences().getName();
+      String? profile = await AppPreferences().getImage();
+      String? email = await AppPreferences().getEmail();
+
+      setState(() {
+        _userName = name ?? 'Guest';
+        _profile = (profile != null && Uri.tryParse(profile)?.isAbsolute == true)
+            ? profile
+            : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
+        _email = email ?? '';
+      });
+
+      print("Loaded user name: $_userName");
+    } catch (e) {
+      print("Failed to load user info: $e");
+    }
+  }
+
+
+
   void voidcallback00() {
     setState(() {
       print("0.00.00");
 
-    });
-  }
-
-
-  void _loadUserName() async {
-    String? name = await AppPreferences().getName();
-    String? profile = await AppPreferences().getImage();
-    String? email = await AppPreferences().getEmail();
-    String? image = await AppPreferences().getImage();
-    setState(() {
-      _userName = name ?? 'Guest';
-      _profile = Uri.tryParse(profile ?? '')?.hasAbsolutePath ?? false
-          ? profile
-          : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
-      _email = email ?? '';
-      // AppPreferences().g
     });
   }
   @override
@@ -261,7 +278,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       create: (BuildContext context) => StatisticsStoreBloc(),
                     ),
                   ],
-                  child: StatisticsEditScreen(Id: 0),
+                  child: StatisticsEditScreen(Id: 0,),
                 );
               });
             },
@@ -707,7 +724,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           if(GlobleValue.overlayScreen.value != null){
                             GlobleValue.currentIndex.value = index;
                           }
-                          if(index==1){
+                          if(index==1 && GlobleValue.currentIndex.value!=1){
                             GlobleValue.button.value=1;
                             // if(GlobleValue.overlayScreen.value!=null){
                             //    GlobleValue.currentIndex.value = index;
