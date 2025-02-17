@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -26,11 +27,13 @@ import '../screens/faq_screen_view/faq_screen.dart';
 import '../screens/home_screen_view/home_screen.dart';
 import '../screens/home_screen_view/user_details_bloc/user_details_bloc.dart';
 import '../screens/home_screen_view/user_details_bloc/user_details_event.dart';
+import '../screens/home_screen_view/user_details_bloc/user_details_state.dart';
 import '../screens/how_to_use_screen_view/how_to_use_screen.dart';
 import '../screens/leaderboard_screen_view/leaderboard_bloc/leader_board_bloc.dart';
 import '../screens/privacy_policy_screen_view/privacy_policy_screen.dart';
 import '../screens/profile_screen_view/get_profile_bloc/get_profile_bloc.dart';
 import '../screens/profile_screen_view/get_profile_bloc/get_profile_event.dart';
+import '../screens/profile_screen_view/get_profile_bloc/get_profile_state.dart';
 import '../screens/profile_screen_view/profile_screen.dart';
 import '../screens/profile_screen_view/profile_singleton.dart';
 import '../screens/state_screen_view/statistics_bloc/statistics_bloc.dart';
@@ -208,17 +211,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
   Future<void> _initializeData() async {
     try {
-      // Dispatch Bloc events with some delay to ensure proper execution
+      // Call Profile API and wait until it finishes
       context.read<ProfileBloc>().add(FetchProfile());
-      await Future.delayed(const Duration(milliseconds: 300));
+      await context.read<ProfileBloc>().stream.firstWhere(
+            (state) => state is ProfileLoaded || state is ProfileError,
+      );
 
+      // Call User Details API and wait until it finishes
       context.read<UserDetailsBloc>().add(FetchUserDetails());
-      await Future.delayed(const Duration(milliseconds: 300));
+      await context.read<UserDetailsBloc>().stream.firstWhere(
+            (state) => state is UserDetailsLoaded || state is UserDetailsError,
+      );
 
-      // Optionally, dispatch other events if needed
-      // context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
-
-      // Load local preferences
+      // Use SharedPreferences only after both APIs succeed
       await _loadUserName();
     } catch (e) {
       print("Error initializing data: $e");
@@ -238,8 +243,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
             : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
         _email = email ?? '';
       });
-
-      print("Loaded user name: $_userName");
     } catch (e) {
       print("Failed to load user info: $e");
     }
@@ -389,22 +392,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                           ),
-                                          child: Image.network(
-                                            _profile.toString(),
+                                          child: CachedNetworkImage(
+                                            imageUrl: _profile.toString(),
                                             fit: BoxFit.cover,
-                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              } else {
-                                                return Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: CircularProgressIndicator(color: AppColors.appColor,),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                            placeholder: (BuildContext context, String url) => Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: CircularProgressIndicator(
+                                                  color: AppColors.appColor,
+                                               strokeWidth: 1,
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget: (BuildContext context, String url, dynamic error) {
                                               return Image.asset(
                                                 'assets/images/placeholder.jpg',
                                                 fit: BoxFit.cover,
@@ -683,97 +683,122 @@ class _DrawerScreenState extends State<DrawerScreen> {
           ),
 
 
-          bottomNavigationBar: ValueListenableBuilder<int>(
-            valueListenable: GlobleValue.currentIndex,
-            builder: (context, currentIndex, child) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 15,left: 15,right: 15),
-                decoration: BoxDecoration(
-                    color: AppColors.bNavBar,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                          color:AppColors.bShadow.withOpacity(0.6),
-                          spreadRadius: 0,
-                          blurRadius: 100,
-                          offset: Offset(0, 26)
-                      )
-                    ]
-                ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(14),
-                    topRight: Radius.circular(14),
-                    bottomLeft: Radius.circular(14),
-                    bottomRight: Radius.circular(14),
-                  ),
-                  child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: BottomNavigationBar(
-                        backgroundColor: AppColors.bNavBar,
-                        selectedItemColor: AppColors.appColor,
-                        unselectedItemColor: AppColors.unSelectedNav,
-                        type: BottomNavigationBarType.fixed,
-                        elevation: 0.0,
-                        currentIndex: currentIndex,
-                        onTap: (index) {
-                          GlobleValue.selectedText.value=null;
-                          GlobleValue.selectedButton.value ='Beginner';
-                          print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
-                          // Update current index and remove overlay when switching tabs
-                          if(GlobleValue.overlayScreen.value != null){
-                            GlobleValue.currentIndex.value = index;
-                          }
-                          if(index==1 && GlobleValue.currentIndex.value!=1){
-                            GlobleValue.button.value=1;
-                            // if(GlobleValue.overlayScreen.value!=null){
-                            //    GlobleValue.currentIndex.value = index;
-                            // }
-                          }else{
-                            GlobleValue.button.value=0;
-                          }
-                          GlobleValue.currentIndex.value = index;
-                          GlobleValue.overlayScreen.value = null;
-
-                        },
-                        items: <BottomNavigationBarItem>[
-                          BottomNavigationBarItem(
-                            icon: Center(
-                              child: ImageIcon(AssetImage(AppImages.home), size: 24),
-                            ),
-                            label: '', // Keep this empty to remove labels
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Center(
-                              child: ImageIcon(AssetImage(AppImages.state), size: 24),
-                            ),
-                            label: '', // Keep this empty to remove labels
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Center(
-                              child: ImageIcon(AssetImage(AppImages.cart), size: 24),
-                            ),
-                            label: '', // Keep this empty to remove labels
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Center(
-                              child: ImageIcon(AssetImage(AppImages.leader), size: 24),
-                            ),
-                            label: '', // Keep this empty to remove labels
-                          ),
-                        ],
-                      )
-
-                  ),
-                ),
-              );
-            },)
+          bottomNavigationBar:CustomBottomNavBar()
       ),
     );
   }
 }
 
+class CustomBottomNavBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: GlobleValue.currentIndex,
+      builder: (context, currentIndex, child) {
+        return Container(
+          height: 65,
+          margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
+          decoration: BoxDecoration(
+            color: AppColors.bNavBar,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.bShadow.withOpacity(0.6),
+                spreadRadius: 0,
+                blurRadius: 100,
+                offset: Offset(0, 26),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(14),
+              topRight: Radius.circular(14),
+              bottomLeft: Radius.circular(14),
+              bottomRight: Radius.circular(14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _CustomNavItem(
+                  icon: AppImages.home,
+                  isSelected: currentIndex == 0,
+                  onTap: () => _onNavItemTapped(0),
+                ),
+                _CustomNavItem(
+                  icon: AppImages.state,
+                  isSelected: currentIndex == 1,
+                  onTap: () => _onNavItemTapped(1),
+                ),
+                _CustomNavItem(
+                  icon: AppImages.cart,
+                  isSelected: currentIndex == 2,
+                  onTap: () => _onNavItemTapped(2),
+                ),
+                _CustomNavItem(
+                  icon: AppImages.leader,
+                  isSelected: currentIndex == 3,
+                  onTap: () => _onNavItemTapped(3),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
+  void _onNavItemTapped(int index) {
+    GlobleValue.selectedText.value = null;
+    GlobleValue.selectedButton.value = 'Beginner';
+    print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
+
+    if (GlobleValue.overlayScreen.value != null) {
+      GlobleValue.currentIndex.value = index;
+    }
+
+    if (index == 1 && GlobleValue.currentIndex.value != 1) {
+      GlobleValue.button.value = 1;
+    } else {
+      GlobleValue.button.value = 0;
+    }
+    GlobleValue.currentIndex.value = index;
+    GlobleValue.overlayScreen.value = null;
+    GlobleValue.selectedButton.value = '';
+  }
+}
+
+class _CustomNavItem extends StatelessWidget {
+  final String icon;
+  final bool isSelected;
+  final Function onTap;
+
+  _CustomNavItem({
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onTap(),
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          // color: isSelected ? AppColors.appColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: ImageIcon(
+          AssetImage(icon),
+          size: 24,
+          color: isSelected ? AppColors.appColor : AppColors.unSelectedNav,
+        ),
+      ),
+    );
+  }
+}
 
 
 

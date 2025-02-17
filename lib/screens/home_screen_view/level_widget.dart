@@ -34,8 +34,10 @@ class LevelScreen extends StatefulWidget {
 }
 
 class _LevelScreenState extends State<LevelScreen> {
-  String? currentVideoId;
+  String?  currentVideoId ;
   bool showVideo = false;
+  bool isWidgetIdUsed = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -92,10 +94,16 @@ class _LevelScreenState extends State<LevelScreen> {
                   showVideo = true;
                 }
 
-                if (data?.unlocked?.isNotEmpty == true && data!.unlocked?.first.id != null) {
-                  currentVideoId = widget.id??data.unlocked?.first.id.toString();
+                if (data?.unlocked?.isNotEmpty == true) {
+                  if (!isWidgetIdUsed && widget.id != null) {
+                    currentVideoId = widget.id; // Use widget.id only once
+                    isWidgetIdUsed = true;      // Mark that widget.id was used
+                  } else {
+                    currentVideoId = data!.unlocked?.first.id.toString(); // Use first.id for subsequent changes
+                  }
                   context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
                 }
+
 
                 return Column(
                   children: [
@@ -269,40 +277,5 @@ class _LevelScreenState extends State<LevelScreen> {
     );
   }
 
-  // Widget _buildListView(List<dynamic>? data, bool isUnlocked) {
-  //   return ListView.builder(
-  //     shrinkWrap: true,
-  //     itemCount: data?.length ?? 0,
-  //     itemBuilder: (context, index) {
-  //       final item = data?[index];
-  //       return VideoComponent();/*InkWell(
-  //         splashFactory: NoSplash.splashFactory,
-  //         // onTap: () {
-  //         //   if (isUnlocked) {
-  //         //     _videoPlayerController?.pause();
-  //         //     currentVideoId = item.id.toString();
-  //         //     context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
-  //         //   }
-  //         // },
-  //         child: Container(
-  //           margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-  //           height: 50,
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(12),
-  //             border: Border.all(color: AppColors.whiteColor),
-  //           ),
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               if (!isUnlocked)
-  //                 Icon(Icons.lock_clock_outlined, color: Colors.white),
-  //               if (!isUnlocked) SizedBox(width: 5),
-  //               Text(item.title, style: TextStyle(color: Colors.white)),
-  //             ],
-  //           ),
-  //         ),
-  //       );*/
-  //     },
-  //   );
-  // }
+
 }

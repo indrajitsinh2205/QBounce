@@ -106,33 +106,35 @@ Widget statisticTable(List<StatisticsData> statistics){
               motion: ScrollMotion(),
               children: [
                 InkWell(
-                  onTap: () {
-                    setState(() {
-                      if(widget.voidCallback !=null){
-                        widget.voidCallback!();
-                      }
-                      GlobleValue.button.value = 0;
-                      GlobleValue.selectedIndex.value = 0;
-                      print("Data of button ${GlobleValue.selectedIndex.value}");
-                      print("Data of button ${GlobleValue.button.value}");
-                      print("Data of button ${GlobleValue.overlayScreen.value}");
-                      GlobleValue.overlayScreen.value = MultiBlocProvider(
-                        providers: [
-                          BlocProvider<StatisticsEditBloc>(
-                            create: (BuildContext context) => StatisticsEditBloc(),
-                          ),
-                          BlocProvider<StatisticsUpdateBloc>(
-                            create: (BuildContext context) => StatisticsUpdateBloc(),
-                          ),
-                          BlocProvider<StatisticsStoreBloc>(
-                            create: (BuildContext context) => StatisticsStoreBloc(),
-                          ),
-                        ],
-                        child: StatisticsEditScreen(Id: latestGame.id,voidCallbacksuccess: widget.voidCallbacksuccess,),
-                      );
-                    });
-                  },
-                  child: Container(
+                onTap: () {
+          if (mounted) {
+          setState(() {
+          if (widget.voidCallback != null) {
+          widget.voidCallback!();
+          }
+          GlobleValue.button.value = 0;
+          GlobleValue.selectedIndex.value = 0;
+          GlobleValue.overlayScreen.value = MultiBlocProvider(
+          providers: [
+          BlocProvider<StatisticsEditBloc>(
+          create: (BuildContext context) => StatisticsEditBloc(),
+          ),
+          BlocProvider<StatisticsUpdateBloc>(
+          create: (BuildContext context) => StatisticsUpdateBloc(),
+          ),
+          BlocProvider<StatisticsStoreBloc>(
+          create: (BuildContext context) => StatisticsStoreBloc(),
+          ),
+          ],
+          child: StatisticsEditScreen(
+          Id: latestGame.id,
+          voidCallbacksuccess: widget.voidCallbacksuccess,
+          ),
+          );
+          });
+          }
+          }
+          ,    child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 6),
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     height: double.infinity,

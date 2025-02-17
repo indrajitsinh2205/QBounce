@@ -106,20 +106,20 @@ class NavigationService {
           },
         );
 
-      case 'training':
-        return MultiBlocProvider(
-            providers: [
-              BlocProvider<TrainingProgramBloc>(
-                create: (BuildContext context) => TrainingProgramBloc(),
-              ),
-              BlocProvider<TrainingVideoBloc>(
-                create: (BuildContext context) => TrainingVideoBloc(),
-              ),
-              BlocProvider<TrainingProgressBloc>(
-                create: (BuildContext context) => TrainingProgressBloc(),
-              ),
-            ],
-            child: TrainingScreen());
+      // case 'training':
+      //   return MultiBlocProvider(
+      //       providers: [
+      //         BlocProvider<TrainingProgramBloc>(
+      //           create: (BuildContext context) => TrainingProgramBloc(),
+      //         ),
+      //         BlocProvider<TrainingVideoBloc>(
+      //           create: (BuildContext context) => TrainingVideoBloc(),
+      //         ),
+      //         BlocProvider<TrainingProgressBloc>(
+      //           create: (BuildContext context) => TrainingProgressBloc(),
+      //         ),
+      //       ],
+      //       child: TrainingScreen());
       case statistics:
         return  MultiBlocProvider(
             providers: [

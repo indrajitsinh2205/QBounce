@@ -166,9 +166,9 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
 
   bool isVideoCompleted = false;
 
-    void _rebuildPage() {
-      // Trigger the fetch event again to update data
-      context.read<TrainingProgramBloc>().add(FetchTraining(widget.text.toString()));
+  void _rebuildPage() {
+    // Trigger the fetch event again to update data
+    context.read<TrainingProgramBloc>().add(FetchTraining(widget.text.toString()));
 
       // Schedule the rebuild of the parent after the current frame is done
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -203,17 +203,20 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
                               width: double.infinity,
                               fit: BoxFit.cover,
                             ),
-                          if (isLoading) CircularProgressIndicator(color: Colors.white),
+                          if (isLoading) CircularProgressIndicator(color: AppColors.appColor),
                           if (isVideoLoaded && !isVideoPlaying)
                             GestureDetector(
                               onTap: _playVideo,
-                              child: Icon(Icons.play_circle_fill, size: 80, color: Colors.white),
+                              child: Icon(Icons.play_circle_fill, size: 80, color: AppColors.appColor)
                             ),
                           if (isVideoPlaying && _chewieController != null)
                             Chewie(controller: _chewieController!),
                         ],
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   Container(
                     width: double.infinity,

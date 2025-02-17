@@ -21,7 +21,7 @@ class GlobleValue {
   static ValueNotifier<String> session = ValueNotifier<String>('');
   static ValueNotifier<String?> selectedText = ValueNotifier<String?>(null);
   static ValueNotifier<String> selectedDate = ValueNotifier<String>('');
-  static ValueNotifier<String> selectedButton = ValueNotifier<String>('Beginner');
+  static ValueNotifier<String> selectedButton = ValueNotifier<String>('');
   static ValueNotifier<int> button = ValueNotifier<int>(0);
   static ValueNotifier<int> numericCount = ValueNotifier<int>(0);
   static ValueNotifier<int> currentIndex = ValueNotifier<int>(0);

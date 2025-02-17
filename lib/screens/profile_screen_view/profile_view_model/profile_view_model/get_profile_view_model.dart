@@ -39,7 +39,7 @@ class GetProfileViewModel extends ChangeNotifier {
         print("statistics: ${getProfileResponse.data}");
         AppPreferences().saveName(getProfileResponse.data!.firstName.toString());
         AppPreferences().saveImage(getProfileResponse.data!.image.toString());
-        // GlobalImageManager().updateProfileImage(getProfileResponse.data?.image ?? '');
+        AppPreferences().saveImage(getProfileResponse.data?.image ?? '');
 
         return getProfileResponse;
       }

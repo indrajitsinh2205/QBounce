@@ -26,12 +26,12 @@ class CommonAlert {
               borderRadius: BorderRadius.circular(12), // Rounded corners
             ),
             title: Center(
-              child: AppImages.image(
-                AppImages.confirmDelete,
-                height: 78,
-                width: 80,
-                fit: BoxFit.fitWidth,
-              ),
+                child: AppImages.image(
+                  AppImages.confirmDelete,
+                  height: 78,
+                  width: 80,
+                  fit: BoxFit.fitWidth,
+                ),
             ),
             content: SizedBox(
               width: 300, // Set a fixed width for the dialog

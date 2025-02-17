@@ -38,6 +38,10 @@ class MyApp extends StatelessWidget {
       navigatorKey: NavigationService.navigatorKey,
       onGenerateRoute: NavigationService.generateRoute,
       initialRoute: '/',
+      theme: Theme.of(context).copyWith(colorScheme: ColorScheme(
+        primary: Colors.red, brightness: Brightness.light, onPrimary: AppColors.appColor, secondary: AppColors.appColor, onSecondary: AppColors.appColor, error: AppColors.appColor, onError: AppColors.appColor, surface: AppColors.appColor, onSurface: AppColors.appColor,
+        // You should set other properties too
+      )),
       debugShowCheckedModeBanner: false,
     );
   }
