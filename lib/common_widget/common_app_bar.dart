@@ -186,6 +186,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       child: YourStatsScreen(
         key: UniqueKey(),
         voidCallbacksuccess: (){
+          setIndexForOverlayOpen();
           GlobleValue.overlayScreen.value = MultiBlocProvider(
               providers: [
                 BlocProvider<StatisticsBloc>(
@@ -204,6 +205,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
           // This will call voidcallback00 safely after the widget is initialized
           // GlobleValue.selectedIndex.value = 0;
           // GlobleValue.button.value = 0;
+          setIndexForOverlayOpen();
           GlobleValue.overlayScreen.value = MultiBlocProvider(
               providers: [
                 BlocProvider<StatisticsEditBloc>(
@@ -216,7 +218,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   create: (BuildContext context) => StatisticsStoreBloc(),
                 ),
               ],
-              child: StatisticsEditScreen(Id: 0));
+              child: StatisticsEditScreen(Id: 0)
+          );
           GlobleValue.currentIndex.value = 0;
         },
       ),
@@ -225,7 +228,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
     CartScreen(key: UniqueKey()),
     BlocProvider<LeaderBoardBloc>(
         create: (context) => LeaderBoardBloc(),
-        child: StaticLeaderBoard()),
+        child: StaticLeaderBoard()
+    ),
   ];
 
   String? _userName;
@@ -300,6 +304,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 GlobleValue.button.value = 1;
                 GlobleValue.currentIndex.value = 1;
                 GlobleValue.backButton.value = 0;
+                setIndexForOverlayOpen();
                 GlobleValue.overlayScreen.value = MultiBlocProvider(
                     providers: [
                       BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
@@ -314,6 +319,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 GlobleValue.selectedIndex.value=0;
                 GlobleValue.button.value=0;
                 GlobleValue.backButton.value=1;
+                setIndexForOverlayOpen();
                 GlobleValue.overlayScreen.value = MultiBlocProvider(
                   providers: [
                     BlocProvider<StatisticsEditBloc>(
@@ -383,6 +389,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             setState(() {
                               GlobleValue.button.value=2;
                               GlobleValue.backButton.value=0;
+                              setIndexForOverlayOpen();
                               GlobleValue.overlayScreen.value = MultiBlocProvider(
                                   providers: [
                                     BlocProvider<ProfileBloc>(
@@ -548,6 +555,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             onTap: () {
                               setState(() {
                                 GlobleValue.backButton.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = HowToUseScreen();
                                 GlobleValue.button.value=0;
                               });
@@ -570,6 +578,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               setState(() {
                                 GlobleValue.backButton.value=0;
                                 GlobleValue.button.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = HowToCastScreen();
 
                               });
@@ -592,6 +601,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               setState(() {
                                 GlobleValue.backButton.value=0;
                                 GlobleValue.button.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = TermsAndConditonsScreen();
                               });
                               Navigator.pop(context); // Close drawer
@@ -613,6 +623,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               GlobleValue.backButton.value=0;
                               setState(() {
                                 GlobleValue.backButton.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = PrivacyPolicyScreen();
                                 GlobleValue.button.value=0;
                               });
@@ -634,6 +645,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             onTap: () {
                               setState(() {
                                 GlobleValue.backButton.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = FAQPage();
                                 GlobleValue.button.value=0;
                               });
@@ -656,6 +668,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             onTap: () {
                               setState(() {
                                 GlobleValue.backButton.value=0;
+                                setIndexForOverlayOpen();
                                 GlobleValue.overlayScreen.value = MultiBlocProvider(
                                     providers: [
                                       BlocProvider<ContactUsBloc>(
@@ -700,37 +713,40 @@ class _DrawerScreenState extends State<DrawerScreen> {
           body: ValueListenableBuilder<int>(
             valueListenable: GlobleValue.currentIndex,
             builder: (context, currentIndex, child) {
-              // Debugging logs
-              print('Current Index: $currentIndex');
-              print('Overlay Screen: ${GlobleValue.overlayScreen.value}');
-              print('Base Screens Length: ${_baseScreens.length}');
-              print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
+              return ValueListenableBuilder(valueListenable: GlobleValue.overlayScreen, builder: (_, overlay, child) {
+                // Debugging logs
+                // print('Current Index: $currentIndex');
+                // print('Overlay Screen: ${GlobleValue.overlayScreen.value}');
+                // print('Base Screens Length: ${_baseScreens.length}');
+                // print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
 
-              // Validate index and widget lists
-              if (_baseScreens.isEmpty) {
-                print('Error: Base screens list is empty!');
-                return const Center(child: Text('No screens available'));
-              }
+                // Validate index and widget lists
+                if (_baseScreens.isEmpty) {
+                  print('Error: Base screens list is empty!');
+                  return const Center(child: Text('No screens available'));
+                }
 
-              // Ensure overlay screen logic works correctly
-              List<Widget> screens = [];
-              if (GlobleValue.overlayScreen.value != null) {
-                print('Using overlay screen');
-                screens = [GlobleValue.overlayScreen.value!];
-              } else {
-                print('Using base screens');
-                screens = _baseScreens;
-              }
+                // Ensure overlay screen logic works correctly
+                List<Widget> screens = [];
+                if (GlobleValue.overlayScreen.value != null) {
+                  print('Using overlay screen');
+                  screens = [GlobleValue.overlayScreen.value!];
+                } else {
+                  print('Using base screens');
+                  screens = _baseScreens;
+                }
 
-              // Validate current index
-              int validIndex = (currentIndex >= 0 && currentIndex < screens.length) ? currentIndex : 0;
+                // Validate current index
+                int validIndex = (currentIndex >= 0 && currentIndex < screens.length) ? currentIndex : 0;
 
-              print('Final Index: $validIndex | Screens Length: ${screens.length}');
+                print('Current Index:$currentIndex');
+                print('Final Index: $validIndex | Screens Length: ${screens.length}');
 
-              return IndexedStack(
-                index: validIndex,
-                children: screens,
-              );
+                return IndexedStack(
+                  index: validIndex,
+                  children: screens,
+                );
+              });
             },
           ),
 
@@ -741,12 +757,24 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
 }
 
+void setIndexForOverlayOpen() {
+  int index = GlobleValue.currentIndex.value;
+  if (index == 1 || index == 2 || index == 3) {
+    GlobleValue.currentIndex.value = -(index+1);
+  } else if (index == 0) {
+    GlobleValue.currentIndex.value = -1;
+  } else {
+    GlobleValue.currentIndex.value = index;
+  }
+}
+
 class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<int>(
       valueListenable: GlobleValue.currentIndex,
       builder: (context, currentIndex, child) {
+        print("Build - Current Index:$currentIndex");
         return Container(
           height: 65,
           margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
@@ -774,22 +802,22 @@ class CustomBottomNavBar extends StatelessWidget {
               children: [
                 _CustomNavItem(
                   icon: AppImages.home,
-                  isSelected: currentIndex == 0,
+                  isSelected: currentIndex == 0 || currentIndex == -1,
                   onTap: () => _onNavItemTapped(0),
                 ),
                 _CustomNavItem(
                   icon: AppImages.state,
-                  isSelected: currentIndex == 1,
+                  isSelected: currentIndex == 1 || currentIndex == -2,
                   onTap: () => _onNavItemTapped(1),
                 ),
                 _CustomNavItem(
                   icon: AppImages.cart,
-                  isSelected: currentIndex == 2,
+                  isSelected: currentIndex == 2 || currentIndex == -3,
                   onTap: () => _onNavItemTapped(2),
                 ),
                 _CustomNavItem(
                   icon: AppImages.leader,
-                  isSelected: currentIndex == 3,
+                  isSelected: currentIndex == 3 || currentIndex == -4,
                   onTap: () => _onNavItemTapped(3),
                 ),
               ],
@@ -806,8 +834,9 @@ class CustomBottomNavBar extends StatelessWidget {
     GlobleValue.selectedButton.value = 'Beginner';
 
     print("Current Overlay Screen: ${GlobleValue.overlayScreen.value}");
+    print("Current Index: ${GlobleValue.currentIndex.value}");
 
-    // Handle the overlay screen logic
+    // // Handle the overlay screen logic
     if (GlobleValue.overlayScreen.value != null) {
       GlobleValue.currentIndex.value = index;
       GlobleValue.overlayScreen.value = null;
