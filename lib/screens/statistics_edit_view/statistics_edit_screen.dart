@@ -69,7 +69,21 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
       initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.appColor, // Header background color
+              onPrimary: Colors.white, // Header text color
+              onSurface: Colors.black, // Text color
+            ),
+            dialogBackgroundColor: Colors.grey[200], // Background color
+          ),
+          child: child!,
+        );
+      },
     );
+
 
     if (pickedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);

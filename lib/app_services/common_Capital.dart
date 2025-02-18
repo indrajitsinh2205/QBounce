@@ -25,6 +25,7 @@ class GlobleValue {
   static ValueNotifier<int> button = ValueNotifier<int>(0);
   static ValueNotifier<int> numericCount = ValueNotifier<int>(0);
   static ValueNotifier<int> currentIndex = ValueNotifier<int>(0);
+  static ValueNotifier<int> backButton = ValueNotifier<int>(0);
   static ValueNotifier<Widget?> overlayScreen = ValueNotifier<Widget?>(null);
 
   static ValueNotifier<Widget> selectedScreen = ValueNotifier<Widget>(MultiBlocProvider(

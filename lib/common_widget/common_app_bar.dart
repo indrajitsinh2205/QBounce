@@ -53,6 +53,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? saveButton;
   final VoidCallback voidCallback1;
   final VoidCallback voidCallback2;
+  final VoidCallback voidCallback;
 
   CommonAppBar({
     required this.title,
@@ -60,6 +61,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.button = false,
     required this.voidCallback1,
     required this.voidCallback2,
+    required this.voidCallback,
     this.saveButton,
   });
 
@@ -74,17 +76,45 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         leadingWidth: MediaQuery.of(context).size.width/2,
         leading: Row(
           children: [
-            InkWell(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
+            // InkWell(
+            //   onTap: () {
+            //     Scaffold.of(context).openDrawer();
+            //   },
+            //   child: Container(
+            //     margin: EdgeInsets.only(top: 10, bottom: 10,right: 10),
+            //     height: 36,
+            //     width: 36,
+            //     child: AppImages.image(AppImages.drawerIcon),
+            //   ),
+            // ),
+            ValueListenableBuilder<int>(
+              valueListenable: GlobleValue.backButton,
+              builder: (context, isBackEnabled, child) {
+                return isBackEnabled!=1? InkWell(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 10, bottom: 10,right: 10),
+                    height: 36,
+                    width: 36,
+                    child: AppImages.image(AppImages.drawerIcon),
+                  ),
+                ):InkWell(
+                  onTap: () {
+                    voidCallback();
+
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 10, bottom: 10,right: 10),
+                    height: 36,
+                    width: 36,
+                    child: Icon(Icons.arrow_back_ios_new,color: Colors.white,),
+                  ),
+                );
               },
-              child: Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10,right: 10),
-                height: 36,
-                width: 36,
-                child: AppImages.image(AppImages.drawerIcon),
-              ),
             ),
+
             actions
           ],
         ),
@@ -168,6 +198,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               child: YourStatsScreen());
           GlobleValue.currentIndex.value = 1;
           GlobleValue.button.value = 0;
+          GlobleValue.backButton.value = 0;
         },
         voidCallback: () {
           // This will call voidcallback00 safely after the widget is initialized
@@ -264,11 +295,25 @@ class _DrawerScreenState extends State<DrawerScreen> {
       child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: CommonAppBar(
+            voidCallback: () {
+              setState(() {
+                GlobleValue.button.value = 1;
+                GlobleValue.currentIndex.value = 1;
+                GlobleValue.backButton.value = 0;
+                GlobleValue.overlayScreen.value = MultiBlocProvider(
+                    providers: [
+                      BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                      BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
+                    ],
+                    child: YourStatsScreen());
+              });
+            },
             voidCallback1: () {
               print("0.");
               setState(() {
                 GlobleValue.selectedIndex.value=0;
                 GlobleValue.button.value=0;
+                GlobleValue.backButton.value=1;
                 GlobleValue.overlayScreen.value = MultiBlocProvider(
                   providers: [
                     BlocProvider<StatisticsEditBloc>(
@@ -321,6 +366,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             },
           ),
           drawer: Drawer(
+            backgroundColor: Colors.transparent,
             child: Container(
               padding: EdgeInsets.only(left: 23,right: 27),
               decoration: AppImages.background(AppImages.drawerBG),
@@ -336,6 +382,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           onTap: () {
                             setState(() {
                               GlobleValue.button.value=2;
+                              GlobleValue.backButton.value=0;
                               GlobleValue.overlayScreen.value = MultiBlocProvider(
                                   providers: [
                                     BlocProvider<ProfileBloc>(
@@ -441,7 +488,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                           try {
                                             if (imageManager.textData.isNotEmpty) {
                                               return Text(
-                                                imageManager.textData, // Display the text data from GlobalImageManager
+                                                imageManager.textData,
                                                 style: AppTextStyles.athleticStyle(
                                                   fontSize: 14,
                                                   fontFamily: AppTextStyles.sfPro700,
@@ -449,23 +496,21 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                                 ),
                                               );
                                             } else {
-                                              return _userName != null
-                                                  ? Text(
-                                                _userName.toString(),
-                                                style: AppTextStyles.athleticStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: AppTextStyles.sfPro700,
-                                                  color: AppColors.whiteColor,
-                                                ),
-                                              )
-                                                  : Text(
-                                                '', // Default text if no data
-                                                style: AppTextStyles.athleticStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: AppTextStyles.sfPro700,
-                                                  color: AppColors.whiteColor,
-                                                ),
-                                              );
+                                              // Check if username is null, empty, or equals "null" string
+                                              if (_userName != null &&
+                                                  _userName!.isNotEmpty &&
+                                                  _userName != 'null') {
+                                                return Text(
+                                                  _userName!,
+                                                  style: AppTextStyles.athleticStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: AppTextStyles.sfPro700,
+                                                    color: AppColors.whiteColor,
+                                                  ),
+                                                );
+                                              } else {
+                                                return const SizedBox(height: 10,); // Show nothing if invalid username
+                                              }
                                             }
                                           } catch (e) {
                                             return Text(
@@ -502,6 +547,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             title: Text('How To Use',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.overlayScreen.value = HowToUseScreen();
                                 GlobleValue.button.value=0;
                               });
@@ -522,6 +568,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.button.value=0;
                                 GlobleValue.overlayScreen.value = HowToCastScreen();
 
@@ -543,6 +590,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             title: Text('Teams & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.button.value=0;
                                 GlobleValue.overlayScreen.value = TermsAndConditonsScreen();
                               });
@@ -562,7 +610,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
                             title: Text('Privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
+                              GlobleValue.backButton.value=0;
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.overlayScreen.value = PrivacyPolicyScreen();
                                 GlobleValue.button.value=0;
                               });
@@ -583,6 +633,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             title: Text('Faq',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.overlayScreen.value = FAQPage();
                                 GlobleValue.button.value=0;
                               });
@@ -604,6 +655,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             title: Text('Contact Us',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
+                                GlobleValue.backButton.value=0;
                                 GlobleValue.overlayScreen.value = MultiBlocProvider(
                                     providers: [
                                       BlocProvider<ContactUsBloc>(
@@ -749,21 +801,28 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   void _onNavItemTapped(int index) {
+    // Reset some global values
     GlobleValue.selectedText.value = null;
     GlobleValue.selectedButton.value = 'Beginner';
-    print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
 
+    print("Current Overlay Screen: ${GlobleValue.overlayScreen.value}");
+
+    // Handle the overlay screen logic
     if (GlobleValue.overlayScreen.value != null) {
       GlobleValue.currentIndex.value = index;
+      GlobleValue.overlayScreen.value = null;
+      return; // Exit early to prevent further execution
     }
 
+    // Handle bottom sheet logic
     if (index == 1 && GlobleValue.currentIndex.value != 1) {
       GlobleValue.button.value = 1;
     } else {
       GlobleValue.button.value = 0;
     }
+
+    // Set current index
     GlobleValue.currentIndex.value = index;
-    GlobleValue.overlayScreen.value = null;
     GlobleValue.selectedButton.value = '';
   }
 }

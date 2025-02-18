@@ -113,6 +113,8 @@ Widget statisticTable(List<StatisticsData> statistics){
           widget.voidCallback!();
           }
           GlobleValue.button.value = 0;
+          GlobleValue.backButton.value=1;
+
           GlobleValue.selectedIndex.value = 0;
           GlobleValue.overlayScreen.value = MultiBlocProvider(
           providers: [

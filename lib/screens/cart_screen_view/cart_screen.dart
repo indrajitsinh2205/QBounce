@@ -77,9 +77,9 @@ class _CartScreenState extends State<CartScreen> {
             onWebResourceError: (WebResourceError error) {
               print(
                   "Failed to load URL: ${error.url}, Error: ${error.description}");
-              setState(() {
+              // setState(() {
                 isLoading = false;
-              });
+              // });
             },
           ),
         )
