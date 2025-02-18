@@ -17,7 +17,7 @@ void main()async {
   await globalImageManager.loadProfileImage();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
+    // DeviceOrientation.portraitDown,
   ]).then((_) {
     runApp(
       MultiProvider(
