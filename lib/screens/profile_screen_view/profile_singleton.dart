@@ -24,13 +24,53 @@ class ProfileNotifier with ChangeNotifier {
   }
 }
 class ProfileData {
-  static final ProfileData _instance = ProfileData._internal();
+  static final ProfileData instance = ProfileData._internal();
 
   factory ProfileData() {
-    return _instance;
+    return instance;
   }
 
   ProfileData._internal();
 
+  // variables and their default values
+
+  String firstName = "";
+  String lastName = "";
+  String jerseyNumber = "";
+
+  String selectedGender = 'Male';
+  String selectedTeam = 'hawks';
+  String selectedPosition = 'Power Forward';
+  String selectedCountry = 'Haiti';
+
+  String instagramHandler = '1';
+
+  String image = "";
+
   UpdateProfileRequest? updateProfileRequest;
+
+
+  // GENERATE REQUEST MODEL
+  void getUpdateProfileRequest() {
+
+    final updatedProfileRequest = UpdateProfileRequest(
+      firstName: firstName,
+      lastName: lastName,
+      country: selectedCountry,
+      jerseyNumber: int.tryParse(jerseyNumber) ?? 0,
+      gender: selectedGender,
+      team: selectedTeam,
+      instagram: instagramHandler,
+      position: selectedPosition,
+      image: image,
+    );
+
+    // Update the ProfileData singleton
+    updateProfileRequest = updatedProfileRequest;
+
+    // Print the updated request
+    print('Saved Profile Request: ${updateProfileRequest?.toJson()}');
+
+  }
+
 }

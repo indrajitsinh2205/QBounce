@@ -55,7 +55,14 @@ class UpdateProfileViewModel extends ChangeNotifier {
       final responseString = await response.stream.bytesToString();
       final jsonResponse = jsonDecode(responseString);
       print("jsonResponse $jsonResponse");
+      print("jsonRequest ${request.fields}");
       if (response.statusCode == 200) {
+        // Convert the streamed response body into a string
+        // String responseBody = await response.stream.bytesToString();
+        // print("Update Profile: ${response.reasonPhrase.toString()}");
+        // print("Response Body: $responseBody");
+
+        // Update the profile image if an image path is provided
         if (imageFile?.path != null) {
           GlobalImageManager().updateProfileImage(imageFile?.path ?? '');
         }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -66,12 +67,27 @@ class BuildRankContainer extends StatelessWidget {
                   ),
                 ),
                 child: ClipOval( // Ensures the child image is round
-                  child: Image.network(
-                    personImage,
-                    height: logoHeight,
-                    width: logoHeight,
-                    fit: BoxFit.cover, // Ensures the image fills the circular space
-                  ),
+                  child:
+                  CachedNetworkImage(
+                    imageUrl: personImage.toString(),
+                    fit: BoxFit.cover,
+                    height:logoHeight,
+                    width:logoHeight,
+                    placeholder: (BuildContext context, String url) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(
+                          color: AppColors.appColor,
+                          strokeWidth: 1,
+                        ),
+                      ),
+                    ),),
+                  // Image.network(
+                  //   personImage,
+                  //   height: logoHeight,
+                  //   width: logoHeight,
+                  //   fit: BoxFit.cover, // Ensures the image fills the circular space
+                  // ),
                 ),
               ),
 

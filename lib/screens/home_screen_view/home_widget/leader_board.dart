@@ -48,9 +48,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                         GlobleValue.button.value =0;
                         GlobleValue.selectedIndex.value =3;
                       });
-                      GlobleValue.selectedScreen.value = BlocProvider<LeaderBoardBloc>(
-                          create: (context) => LeaderBoardBloc(),
-                          child: StaticLeaderBoard());
+                      GlobleValue.currentIndex.value  = 3;
                     },
                     child: CommonButton(title: AppStrings.allScore, color: AppColors.appColor,horizontal: 18.5,vertical: 9.5,))
               ],

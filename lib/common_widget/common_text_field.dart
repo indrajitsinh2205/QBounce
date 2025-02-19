@@ -10,10 +10,11 @@ class CommonTextField extends StatefulWidget {
   final Widget? icon;
   final bool? hintColor;
   final TextEditingController controller;
+  final ValueChanged<String>? onChanged; // Use the correct type
     final  String? label;
   final String hint;
       final bool? numType;
-  const CommonTextField({super.key, required this.controller, required this.label, required this.hint, this.numType, this.boarder = false, this.icon, this.textArea = false, this.readOnly = false, this.hintColor = false});
+   CommonTextField({super.key, required this.controller, required this.label, required this.hint, this.numType, this.boarder = false, this.icon, this.textArea = false, this.readOnly = false, this.hintColor = false, this.onChanged});
 
   @override
   State<CommonTextField> createState() => _CommonTextFieldState();
@@ -30,6 +31,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
         Container(
           // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Colors.white),
           child:TextField(
+            onChanged: widget.onChanged,
             keyboardAppearance: Brightness.dark,
             cursorColor: AppColors.appColor,
             readOnly:widget.readOnly as bool ,
