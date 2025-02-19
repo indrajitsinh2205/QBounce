@@ -103,6 +103,9 @@ class _VideoSwitcherPageState extends State<VideoSwitcherPage> {
           videoPlayerController: _videoPlayerController!,
           autoPlay: false, // Do not auto-play
           looping: false,
+          showControlsOnInitialize: false,
+          showControls: false,
+          allowPlaybackSpeedChanging: false
         );
       });
   }

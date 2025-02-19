@@ -27,34 +27,34 @@ class _CartScreenState extends State<CartScreen> {
 
     if (Platform.isIOS) {
       // Use WebViewController for WKWebView
-      _controller = WebViewController();
-      _controller
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setBackgroundColor(const Color(0x00000000))
-        ..setNavigationDelegate(
-          NavigationDelegate(
-            onPageStarted: (String url) {
-              print("Page loading started: $url");
-              setState(() {
-                isLoading = true;
-              });
-            },
-            onPageFinished: (String url) {
-              print("Page loading finished: $url");
-              setState(() {
-                isLoading = false;
-              });
-            },
-            onWebResourceError: (WebResourceError error) {
-              print(
-                  "Failed to load URL: ${error.url}, Error: ${error.description}");
-              setState(() {
-                isLoading = false;
-              });
-            },
-          ),
-        )
-        ..loadRequest(Uri.parse(url));
+      // _controller = WebViewController();
+      // _controller
+      //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      //   ..setBackgroundColor(const Color(0x00000000))
+      //   ..setNavigationDelegate(
+      //     NavigationDelegate(
+      //       onPageStarted: (String url) {
+      //         print("Page loading started: $url");
+      //         setState(() {
+      //           isLoading = true;
+      //         });
+      //       },
+      //       onPageFinished: (String url) {
+      //         print("Page loading finished: $url");
+      //         setState(() {
+      //           isLoading = false;
+      //         });
+      //       },
+      //       onWebResourceError: (WebResourceError error) {
+      //         print(
+      //             "Failed to load URL: ${error.url}, Error: ${error.description}");
+      //         setState(() {
+      //           isLoading = false;
+      //         });
+      //       },
+      //     ),
+      //   )
+      //   ..loadRequest(Uri.parse(url));
     } else if (Platform.isAndroid) {
       // Use WebViewController for Android
       _controller = WebViewController()
@@ -94,10 +94,11 @@ class _CartScreenState extends State<CartScreen> {
       body: Stack(
         children: [
           if (Platform.isIOS)
-            WebViewWidget(controller: _controller)
+            Container()
+            // WebViewWidget(controller: _controller)
           else if (Platform.isAndroid)
             WebViewWidget(controller: _controller),
-          if (isLoading)
+          if (isLoading && !Platform.isIOS)
             const Center(
               child: CircularProgressIndicator(),
             ),

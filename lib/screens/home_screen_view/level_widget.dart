@@ -26,7 +26,9 @@ import 'get_level_profile_view_model/get_level_profile_response.dart';
 class LevelScreen extends StatefulWidget {
   final String text ;
   final String? id ;
-  const LevelScreen({super.key, required this.text, required, this.id ,});
+  final List<Unlocked>? unlocked;
+  final List<Locked>? locked;
+  const LevelScreen({super.key, required this.text, required, this.id, this.unlocked, this.locked ,});
 
   @override
   State<LevelScreen> createState() => _LevelScreenState();
@@ -63,7 +65,10 @@ class _LevelScreenState extends State<LevelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<TrainingProgramBloc>().add(FetchTraining(widget.text));
+
+    if(widget.locked == null && widget.unlocked == null) {
+      context.read<TrainingProgramBloc>().add(FetchTraining(widget.text));
+    }
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -117,7 +122,9 @@ class _LevelScreenState extends State<LevelScreen> {
                   children: [
                     Container(
                       child: TrainingView(
-                          unLockedData: data?.unlocked, lockedData: data?.locked),
+                          unLockedData: widget.unlocked ?? data?.unlocked,
+                          lockedData: widget.locked ?? data?.locked,
+                      ),
                     ),
                     if (showVideo) ...[
                       BlocBuilder<TrainingVideoBloc, TrainingVideoState>(

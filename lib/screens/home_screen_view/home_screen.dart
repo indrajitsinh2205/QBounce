@@ -44,7 +44,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String? _id ;
   String? currentCategory='' ;
 
+  final List<String> categories = ['Beginner', 'Advanced', 'Pro', 'Master'];
 
+  // Initialize the HashMaps
+  final Map<String, List<Locked>?> lockedMap = {};
+  final Map<String, List<Unlocked>?> unlockedMap = {};
 
   void _updateUI(String text, [String? id]) {
     setState(() {
@@ -69,6 +73,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   void initState() {
+    // Populate each category with a null value
+    for (String category in categories) {
+      lockedMap[category] = null;
+      unlockedMap[category] = null;
+    }
+
     context.read<TrainingProgramBloc>().add(FetchTraining('beginner'));
     context.read<UserDetailsBloc>().add(FetchUserDetails());
     context.read<UserDetailsBloc>().stream.listen((state) {
@@ -85,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
     super.initState();
   }
-  final List<String> categories = ['Beginner', 'Advanced', 'Pro', 'Master'];
+
   int _getCategoryIndex(String category) {
     return categories.indexOf(category);
   }
@@ -136,6 +146,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   child: LevelScreen(
                     text: value.toString(),
                     id: _id,
+                    unlocked: unlockedMap[_id],
+                    locked: lockedMap[_id],
                   ),
                 );
               },
@@ -242,10 +254,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           var data = state.trainingResponse.data;
           print("datadata:$data");
 
+          if(unlockedMap[_id] == null && _id != null) {
+            unlockedMap[_id!] = data?.unlocked;
+          }
+          if(lockedMap[_id] == null && _id != null) {
+            lockedMap[_id!] = data?.locked;
+          }
+
           return Container(
             child: TrainingView(
-                unLockedData: data?.unlocked,
-                lockedData: data?.locked),
+              unLockedData: unlockedMap[_id] ?? data?.unlocked,
+              lockedData: lockedMap[_id] ?? data?.locked,
+            ),
           );
         } else if (state is TrainingError) {
           return Center(child: Text('${state.errorMessage}'));

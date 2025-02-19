@@ -173,7 +173,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
           ),
 
         ],
-        child: HomeScreen(key: UniqueKey())),
+        child: HomeScreen(key: UniqueKey())
+    ),
     MultiBlocProvider(
       providers: [
         BlocProvider<StatisticsBloc>(
@@ -596,7 +597,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
 
                             leading: AppImages.image(AppImages.terms,height: 20,width: 20),
-                            title: Text('Teams & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                            title: Text('Terms & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
                                 GlobleValue.backButton.value=0;
@@ -618,7 +619,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
 
                             leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
-                            title: Text('Privacy policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                            title: Text('Privacy Policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
                             onTap: () {
                               GlobleValue.backButton.value=0;
                               setState(() {
@@ -641,7 +642,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
 
                             leading: AppImages.image(AppImages.faq,height: 20,width: 20),
-                            title: Text('Faq',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
+                            title: Text('FAQ',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
                             onTap: () {
                               setState(() {
                                 GlobleValue.backButton.value=0;
