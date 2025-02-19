@@ -448,6 +448,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                             shape: BoxShape.circle,
                                           ),
                                           child: CachedNetworkImage(
+                                            fadeInCurve: Curves.linear,
+                                            fadeOutCurve: Curves.linear,
+                                            fadeInDuration: Duration(microseconds: 0),
+                                            fadeOutDuration: Duration(microseconds: 0),
                                             imageUrl: _profile.toString(),
                                             fit: BoxFit.cover,
                                             placeholder: (BuildContext context, String url) => Center(

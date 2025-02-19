@@ -70,6 +70,10 @@ class BuildRankContainer extends StatelessWidget {
                   child:
                   CachedNetworkImage(
                     imageUrl: personImage.toString(),
+                    fadeInCurve: Curves.linear,
+                    fadeOutCurve: Curves.linear,
+                    fadeInDuration: Duration(microseconds: 0),
+                    fadeOutDuration: Duration(microseconds: 0),
                     fit: BoxFit.cover,
                     height:logoHeight,
                     width:logoHeight,
@@ -82,12 +86,7 @@ class BuildRankContainer extends StatelessWidget {
                         ),
                       ),
                     ),),
-                  // Image.network(
-                  //   personImage,
-                  //   height: logoHeight,
-                  //   width: logoHeight,
-                  //   fit: BoxFit.cover, // Ensures the image fills the circular space
-                  // ),
+
                 ),
               ),
 
