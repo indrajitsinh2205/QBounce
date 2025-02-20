@@ -1,6 +1,7 @@
 
 
 import 'package:bloc/bloc.dart';
+import 'package:q_bounce/screens/profile_screen_view/profile_singleton.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_bloc/statistics_event.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_bloc/statistics_state.dart';
 import 'package:q_bounce/screens/state_screen_view/statistics_bloc/statistics_view_model/statistics_view_model.dart';
@@ -20,12 +21,19 @@ class LevelProfileBloc extends Bloc<LevelProfileEvent, LevelProfileState> {
   Future<void> _onFetchstatistics(FetchLevelProfile event, Emitter<LevelProfileState> emit) async {
     emit(LevelProfileLoading());
     try {
-      final response = await GetLevelProfileViewModel().getLevelProfile();
-      print("statisticsResponse1 ${response}");
-      if (response != null) {
-        emit(LevelProfileLoaded(response));
-      } else {
-        emit(LevelProfileError('Something went Wrong'));
+
+      var fetchedData = LevelModuleDataHandler.instance.levelData;
+      if (fetchedData != null){
+        emit(LevelProfileLoaded(fetchedData));
+      }else {
+        final response = await GetLevelProfileViewModel().getLevelProfile();
+        print("statisticsResponse1 ${response}");
+        if (response != null) {
+          LevelModuleDataHandler.instance.levelData = response;
+          emit(LevelProfileLoaded(response));
+        } else {
+          emit(LevelProfileError('Something went Wrong'));
+        }
       }
     } catch (e) {
       emit(LevelProfileError('An unexpected error occurred: $e'));

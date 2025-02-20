@@ -94,7 +94,7 @@ class LevelModuleDataHandler {
   LevelModuleDataHandler._internal();
 
 
-  LevelData  levelData = LevelData();
+  GetLevelProfileResponse  levelData = GetLevelProfileResponse();
 
   Map<String,TrainingResponse> trainingDataMap ={};
   Map<String,TrainingVideoResponse> videoDataMap ={};

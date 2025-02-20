@@ -1,5 +1,4 @@
-
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,10 +7,12 @@ import 'package:q_bounce/screens/home_screen_view/get_level_profile_bloc/get_lev
 import 'package:q_bounce/screens/home_screen_view/get_level_profile_bloc/get_level_profile_event.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/video_component.dart';
 import 'package:q_bounce/screens/home_screen_view/home_widget/video_details_component.dart';
+import 'package:q_bounce/screens/training_screen_view/training_view_model/TrainingVideoResponse.dart';
 
 import '../../constant/app_color.dart';
 import '../../constant/app_strings.dart';
 import '../../constant/app_text_style.dart';
+import '../profile_screen_view/profile_singleton.dart';
 import '../training_screen_view/training_bloc/training_program_bloc.dart';
 import '../training_screen_view/training_bloc/training_program_event.dart';
 import '../training_screen_view/training_bloc/training_program_state.dart';
@@ -24,14 +25,24 @@ import 'get_level_profile_bloc/get_level_profile_state.dart';
 import 'get_level_profile_view_model/get_level_profile_response.dart';
 
 class LevelScreen extends StatefulWidget {
-  final String text ;
-  final String? id ;
+
+  final String text;
+  final String? id;
+
   final List<Unlocked>? unlocked;
   final List<Locked>? locked;
-  const LevelScreen({super.key, required this.text, required, this.id, this.unlocked, this.locked ,});
 
-  @override
-  State<LevelScreen> createState() => _LevelScreenState();
+  const LevelScreen({
+  super.key,
+  required this.text,
+  required,
+  this.id,
+  this.unlocked,
+  this.locked,
+});
+
+@override
+State<LevelScreen> createState() => _LevelScreenState();
 }
 
 class _LevelScreenState extends State<LevelScreen> {
@@ -39,144 +50,161 @@ class _LevelScreenState extends State<LevelScreen> {
   bool showVideo = false;
   bool isWidgetIdUsed = false;
 
-  // Create a cache for the level data
-  Map<String, LevelData> levelDataCache = {};
+  bool isLoading = false;
+  bool isLoadingFromWidgetBuilder = false;
+  String errorMessage = "";
+
+  GetLevelProfileResponse? levelData;
+  TrainingResponse? trainingData;
+  TrainingVideoResponse? videoResponse;
 
   @override
   void initState() {
     super.initState();
-    _fetchLevelProfile();
+    context.read<LevelProfileBloc>().add(FetchLevelProfile());
+
   }
 
-  void _fetchLevelProfile() {
-    if (!levelDataCache.containsKey(widget.text)) {
+
+  void _fetchInitialData() async {
+    // if (isLoadingFromWidgetBuilder) return;
+    // isLoadingFromWidgetBuilder = true;
+
+    // isLoading = true;
+    var type = widget.text;
+    levelData = await LevelModuleDataHandler.instance.levelData;
+    trainingData =
+    await LevelModuleDataHandler.instance.fetchTrainingData(type);
+
+    if (levelData?.data == null) {
       // Fetch the data if it hasn't been fetched yet
       context.read<LevelProfileBloc>().add(FetchLevelProfile());
-    } else {
-      // Use the cached data if available
-      setState(() {
-        var cachedData = levelDataCache[widget.text];
-        if (cachedData != null) {
-          // Do something with cached data, or trigger UI update
-        }
-      });
     }
+    if (trainingData == null) {
+      // Fetch the data if it hasn't been fetched yet
+      context.read<TrainingProgramBloc>().add(FetchTraining(widget.text));
+    }
+    if (videoResponse == null) {
+      // Fetch the data if it hasn't been fetched yet
+      if (trainingData?.data?.unlocked?.isNotEmpty == true) {
+        if (!isWidgetIdUsed && widget.id != null) {
+          currentVideoId = widget.id; // Use widget.id only once
+          isWidgetIdUsed = true;
+        } else {
+          currentVideoId = trainingData?.data?.unlocked!.first.id
+              .toString(); // Use first.id for subsequent changes
+        }
+      }
+      context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
+    }
+
+    // print('Level Data for type : $type :${levelData?.firstName}');
+    print('Training Data for type : $type :${trainingData?.data?.category}');
+    // print('VideoData Data for type : $type :${vide?.data?.category}');
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // isLoadingFromWidgetBuilder = false;
+
   }
 
   @override
   Widget build(BuildContext context) {
 
-    if(widget.locked == null && widget.unlocked == null) {
-      context.read<TrainingProgramBloc>().add(FetchTraining(widget.text));
-    }
+    _fetchInitialData();
+
 
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children: [
-          SizedBox(height: 30),
-          BlocBuilder<LevelProfileBloc, LevelProfileState>(
-            builder: (context, state) {
-              if (state is LevelProfileLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.appColor));
-              } else if (state is LevelProfileLoaded) {
-                var levelData = state.getLevelProfileResponse.data;
-                if (levelData == null) {
-                  return Center(child: Text(AppStrings.noSTData));
-                }
+        padding: const EdgeInsets.all(10.0),
+        child: Column(children: [
+          Column(
+            children: [
 
-                // Cache the level data for future use
-                levelDataCache[widget.text] = levelData;
+              SizedBox(height: 30),
+               BlocBuilder<LevelProfileBloc, LevelProfileState>(
+                builder: (context, state) {
+                  if (state is LevelProfileLoading) {
+                    return Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.appColor));
+                  } else if (state is LevelProfileLoaded) {
+                    var levelData = state.getLevelProfileResponse.data;
+                    if (levelData == null) {
+                      return Center(child: Text(AppStrings.noSTData));
+                    }
 
-                return levelProfile(levelData);
-              } else if (state is LevelProfileError) {
-                return Center(child: Text(state.errorMessage, style: TextStyle(color: Colors.red)));
-              } else {
-                return Center(child: Text(AppStrings.somethingW));
-              }
-            },
-          ),
-          BlocBuilder<TrainingProgramBloc, TrainingProgramState>(
-            builder: (context, state) {
-              if (state is TrainingLoading) {
-                return Center(child: CircularProgressIndicator(color: AppColors.appColor));
-              } else if (state is TrainingLoaded) {
-                var data = state.trainingResponse.data;
-                if (data?.unlocked?.isEmpty == true) {
-                  showVideo = false;
-                } else {
-                  showVideo = true;
-                }
+                    // Cache the level data for future use
+                    // levelDataCache[widget.text] = levelData;
 
-                if (data?.unlocked?.isNotEmpty == true) {
-                  if (!isWidgetIdUsed && widget.id != null) {
-                    currentVideoId = widget.id; // Use widget.id only once
-                    isWidgetIdUsed = true;
+                    return levelProfile(levelData);
+                  } else if (state is LevelProfileError) {
+                    return Center(
+                        child: Text(state.errorMessage,
+                            style: TextStyle(color: Colors.red)));
                   } else {
-                    currentVideoId = data!.unlocked!.first.id.toString(); // Use first.id for subsequent changes
+                    return Center(child: Text(AppStrings.somethingW));
                   }
-                  context.read<TrainingVideoBloc>().add(FetchTrainingVideo(currentVideoId!));
-                }
-
-                return Column(
-                  children: [
-                    Container(
-                      child: TrainingView(
-                          unLockedData: widget.unlocked ?? data?.unlocked,
-                          lockedData: widget.locked ?? data?.locked,
-                      ),
+                },
+              ),
+              Container(
+                child: /*trainingData?.data==null ?
+                CircularProgressIndicator(color: AppColors.appColor,) :*/
+                TrainingView(
+                  unLockedData: widget.unlocked ?? trainingData?.data?.unlocked,
+                  lockedData: widget.locked ?? trainingData?.data?.locked,
+                ),
+              ),
+              MultiBlocProvider(
+                  providers: [
+                    BlocProvider<TrainingProgressBloc>(
+                      create: (context) => TrainingProgressBloc(),
                     ),
-                    if (showVideo) ...[
-                      BlocBuilder<TrainingVideoBloc, TrainingVideoState>(
-                        builder: (context, videoState) {
-                          if (videoState is TrainingVideoLoading) {
-                            return Center(child: CircularProgressIndicator(color: AppColors.appColor));
-                          } else if (videoState is TrainingVideoLoaded) {
-                            var videoData = videoState.trainingVideoResponse.data;
-                            return MultiBlocProvider(
-                              providers: [
-                                BlocProvider<TrainingProgressBloc>(
-                                  create: (context) => TrainingProgressBloc(),
-                                ),
-                                BlocProvider<TrainingVideoBloc>(
-                                  create: (context) => TrainingVideoBloc(),
-                                ),
-                                BlocProvider<TrainingProgramBloc>(
-                                  create: (context) => TrainingProgramBloc(),
-                                ),
-                              ],
-                              child: VideoDetailsComponent(
-                                  videoIndex: data!.currentVideoId!.toInt(),
-                                  data: videoData,
-                                  text: widget.text,
-                                  onRebuildParent: () {
-                                    setState(() {
-
-                                    });
-                                  },),
-                            );
-                          } else if (videoState is TrainingVideoError) {
-                            return Center(child: Text('${videoState.errorMessage}'));
-                          } else {
-                            return Center(child: Text('Something Went Wrong'));
-                          }
-                        },
-                      ),
-                    ]
+                    BlocProvider<TrainingVideoBloc>(
+                      create: (context) => TrainingVideoBloc(),
+                    ),
+                    BlocProvider<TrainingProgramBloc>(
+                      create: (context) => TrainingProgramBloc(),
+                    ),
                   ],
-                );
-              } else if (state is TrainingError) {
-                return Center(child: Text('${state.errorMessage}'));
-              } else {
-                return Center(child: Text('Something Went Wrong'));
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
+                  child:
 
+                  videoResponse==null?Container():
+                  VideoDetailsComponent(
+                      videoIndex: videoResponse!.data!.id!.toInt(),
+                      data: videoResponse?.data,
+                      text: widget.text,
+                      onRebuildParent: () {
+                        setState(() {});
+                      })),
+              // MultiBlocProvider(
+              //   providers: [
+              //     BlocProvider<TrainingProgressBloc>(
+              //       create: (context) => TrainingProgressBloc(),
+              //     ),
+              //     BlocProvider<TrainingVideoBloc>(
+              //       create: (context) => TrainingVideoBloc(),
+              //     ),
+              //     BlocProvider<TrainingProgramBloc>(
+              //       create: (context) => TrainingProgramBloc(),
+              //     ),
+              //   ],
+              //   child: VideoDetailsComponent(
+              //     videoIndex: trainingData.data.category!.currentVideoId!.toInt(),
+              //     data: videoData,
+              //     text: widget.text,
+              //     onRebuildParent: () {
+              //       setState(() {
+              //
+              //       });
+              //     },),
+              // )
+
+            ],
+          ),
+        ]));
+  }
 
   Widget levelProfile(LevelData levelData) {
     List<Map<String, String>> stateData = [
@@ -202,11 +230,17 @@ class _LevelScreenState extends State<LevelScreen> {
                 children: [
                   Text(
                     "My Player",
-                    style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfUi700, color: AppColors.whiteColor),
+                    style: AppTextStyles.athleticStyle(
+                        fontSize: 18,
+                        fontFamily: AppTextStyles.sfUi700,
+                        color: AppColors.whiteColor),
                   ),
                   Text(
                     "#${levelData.id}",
-                    style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor),
+                    style: AppTextStyles.athleticStyle(
+                        fontSize: 18,
+                        fontFamily: AppTextStyles.sfPro700,
+                        color: AppColors.whiteColor),
                   ),
                 ],
               ),
@@ -221,19 +255,47 @@ class _LevelScreenState extends State<LevelScreen> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Color(0xFFD74B16), width: 2),
                     ),
-                    child: Image.network(levelData.image.toString(), height: 75, width: 75),
+                    child: levelData.image == null || levelData.image != 'null'
+                        ? AppImages.image("assets/images/placeholder.jpg",
+                        height: 75, width: 75, fit: BoxFit.cover)
+                        : CachedNetworkImage(
+                      imageUrl: levelData.image.toString(),
+                      fadeInCurve: Curves.linear,
+                      fadeOutCurve: Curves.linear,
+                      fadeInDuration: Duration(microseconds: 0),
+                      fadeOutDuration: Duration(microseconds: 0),
+                      fit: BoxFit.cover,
+                      height: 75,
+                      width: 75,
+                      placeholder: (BuildContext context, String url) =>
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(
+                                color: AppColors.appColor,
+                                strokeWidth: 1,
+                              ),
+                            ),
+                          ),
+                    ),
                   ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${levelData.firstName != 'null' ?levelData.firstName:""} ${levelData.lastName!= 'null' ?levelData.lastName:''}",
-                          style: AppTextStyles.athleticStyle(fontSize: 18, fontFamily: AppTextStyles.sfPro700, color: AppColors.whiteColor)),
+                      Text(
+                          "${levelData.firstName != 'null' ? levelData.firstName : ""} ${levelData.lastName != 'null' ? levelData.lastName : ''}",
+                          style: AppTextStyles.athleticStyle(
+                              fontSize: 18,
+                              fontFamily: AppTextStyles.sfPro700,
+                              color: AppColors.whiteColor)),
                       Row(
                         children: List.generate(5, (index) {
                           return Icon(
                             Icons.star,
-                            color: (index < levelData.stars!.toInt()) ? Colors.yellow : Colors.white,
+                            color: (index < levelData.stars!.toInt())
+                                ? Colors.yellow
+                                : Colors.white,
                           );
                         }),
                       )
@@ -260,15 +322,22 @@ class _LevelScreenState extends State<LevelScreen> {
                           children: [
                             Text(
                               item['name']!,
-                              style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w800),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800),
                             ),
                             Text(
                               item['point'] == "null" || item['point'] == null
                                   ? "0"
                                   : (double.tryParse(item['point']!) != null
-                                  ? (double.parse(item['point']!) / 100000).toStringAsFixed(1)
+                                  ? (double.parse(item['point']!) / 100000)
+                                  .toStringAsFixed(1)
                                   : "0"),
-                              style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
                             ),
                             SizedBox(height: 2),
                           ],
@@ -284,14 +353,39 @@ class _LevelScreenState extends State<LevelScreen> {
     );
   }
 
-  Widget TrainingView({List<Unlocked>? unLockedData, List<Locked>? lockedData}) {
+  Widget TrainingView(
+      {List<Unlocked>? unLockedData, List<Locked>? lockedData}) {
     return Column(
       children: [
         // _buildListView(unLockedData, true),
         // _buildListView(lockedData, false),
-        VideoComponent(data:unLockedData, isUnlocked:true,text: widget.text,id: widget.id,),
-        VideoComponent(data:lockedData,isUnlocked: false,text: widget.text,),
+        VideoComponent(
+          data: unLockedData,
+          isUnlocked: true,
+          text: widget.text,
+          id: widget.id,
+        ),
+        VideoComponent(
+          data: lockedData,
+          isUnlocked: false,
+          text: widget.text,
+        ),
       ],
     );
   }
+
+  Future<List<Map<String, String>>> fetchCategoryDataFromApi(
+      String category) async {
+    await Future.delayed(Duration(seconds: 2)); // Simulate network delay
+
+    // Return dummy data for demonstration (replace with your actual API response)
+    return List.generate(5, (index) {
+      return {
+        "title": "$category Item ${index + 1}",
+        "description": "Description for $category Item ${index + 1}",
+      };
+    });
+  }
+
 }
+

@@ -95,10 +95,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<ProfileBloc>().add(FetchProfile());
     _loadUserName();
     // Initialize map with default values
-    profileData['firstName'] = '';
-    profileData['lastName'] = '';
-    profileData['jerseyNumber'] = '';
-    profileData['instagramHandle'] = '';
+    profileData['firstName'] = ProfileData.instance.firstName;
+    profileData['lastName'] = ProfileData.instance.lastName;
+    profileData['jerseyNumber'] = ProfileData.instance.jerseyNumber;
+    profileData['instagramHandle'] = ProfileData.instance.instagramHandler;
+
     profileData['gender'] = ProfileData.instance.selectedGender;
     profileData['team'] = ProfileData.instance.selectedTeam;
     profileData['position'] = ProfileData.instance.selectedPosition;
@@ -503,18 +504,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "Your Gender",
                     genders,
                     ProfileData.instance.selectedGender,
-                    (value) => setState(() => ProfileData
-                        .instance.selectedGender = value.toString()))),
+                    (value) => ProfileData
+                        .instance.selectedGender = value.toString())),
             SizedBox(width: 15),
             Flexible(
               child: buildDropdownField(
                 "Your Future Team",
                 teams,
                 ProfileData.instance.selectedTeam,
-                (value) => setState(() {
-                  ProfileData.instance.selectedTeam = value.toString();
-                  print("Selected Team: $value"); // Use the value directly
-                }),
+                (value) =>
+                  ProfileData.instance.selectedTeam = value.toString()
+
               ),
             ),
           ],
@@ -527,8 +527,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "Your Position",
                     positions,
                     ProfileData.instance.selectedPosition,
-                    (value) => setState(() => ProfileData
-                        .instance.selectedPosition = value.toString()))),
+                    (value) => ProfileData
+                        .instance.selectedPosition = value.toString())),
             SizedBox(width: 10),
             Flexible(
                 child: CommonTextField(
@@ -550,8 +550,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "Your Country Name",
                     countries,
                     ProfileData.instance.selectedCountry,
-                    (value) => setState(() => ProfileData
-                        .instance.selectedCountry = value.toString()))),
+                    (value) => ProfileData
+                        .instance.selectedCountry = value.toString())),
             SizedBox(width: 15),
             Flexible(
                 child: CommonTextField(
@@ -600,7 +600,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             }).toList(),
             onChanged: (newValue) {
-              setState(() {
+              // setState(() {
                 if (label == "Your Gender") {
                   ProfileData.instance.selectedGender =
                       newValue.toString(); // Update corresponding state
@@ -614,7 +614,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileData.instance.selectedCountry =
                       newValue.toString(); // Update corresponding state
                 }
-              });
+              // });
               print("Selected value for $label: $newValue");
 
               // Call external method if necessary
