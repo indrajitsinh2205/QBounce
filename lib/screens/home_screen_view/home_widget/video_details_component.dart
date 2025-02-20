@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,9 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
   bool isVideoLoaded = false;
   bool isVideoPlaying = false;
   bool isLoading = false;
+  bool showControls = true; // Track visibility of play/pause button
+  Timer? _hideControlsTimer; // Timer to hide controls
+
 
   final List<Map<String, dynamic>> videoDetails = [
     {
@@ -92,6 +97,33 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
     _initializeVideo(widget.videoIndex);
     super.initState();
   }
+  void _startHideControlsTimer() {
+    _hideControlsTimer?.cancel(); // Cancel any existing timer
+    _hideControlsTimer = Timer(Duration(seconds: 2), () {
+      setState(() {
+        showControls = false; // Hide controls after 2 seconds
+      });
+    });
+  }void _togglePlayPause() {
+    setState(() {
+      if (isVideoPlaying) {
+        _videoPlayerController!.pause();
+        isVideoPlaying = false;
+      } else {
+        _videoPlayerController!.play();
+        isVideoPlaying = true;
+      }
+      showControls = true; // Show controls when toggling
+    });
+    _startHideControlsTimer(); // Restart the timer
+  }
+  void _onVideoTap() {
+    setState(() {
+      showControls = true; // Show controls when the user taps the video
+    });
+    _startHideControlsTimer(); // Restart the timer
+  }
+
 
   void _startNewVideo(int index) {
     _videoPlayerController = VideoPlayerController.network(widget.data!.videoUrl.toString())
@@ -131,21 +163,26 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
           videoPlayerController: _videoPlayerController!,
           autoPlay: false,
           looping: false,
-          showControlsOnInitialize: true,
-          showControls: true,
+          showControls: false, // Disable default controls
           allowPlaybackSpeedChanging: false,
           placeholder: Container(
             color: Colors.black87,
-            child: Container(
-              child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.appColor),
-                  )
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.appColor),
               ),
             ),
           ),
-          cupertinoProgressColors: ChewieProgressColors(backgroundColor: AppColors.unSelectedNav,bufferedColor: AppColors.appColor,handleColor: AppColors.appColor,playedColor: AppColors.appColor),
-          materialProgressColors:ChewieProgressColors(backgroundColor: AppColors.whiteColor,bufferedColor: AppColors.appColor,)
+          cupertinoProgressColors: ChewieProgressColors(
+            backgroundColor: AppColors.unSelectedNav,
+            bufferedColor: AppColors.appColor,
+            handleColor: AppColors.appColor,
+            playedColor: AppColors.appColor,
+          ),
+          materialProgressColors: ChewieProgressColors(
+            backgroundColor: AppColors.whiteColor,
+            bufferedColor: AppColors.appColor,
+          ),
         );
       });
   }
@@ -163,10 +200,7 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
   void dispose() {
     _videoPlayerController?.dispose();
     _chewieController?.dispose();
-
-    _videoPlayerController = null;
-    _chewieController = null;
-
+    _hideControlsTimer?.cancel();
     super.dispose();
   }
 
@@ -200,26 +234,46 @@ class _VideoDetailsComponentState extends State<VideoDetailsComponent> {
                     width: double.infinity,
                     child: AspectRatio(
                       aspectRatio: 16 / 9,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          if (!isVideoPlaying)
-                            Image.network(
-                              widget.data!.thumbnailUrl.toString(),
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          if (isLoading) CircularProgressIndicator(color: AppColors.appColor),
-                          if (isVideoLoaded && !isVideoPlaying)
-                            GestureDetector(
-                              onTap: _playVideo,
-                              child: Icon(Icons.play_circle_fill, size: 80, color: AppColors.appColor)
-                            ),
-                          if (isVideoPlaying && _chewieController != null)
-                            Chewie(controller: _chewieController!),
-                        ],
+                      child:GestureDetector(
+                        onTap: _onVideoTap, // Show controls on tap
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Show the loading indicator while video is loading
+                            if (isLoading)
+                              CircularProgressIndicator(
+                                color: AppColors.appColor,
+                              ),
+
+                            // Show the thumbnail if the video is not yet playing
+                            if (!isVideoPlaying && !isLoading)
+                              Image.network(
+                                widget.data!.thumbnailUrl.toString(),
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+
+                            // Show the video player if loaded and playing
+                            if (isVideoPlaying && _chewieController != null)
+                              Chewie(controller: _chewieController!),
+
+                            // Show the play/pause button if controls are visible
+                            if (isVideoLoaded && showControls)
+                              GestureDetector(
+                                onTap: _togglePlayPause, // Toggle play/pause
+                                child: Icon(
+                                  isVideoPlaying
+                                      ? Icons.pause_circle_filled
+                                      : Icons.play_circle_fill,
+                                  size: 80,
+                                  color: AppColors.appColor.withOpacity(0.8),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+
+              ),
                   ),
                   SizedBox(
                     height: 20,

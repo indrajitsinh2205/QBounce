@@ -297,466 +297,475 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
     return Container(
       decoration: AppImages.background(AppImages.appBackGround),
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: CommonAppBar(
-            voidCallback: () {
-              setState(() {
-                GlobleValue.button.value = 1;
-                GlobleValue.currentIndex.value = 1;
-                GlobleValue.backButton.value = 0;
-                setIndexForOverlayOpen();
-                GlobleValue.overlayScreen.value = MultiBlocProvider(
-                    providers: [
-                      BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
-                      BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
-                    ],
-                    child: YourStatsScreen());
-              });
-            },
-            voidCallback1: () {
-              print("0.");
-              setState(() {
-                GlobleValue.selectedIndex.value=0;
-                GlobleValue.button.value=0;
-                GlobleValue.backButton.value=1;
-                setIndexForOverlayOpen();
-                GlobleValue.overlayScreen.value = MultiBlocProvider(
-                  providers: [
-                    BlocProvider<StatisticsEditBloc>(
-                      create: (BuildContext context) => StatisticsEditBloc(),
-                    ),
-                    BlocProvider<StatisticsUpdateBloc>(
-                      create: (BuildContext context) => StatisticsUpdateBloc(),
-                    ),
-                    BlocProvider<StatisticsStoreBloc>(
-                      create: (BuildContext context) => StatisticsStoreBloc(),
-                    ),
-                  ],
-                  child: StatisticsEditScreen(Id: 0,),
-                );
-              });
-            },
-            button: GlobleValue.button.value==1?true:false,
-            saveButton: GlobleValue.button.value == 2?true:false,
+      child: Stack(
+        children: [
+          Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: CommonAppBar(
+                voidCallback: () {
+                  setState(() {
+                    GlobleValue.button.value = 1;
+                    GlobleValue.currentIndex.value = 1;
+                    GlobleValue.backButton.value = 0;
+                    setIndexForOverlayOpen();
+                    GlobleValue.overlayScreen.value = MultiBlocProvider(
+                        providers: [
+                          BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+                          BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
+                        ],
+                        child: YourStatsScreen());
+                  });
+                },
+                voidCallback1: () {
+                  print("0.");
+                  setState(() {
+                    GlobleValue.selectedIndex.value=0;
+                    GlobleValue.button.value=0;
+                    GlobleValue.backButton.value=1;
+                    setIndexForOverlayOpen();
+                    GlobleValue.overlayScreen.value = MultiBlocProvider(
+                      providers: [
+                        BlocProvider<StatisticsEditBloc>(
+                          create: (BuildContext context) => StatisticsEditBloc(),
+                        ),
+                        BlocProvider<StatisticsUpdateBloc>(
+                          create: (BuildContext context) => StatisticsUpdateBloc(),
+                        ),
+                        BlocProvider<StatisticsStoreBloc>(
+                          create: (BuildContext context) => StatisticsStoreBloc(),
+                        ),
+                      ],
+                      child: StatisticsEditScreen(Id: 0,),
+                    );
+                  });
+                },
+                button: GlobleValue.button.value==1?true:false,
+                saveButton: GlobleValue.button.value == 2?true:false,
 
 
-            title: '',
-            actions: AppImages.image(AppImages.logo, height: 30),
-            voidCallback2: () {
-              setState(() {
-                final profile = Provider.of<ProfileNotifier>(context, listen: false).profile;
-                print("SaveData : ${profile.toJson()}");
-                print("SaveData1 : ${ProfileData()}");
-                GlobleValue.selectedIndex.value=0;
-                GlobleValue.button.value=0;
-                BlocProvider(
-                  create: (context) =>ProfileUpdateBloc() ,
-                );
-                GlobleValue.selectedScreen.value = MultiBlocProvider(
-                    providers: [
-                      ChangeNotifierProvider.value(value:  GlobalImageManager()),
-                      BlocProvider<LeaderBoardBloc>(
-                        create: (context) => LeaderBoardBloc(),
-                      ),
-                      BlocProvider<TrainingProgramBloc>(
-                        create: (context) => TrainingProgramBloc(),
-                      ),
-                      BlocProvider<TrainingProgramBloc>(
-                        create: (context) => TrainingProgramBloc(),
-                      ), BlocProvider<UserDetailsBloc>(
-                        create: (context) => UserDetailsBloc(),
-                      ),
-                    ],
-                    child: HomeScreen());
-              });
-            },
-          ),
-          drawer: Drawer(
-            backgroundColor: Colors.transparent,
-            child: Container(
-              padding: EdgeInsets.only(left: 23,right: 27),
-              decoration: AppImages.background(AppImages.drawerBG),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
+                title: '',
+                actions: AppImages.image(AppImages.logo, height: 30),
+                voidCallback2: () {
+                  setState(() {
+                    final profile = Provider.of<ProfileNotifier>(context, listen: false).profile;
+                    print("SaveData : ${profile.toJson()}");
+                    print("SaveData1 : ${ProfileData()}");
+                    GlobleValue.selectedIndex.value=0;
+                    GlobleValue.button.value=0;
+                    BlocProvider(
+                      create: (context) =>ProfileUpdateBloc() ,
+                    );
+                    GlobleValue.selectedScreen.value = MultiBlocProvider(
+                        providers: [
+                          ChangeNotifierProvider.value(value:  GlobalImageManager()),
+                          BlocProvider<LeaderBoardBloc>(
+                            create: (context) => LeaderBoardBloc(),
+                          ),
+                          BlocProvider<TrainingProgramBloc>(
+                            create: (context) => TrainingProgramBloc(),
+                          ),
+                          BlocProvider<TrainingProgramBloc>(
+                            create: (context) => TrainingProgramBloc(),
+                          ), BlocProvider<UserDetailsBloc>(
+                            create: (context) => UserDetailsBloc(),
+                          ),
+                        ],
+                        child: HomeScreen());
+                  });
+                },
+              ),
+              drawer: Drawer(
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  padding: EdgeInsets.only(left: 23,right: 27),
+                  decoration: AppImages.background(AppImages.drawerBG),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: <Widget>[
 
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              GlobleValue.button.value=2;
-                              GlobleValue.backButton.value=0;
-                              setIndexForOverlayOpen();
-                              GlobleValue.overlayScreen.value = MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider<ProfileBloc>(
-                                      create: (context) => ProfileBloc(),
-                                    ),BlocProvider<ProfileUpdateBloc>(
-                                      create: (context) => ProfileUpdateBloc(),
-                                    ),
-                                  ],
-                                  child: ProfileScreen());
-                            });
-                            Navigator.pop(context); // Close drawer
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(top: 110),
-                            padding: EdgeInsets.symmetric(horizontal: 11.65,vertical: 10),
-                            decoration: BoxDecoration(
-                                color: Color(0xFF414141),
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.faq.withAlpha(3),
-                                  )
-                                ]
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Consumer<GlobalImageManager>(
-                                  builder: (context, imageManager, child) {
-                                    if (!mounted) {
-                                      return SizedBox.shrink();
-                                    }
-
-
-                                    try {
-                                      if (imageManager.profileImagePath.isNotEmpty) {
-                                        return Container(
-                                          width: 40.0,
-                                          height: 40.0,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Image.file(
-                                            File(imageManager.profileImagePath),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
-                                      } else {
-                                        return _profile!=null ?Container(
-                                          width: 40.0,
-                                          height: 40.0,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: CachedNetworkImage(
-                                            fadeInCurve: Curves.linear,
-                                            fadeOutCurve: Curves.linear,
-                                            fadeInDuration: Duration(microseconds: 0),
-                                            fadeOutDuration: Duration(microseconds: 0),
-                                            imageUrl: _profile.toString(),
-                                            fit: BoxFit.cover,
-                                            placeholder: (BuildContext context, String url) => Center(
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: CircularProgressIndicator(
-                                                  color: AppColors.appColor,
-                                               strokeWidth: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            errorWidget: (BuildContext context, String url, dynamic error) {
-                                              return Image.asset(
-                                                'assets/images/placeholder.jpg',
-                                                fit: BoxFit.cover,
-                                              );
-                                            },
-                                          ),
-                                        )
-                                            :Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Image.asset("assets/images/placeholder.jpg")
-                                        );
-                                      }
-                                    } catch (e) {
-                                      return Text('The image manager has been disposed.');
-                                    }
-                                  },
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  GlobleValue.button.value=2;
+                                  GlobleValue.backButton.value=0;
+                                  setIndexForOverlayOpen();
+                                  GlobleValue.overlayScreen.value = MultiBlocProvider(
+                                      providers: [
+                                        BlocProvider<ProfileBloc>(
+                                          create: (context) => ProfileBloc(),
+                                        ),BlocProvider<ProfileUpdateBloc>(
+                                          create: (context) => ProfileUpdateBloc(),
+                                        ),
+                                      ],
+                                      child: ProfileScreen());
+                                });
+                                Navigator.pop(context); // Close drawer
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(top: 110),
+                                padding: EdgeInsets.symmetric(horizontal: 11.65,vertical: 10),
+                                decoration: BoxDecoration(
+                                    color: Color(0xFF414141),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.faq.withAlpha(3),
+                                      )
+                                    ]
                                 ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Consumer<GlobalImageManager>(
-                                        builder: (context, imageManager, child) {
-                                          if (!mounted) {
-                                            return SizedBox.shrink();
-                                          }
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Consumer<GlobalImageManager>(
+                                      builder: (context, imageManager, child) {
+                                        if (!mounted) {
+                                          return SizedBox.shrink();
+                                        }
 
-                                          try {
-                                            if (imageManager.textData.isNotEmpty) {
-                                              return Text(
-                                                imageManager.textData,
-                                                style: AppTextStyles.athleticStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: AppTextStyles.sfPro700,
-                                                  color: AppColors.whiteColor,
+
+                                        try {
+                                          if (imageManager.profileImagePath.isNotEmpty) {
+                                            return Container(
+                                              width: 40.0,
+                                              height: 40.0,
+                                              clipBehavior: Clip.antiAlias,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Image.file(
+                                                File(imageManager.profileImagePath),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            );
+                                          } else {
+                                            return _profile!=null ?Container(
+                                              width: 40.0,
+                                              height: 40.0,
+                                              clipBehavior: Clip.antiAlias,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: CachedNetworkImage(
+                                                fadeInCurve: Curves.linear,
+                                                fadeOutCurve: Curves.linear,
+                                                fadeInDuration: Duration(microseconds: 0),
+                                                fadeOutDuration: Duration(microseconds: 0),
+                                                imageUrl: _profile.toString(),
+                                                fit: BoxFit.cover,
+                                                placeholder: (BuildContext context, String url) => Center(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: CircularProgressIndicator(
+                                                      color: AppColors.appColor,
+                                                      strokeWidth: 1,
+                                                    ),
+                                                  ),
                                                 ),
-                                              );
-                                            } else {
-                                              // Check if username is null, empty, or equals "null" string
-                                              if (_userName != null &&
-                                                  _userName!.isNotEmpty &&
-                                                  _userName != 'null') {
+                                                errorWidget: (BuildContext context, String url, dynamic error) {
+                                                  return Image.asset(
+                                                    'assets/images/placeholder.jpg',
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                                :Container(
+                                                width: 40.0,
+                                                height: 40.0,
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Image.asset("assets/images/placeholder.jpg")
+                                            );
+                                          }
+                                        } catch (e) {
+                                          return Text('The image manager has been disposed.');
+                                        }
+                                      },
+                                    ),
+                                    SizedBox(width: 10,),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Consumer<GlobalImageManager>(
+                                            builder: (context, imageManager, child) {
+                                              if (!mounted) {
+                                                return SizedBox.shrink();
+                                              }
+
+                                              try {
+                                                if (imageManager.textData.isNotEmpty) {
+                                                  return Text(
+                                                    imageManager.textData,
+                                                    style: AppTextStyles.athleticStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: AppTextStyles.sfPro700,
+                                                      color: AppColors.whiteColor,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  // Check if username is null, empty, or equals "null" string
+                                                  if (_userName != null &&
+                                                      _userName!.isNotEmpty &&
+                                                      _userName != 'null') {
+                                                    return Text(
+                                                      _userName!,
+                                                      style: AppTextStyles.athleticStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: AppTextStyles.sfPro700,
+                                                        color: AppColors.whiteColor,
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    return const SizedBox(height: 10,); // Show nothing if invalid username
+                                                  }
+                                                }
+                                              } catch (e) {
                                                 return Text(
-                                                  _userName!,
+                                                  'The text manager has been disposed.',
                                                   style: AppTextStyles.athleticStyle(
                                                     fontSize: 14,
                                                     fontFamily: AppTextStyles.sfPro700,
                                                     color: AppColors.whiteColor,
                                                   ),
                                                 );
-                                              } else {
-                                                return const SizedBox(height: 10,); // Show nothing if invalid username
                                               }
-                                            }
-                                          } catch (e) {
-                                            return Text(
-                                              'The text manager has been disposed.',
-                                              style: AppTextStyles.athleticStyle(
-                                                fontSize: 14,
-                                                fontFamily: AppTextStyles.sfPro700,
-                                                color: AppColors.whiteColor,
-                                              ),
-                                            );
-                                          }
-                                        },
+                                            },
+                                          ),
+                                          Text(overflow: TextOverflow.ellipsis,"$_email",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
+                                        ],
                                       ),
-                                      Text(overflow: TextOverflow.ellipsis,"$_email",style: AppTextStyles.getOpenSansGoogleFont(11, AppColors.whiteColor, false),)
-                                    ],
-                                  ),
+                                    ),
+                                    SizedBox(width: 10,),
+                                    AppImages.image(AppImages.drawerEdit,height: 20,width: 20)
+                                  ],
                                 ),
-                                SizedBox(width: 10,),
-                                AppImages.image(AppImages.drawerEdit,height: 20,width: 20)
-                              ],
+                              ),
                             ),
-                          ),
+                            SizedBox(height: 50,),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+                                leading:AppImages.image(AppImages.howToUse,height: 20,width: 20),
+                                title: Text('How To Use',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = HowToUseScreen();
+                                    GlobleValue.button.value=0;
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+
+                                leading: AppImages.image(AppImages.cast,height: 20,width: 20),
+                                title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    GlobleValue.button.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = HowToCastScreen();
+
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+
+                                leading: AppImages.image(AppImages.terms,height: 20,width: 20),
+                                title: Text('Terms & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    GlobleValue.button.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = TermsAndConditonsScreen();
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+
+                                leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
+                                title: Text('Privacy Policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  GlobleValue.backButton.value=0;
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = PrivacyPolicyScreen();
+                                    GlobleValue.button.value=0;
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+
+                                leading: AppImages.image(AppImages.faq,height: 20,width: 20),
+                                title: Text('FAQ',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = FAQPage();
+                                    GlobleValue.button.value=0;
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.drawerTile
+                              ),
+                              child: ListTile(
+                                trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
+
+                                leading: AppImages.image(AppImages.contact,height: 20,width: 20),
+                                title: Text('Contact Us',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
+                                onTap: () {
+                                  setState(() {
+                                    GlobleValue.backButton.value=0;
+                                    setIndexForOverlayOpen();
+                                    GlobleValue.overlayScreen.value = MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider<ContactUsBloc>(
+                                            create: (context) => ContactUsBloc(),
+                                          ),
+                                        ],
+
+                                        child: ContactUsScreen());
+                                    GlobleValue.button.value=0;
+                                  });
+                                  Navigator.pop(context); // Close drawer
+                                },
+                              ),
+                            ),
+
+                          ],
                         ),
-                        SizedBox(height: 50,),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-                            leading:AppImages.image(AppImages.howToUse,height: 20,width: 20),
-                            title: Text('How To Use',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = HowToUseScreen();
-                                GlobleValue.button.value=0;
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: AppColors.drawerTile
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-
-                            leading: AppImages.image(AppImages.cast,height: 20,width: 20),
-                            title: Text('How To Cast',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                GlobleValue.button.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = HowToCastScreen();
-
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
+                        child: ListTile(
+                          leading:AppImages.image(AppImages.signOut,height: 30,width: 30),
+                          title: Text('Sign Out',style: AppTextStyles.athleticStyle(fontSize: 16  , color: AppColors.whiteColor.withOpacity(0.5),fontFamily: AppTextStyles.sfPro700),),
+                          onTap: () {
+                            CommonAlert.showAlertDialog(context,"SignOut","You want to signOut",() {
+                              NavigationService.navigateTo(NavigationService.signIn);
+                            },);
+                            // Navigator.pop(context); // Close drawer
+                          },
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-
-                            leading: AppImages.image(AppImages.terms,height: 20,width: 20),
-                            title: Text('Terms & Conditions',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                GlobleValue.button.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = TermsAndConditonsScreen();
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-
-                            leading: AppImages.image(AppImages.privacy,height: 20,width: 20),
-                            title: Text('Privacy Policy',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              GlobleValue.backButton.value=0;
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = PrivacyPolicyScreen();
-                                GlobleValue.button.value=0;
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-
-                            leading: AppImages.image(AppImages.faq,height: 20,width: 20),
-                            title: Text('FAQ',style: AppTextStyles.getOpenSansGoogleFont(14 , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = FAQPage();
-                                GlobleValue.button.value=0;
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
-                        ),
-
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColors.drawerTile
-                          ),
-                          child: ListTile(
-                            trailing: Icon(Icons.chevron_right_rounded,size: 16,color: AppColors.whiteColor,),
-
-                            leading: AppImages.image(AppImages.contact,height: 20,width: 20),
-                            title: Text('Contact Us',style: AppTextStyles.getOpenSansGoogleFont(14  , AppColors.whiteColor  , false),),
-                            onTap: () {
-                              setState(() {
-                                GlobleValue.backButton.value=0;
-                                setIndexForOverlayOpen();
-                                GlobleValue.overlayScreen.value = MultiBlocProvider(
-                                    providers: [
-                                      BlocProvider<ContactUsBloc>(
-                                        create: (context) => ContactUsBloc(),
-                                      ),
-                                    ],
-
-                                    child: ContactUsScreen());
-                                GlobleValue.button.value=0;
-                              });
-                              Navigator.pop(context); // Close drawer
-                            },
-                          ),
-                        ),
-
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 50,),
+                    ],
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColors.drawerTile
-                    ),
-                    child: ListTile(
-                      leading:AppImages.image(AppImages.signOut,height: 30,width: 30),
-                      title: Text('Sign Out',style: AppTextStyles.athleticStyle(fontSize: 16  , color: AppColors.whiteColor.withOpacity(0.5),fontFamily: AppTextStyles.sfPro700),),
-                      onTap: () {
-                        CommonAlert.showAlertDialog(context,"SignOut","You want to signOut",() {
-                          NavigationService.navigateTo(NavigationService.signIn);
-                        },);
-                        // Navigator.pop(context); // Close drawer
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 50,),
-                ],
+                ),
               ),
-            ),
+
+              body: ValueListenableBuilder<int>(
+                valueListenable: GlobleValue.currentIndex,
+                builder: (context, currentIndex, child) {
+                  return ValueListenableBuilder(valueListenable: GlobleValue.overlayScreen, builder: (_, overlay, child) {
+                    // Debugging logs
+                    // print('Current Index: $currentIndex');
+                    // print('Overlay Screen: ${GlobleValue.overlayScreen.value}');
+                    // print('Base Screens Length: ${_baseScreens.length}');
+                    // print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
+
+                    // Validate index and widget lists
+                    if (_baseScreens.isEmpty) {
+                      print('Error: Base screens list is empty!');
+                      return const Center(child: Text('No screens available'));
+                    }
+
+                    // Ensure overlay screen logic works correctly
+                    List<Widget> screens = [];
+                    if (GlobleValue.overlayScreen.value != null) {
+                      print('Using overlay screen');
+                      screens = [GlobleValue.overlayScreen.value!];
+                    } else {
+                      print('Using base screens');
+                      screens = _baseScreens;
+                    }
+
+                    // Validate current index
+                    int validIndex = (currentIndex >= 0 && currentIndex < screens.length) ? currentIndex : 0;
+
+                    print('Current Index:$currentIndex');
+                    print('Final Index: $validIndex | Screens Length: ${screens.length}');
+
+                    return IndexedStack(
+                      index: validIndex,
+                      children: screens,
+                    );
+                  });
+                },
+              ),
+
+              // bottomNavigationBar:CustomBottomNavBar()
           ),
-
-          body: ValueListenableBuilder<int>(
-            valueListenable: GlobleValue.currentIndex,
-            builder: (context, currentIndex, child) {
-              return ValueListenableBuilder(valueListenable: GlobleValue.overlayScreen, builder: (_, overlay, child) {
-                // Debugging logs
-                // print('Current Index: $currentIndex');
-                // print('Overlay Screen: ${GlobleValue.overlayScreen.value}');
-                // print('Base Screens Length: ${_baseScreens.length}');
-                // print("GlobleValue.currentIndex.value${GlobleValue.overlayScreen.value}");
-
-                // Validate index and widget lists
-                if (_baseScreens.isEmpty) {
-                  print('Error: Base screens list is empty!');
-                  return const Center(child: Text('No screens available'));
-                }
-
-                // Ensure overlay screen logic works correctly
-                List<Widget> screens = [];
-                if (GlobleValue.overlayScreen.value != null) {
-                  print('Using overlay screen');
-                  screens = [GlobleValue.overlayScreen.value!];
-                } else {
-                  print('Using base screens');
-                  screens = _baseScreens;
-                }
-
-                // Validate current index
-                int validIndex = (currentIndex >= 0 && currentIndex < screens.length) ? currentIndex : 0;
-
-                print('Current Index:$currentIndex');
-                print('Final Index: $validIndex | Screens Length: ${screens.length}');
-
-                return IndexedStack(
-                  index: validIndex,
-                  children: screens,
-                );
-              });
-            },
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: CustomBottomNavBar(),
           ),
-
-
-          bottomNavigationBar:CustomBottomNavBar()
+        ],
       ),
     );
   }
@@ -896,13 +905,46 @@ class _CustomNavItem extends StatelessWidget {
 
 
 
-
-
-
-
-
-
-
-
-
-
+// Widget SomeWidget (){
+//   return Container(
+//     decoration: AppImages.background(AppImages.appBackGround),
+//     child: Stack(
+//       children: [
+//         Scaffold(
+//           backgroundColor: Colors.transparent,
+//           appBar: CommonAppBar(
+//             voidCallback: () {
+//               setState(() {
+//                 GlobleValue.button.value = 1;
+//                 GlobleValue.currentIndex.value = 1;
+//                 GlobleValue.backButton.value = 0;
+//                 setIndexForOverlayOpen();
+//                 GlobleValue.overlayScreen.value = MultiBlocProvider(
+//                   providers: [
+//                     BlocProvider<StatisticsBloc>(create: (BuildContext context) => StatisticsBloc()),
+//                     BlocProvider<StatisticsDeleteBloc>(create: (BuildContext context) => StatisticsDeleteBloc()),
+//                   ],
+//                   child: YourStatsScreen(),
+//                 );
+//               });
+//             },
+//           ),
+//           body: ValueListenableBuilder<int>(
+//             valueListenable: GlobleValue.currentIndex,
+//             builder: (context, currentIndex, child) {
+//               // Add your body content here
+//               return Container(); // Example placeholder
+//             },
+//           ),
+//         ),
+//         // Position the CustomBottomNavBar on top
+//         Positioned(
+//           bottom: 0,
+//           left: 0,
+//           right: 0,
+//           child: CustomBottomNavBar(),
+//         ),
+//       ],
+//     ),
+//   );
+// }

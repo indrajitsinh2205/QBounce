@@ -208,7 +208,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
               assists: _ASTController.text,
               steals: _STLController.text,
               blockedShots: _BLKController.text,
-              gameDate: _DateController.text,
+              gameDate: GlobleValue.selectedDate.value,
             );
             BlocProvider.of<StatisticsUpdateBloc>(context).add(FetchStatisticsUpdate(widget.Id, postData));
           },
@@ -274,8 +274,7 @@ class _StatisticsEditScreenState extends State<StatisticsEditScreen> {
                 _ASTController.text.isEmpty||
                 _STLController.text.isEmpty||
                 _BLKController.text.isEmpty||
-                _DateController.text.isEmpty
-            ) {
+                GlobleValue.selectedDate.value.isNotEmpty            ) {
               ScaffoldMessengerHelper.showMessage("All field are required");
             }
               PostStatisticsStoreRequestModel postData = PostStatisticsStoreRequestModel(
